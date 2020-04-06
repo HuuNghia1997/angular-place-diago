@@ -1,0 +1,67 @@
+<div class="main-container" [class.main-is-mobile]="mobileQuery.matches">
+  <mat-sidenav-container class="main-sidenav-container">
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" [opened]="true">
+      <a href="/">
+        <div class="site_logo">
+          <div class="logo_img"></div>
+          <span class="site_name">{{title}}</span>
+        </div>
+      </a>
+      <!-- menu -->
+      <mat-accordion>
+        <mat-expansion-panel id="sidebar_menu" *ngFor='let m of sidebarMenu; let i = index'>
+          <mat-expansion-panel-header [collapsedHeight]="'20px'" [expandedHeight]="'20px'">
+            <mat-panel-title>
+              <mat-icon>{{m.icon}}</mat-icon> {{m.mainMenu}}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <a id="submenu" mat-button *ngFor='let submenu of m.listSubMenu' class="submenu_notification_{{i}}" routerLink="{{submenu.route}}">{{submenu.title}}</a>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-sidenav>
+    <mat-sidenav-content>
+      <mat-toolbar class="main-toolbar">
+        <mat-toolbar-row>
+          <!-- Show/hide sidebar -->
+          <button mat-icon-button (click)="snav.toggle()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <h1 class="main-app-name">{{navTitle}}</h1>
+          <span class="toolbar-spacer"></span>
+          <!-- Lang/Account -->
+          <button mat-button [matMenuTriggerFor]="menu" align="end">
+            <img src="../assets/logo/flag/vi.jpg" id="lang_flag" alt="" height="20em">
+            <span id="lang_acronym">VI</span>
+            <mat-icon>arrow_drop_down</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item>
+              <button mat-button disabled>
+                <img src="../assets/logo/flag/vi.jpg" id="lang_flag" alt="" height="20em">
+                <span id="lang_acronym">Tiếng Việt (VI)</span>
+              </button>
+            </button>
+            <button mat-menu-item>
+              <button mat-button disabled>
+                <img src="../assets/logo/flag/en.jpg" id="lang_flag" alt="" height="20em">
+                <span id="lang_acronym">Tiếng Anh (EN)</span>
+              </button>
+            </button>
+          </mat-menu>
+          <!-- End lang menu -->
+          <div class="line"></div>
+          <!-- Account -->
+          <a mat-button id="account_btn">
+            <span id="account_name">
+              <div class="avatar" style="background-image: url('../assets/img/avt.jpg');"></div>
+              Nguyễn Văn A
+            </span>
+          </a>
+        </mat-toolbar-row>
+      </mat-toolbar>
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

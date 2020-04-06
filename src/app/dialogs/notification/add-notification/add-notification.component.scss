@@ -1,0 +1,127 @@
+::ng-deep mat-dialog-container::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  background-color: #F5F5F5;
+}
+
+::ng-deep mat-dialog-container::-webkit-scrollbar {
+  width: 5px;
+  background-color: #F5F5F5;
+}
+
+::ng-deep mat-dialog-container::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .1);
+  background-color: #44444450;
+}
+
+.dialog_title {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+}
+
+#title {
+  font-weight: 500;
+  margin-top: 1em;
+}
+
+.drag_upload_btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  align-self: center;
+  border: 1px solid #9e9e9e96;
+  border-style: dashed;
+  cursor: pointer;
+  z-index: 4;
+}
+
+.drag_upload_btn label {}
+
+.drag_upload_btn button {
+  width: 100%;
+  padding: 5em;
+}
+
+.drag_upload_btn button a {
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.drag_upload_btn button a:hover {
+  color: #2196F3;
+}
+
+.drag_upload_btn button a:visited {
+  color: #2196F3;
+}
+
+.drag_upload_btn input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  height: 100%;
+  cursor: pointer;
+}
+
+.image_drag_upload_preview {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.list_uploaded {
+  height: 200px;
+  width: 24%;
+  margin: 0 0.5% 5em 0.5%;
+  background-color: #44444450;
+}
+
+.img_items {
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 120%;
+}
+
+.btn_uploaded {
+  padding: 1em !important;
+}
+
+.clear_img_queue {
+  padding: 5em !important;
+}
+
+
+.img_uploaded {
+  border: 1px solid #9e9e9e96;
+  border-style: dashed;
+}
+
+.no_boder {
+  border: none;
+}
+
+.file_name {
+  font-style: medium;
+  font-weight: normal;
+  margin-left: .5em;
+  margin-top: .9em;
+  color: #2196F3;
+  float: left;
+}
+
+.delete_img {
+  float: right;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+.img_control {
+  width: 100%;
+}

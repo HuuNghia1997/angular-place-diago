@@ -1,0 +1,221 @@
+.main-container a {
+  text-decoration: none;
+}
+
+.main-container a:hover {
+  color: #fff;
+}
+
+.main-container a:visited {
+  color: #fff;
+}
+
+/*==============================================================Sidebar + toolbar*/
+.main-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.main-is-mobile .main-toolbar {
+  position: fixed;
+  z-index: 2;
+}
+
+h1.main-app-name {
+  margin-left: 8px;
+}
+
+.main-sidenav-container {
+  flex: 1;
+}
+
+.main-sidenav-container mat-sidenav {
+  background-color: rgba(60, 141, 188, 1);
+  padding: .8em 1em;
+  color: #fff;
+  border: unset;
+}
+
+.main-sidenav-container mat-sidenav-content {
+  background-color: #F5F8FF;
+}
+
+.main-is-mobile .main-sidenav-container {
+  flex: 1 0 auto;
+}
+
+/*menu*/
+#sidebar_menu {
+  margin-top: 1em;
+  box-shadow: unset;
+  background-color: transparent;
+}
+
+#sidebar_menu mat-panel-title {
+  color: #fff;
+}
+
+/deep/ #sidebar_menu .mat-expansion-indicator::after {
+  color: #fff;
+}
+
+/deep/ #sidebar_menu .mat-expansion-indicator {
+  padding-bottom: .5em;
+}
+
+/deep/ #sidebar_menu .mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+/deep/ #sidebar_menu #submenu {
+  padding: 0 0 0 2.3em;
+  width: 100%;
+  text-align: left;
+}
+
+/deep/ #sidebar_menu a{
+  color: #fff;
+}
+
+#sidebar_menu mat-icon {
+  font-size: 18px;
+}
+
+#sidebar_menu mat-expansion-panel-header {
+  padding: .6em;
+}
+
+.content {
+  padding: .5em 1em;
+}
+
+.mat-toolbar {
+  background-color: #F5F8FF;
+  border-bottom: 0.5px solid #E0E0E0;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+#lang_acronym,
+#account_name {
+  margin-left: .8em;
+  align-self: center;
+  color: #000;
+}
+
+.line {
+  width: 1px;
+  height: 1.5em;
+  border-left: 1px solid #E0E0E0;
+}
+
+#account_btn {
+  padding: 0 1em;
+  display: flex;
+}
+
+#account_name {
+  font-size: 16px;
+  text-transform: uppercase;
+  display: flex;
+}
+
+.avatar {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 200%;
+  width: 2em;
+  height: 2em;
+  border-radius: 50px;
+  margin-right: .5em;
+  background-color: #000;
+}
+
+/*==============================================================Logo*/
+.site_logo {
+  display: flex;
+}
+
+.logo_img {
+  background-image: url(../assets/logo/HCC.png);
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 3em;
+  height: 3em;
+}
+
+.site_name {
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0 0 0 .5em;
+  color: #fff;
+  align-self: center;
+}
+
+
+/*==============================================================Form*/
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: #44444450;
+}
+
+.input-half-width {
+  width: 49%;
+}
+
+.input-1-3-width {
+  width: 32.3%;
+}
+
+.input-full-width {
+  width: 100%;
+}
+
+.input-1-4-width {
+  width: 24%;
+}
+
+.input-2-3-width {
+  width: 66.6%;
+}
+
+.ml-1 {
+  margin-left: 1% !important;
+}
+
+.ml-10 {
+  margin-left: 10% !important;
+}
+
+.mt-1 {
+  margin-top: 1% !important;
+}
+
+.mb-1 {
+  margin-bottom: 1% !important;
+}
+
+.mb-2 {
+  margin-bottom: 2% !important;
+}
+
+.mb-4 {
+  margin-bottom: 4% !important;
+}
+
+.d-none {
+  display: none !important;
+}
+
+.primary-blue-btn {
+  background-color: #2196F3;
+  color: #fff;
+}
