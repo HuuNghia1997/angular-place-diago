@@ -1,0 +1,18 @@
+::ng-deep .error_notification{
+	background-color: #F44336;
+	color: #fff;
+}
+
+::ng-deep .success_notification{
+	background-color: #388E3C;
+	color: #fff;
+}
+
+.data{
+	font-style: normal;
+	font-weight: normal;
+	font-size: 14px;
+	line-height: 16px;
+	letter-spacing: 0.15px;
+	color: #FFFFFF;
+}
