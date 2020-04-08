@@ -2,7 +2,6 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError } from 'rxjs/operators';
-import { AuthService } from './auth.service';
 import { MainService } from './main.service';
 import { MatDialog } from '@angular/material/dialog';
 import { rootURL, reloadTimeout, pageSizeOptions } from '../../environments/environment';
@@ -32,7 +31,6 @@ export class NotificationService {
 
     constructor(
         private http: HttpClient,
-        private auth: AuthService,
         private main: MainService,
         private dialog: MatDialog,
     ) { }
@@ -157,25 +155,25 @@ export class NotificationService {
 
     checkErrorResponse(error: HttpErrorResponse, type: number) {
         if (error.status === 401) {
-            this.auth.getToken().subscribe(data => {
-                localStorage.setItem('OAuth2TOKEN', data.access_token);
-                switch (type) {
-                    case 1:
-                        this.notificationComponent.search(0, pageSizeOptions);
-                        break;
-                    case 2:
-                        this.notificationComponent.getListTags();
-                        break;
-                    case 3:
-                        this.detailNotificationComponent.getNotificationDetail();
-                        break;
-                    case 4:
-                        this.detailNotificationComponent.getNotificationHistory();
-                        break;
-                }
-            }, err => {
-                console.log(err);
-            });
+            // this.auth.getToken().subscribe(data => {
+            //     localStorage.setItem('OAuth2TOKEN', data.access_token);
+            //     switch (type) {
+            //         case 1:
+            //             this.notificationComponent.search(0, pageSizeOptions);
+            //             break;
+            //         case 2:
+            //             this.notificationComponent.getListTags();
+            //             break;
+            //         case 3:
+            //             this.detailNotificationComponent.getNotificationDetail();
+            //             break;
+            //         case 4:
+            //             this.detailNotificationComponent.getNotificationHistory();
+            //             break;
+            //     }
+            // }, err => {
+            //     console.log(err);
+            // });
         }
     }
 
@@ -201,13 +199,10 @@ export class NotificationService {
         switch (id) {
             case 1:
                 return 'Vui lòng nhập tiêu đề thông báo';
-                break;
             case 2:
                 return 'Vui lòng nhập nội dung thông báo';
-                break;
             case 3:
                 return 'Vui lòng chọn đơn vị';
-                break;
             default:
                 return 'You must enter a valid value';
         }

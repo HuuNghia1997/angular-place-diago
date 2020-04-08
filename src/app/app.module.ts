@@ -10,15 +10,17 @@ import { DetailNotificationModule } from './components/notification/detail-notif
 
 
 //services
-import { AuthService } from './services/auth.service';
 import { NotificationService } from './services/notification.service';
 import { TranslateService } from './services/translate.service';
+import { OauthService } from "./services/oauth.service" 
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { TokenAuthComponent } from './components/token-auth/token-auth.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
+    TokenAuthComponent,
   ],
   imports: [
     BrowserModule,
@@ -30,9 +32,9 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
     DetailNotificationModule,
   ],
   providers: [
-    AuthService,
     NotificationService,
-    TranslateService
+    TranslateService,
+    OauthService
   ],
   exports: [],
   bootstrap: [AppComponent]
