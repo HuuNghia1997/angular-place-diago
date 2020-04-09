@@ -7,13 +7,16 @@
 <div class="main-wrapper mat-elevation-z4">
   <h2 id="title" class="mb-1">{{notificationTitle}}</h2>
   <div class="control mb-2">
-    <button mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="updateRecord()">
+    <button mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1"
+      (click)="updateRecord()">
       <mat-icon>edit</mat-icon> Cập nhật
     </button>
-    <button class="ml-1" mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="deleteRecord()">
+    <button class="ml-1" mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1"
+      (click)="deleteRecord()">
       <mat-icon>delete</mat-icon> Xoá
     </button>
-    <button class="ml-1 primary-blue-btn" mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="sendNotification()">
+    <button class="ml-1 primary-blue-btn" mat-raised-button *ngFor='let status of notificationStatus;'
+      [disabled]="status.status == 1" (click)="sendNotification()">
       <mat-icon>send</mat-icon> Gửi đi
     </button>
   </div>
@@ -29,7 +32,8 @@
         </div>
         <div class="notification_detail">
           <span>Trạng thái:</span>
-          <span *ngFor='let status of notificationStatus;' [ngClass]="{'status_unsent': status.status == 0, 'status_sent': status.status == 1}">{{ status.description }}</span>
+          <span *ngFor='let status of notificationStatus;'
+            [ngClass]="{'status_unsent': status.status == 0, 'status_sent': status.status == 1}">{{ status.description }}</span>
         </div>
         <div class="notification_tags">
           <span>Chuyên mục:</span>
@@ -52,14 +56,16 @@
               <mat-icon>cloud_upload</mat-icon>
               Kéo thả tệp tin hoặc <a href="">Chọn từ thư viện</a> hoặc <a href="">Tải lên</a>
             </button>
-            <input id="img_upload" name="img_upload[]" type='file' (change)="onSelectFile($event)" multiple accept=".JPG, .PNG, .JPEG" value="{{blankVal}}">
+            <input id="img_upload" name="img_upload[]" type='file' (change)="onSelectFile($event)" multiple
+              accept=".JPG, .PNG, .JPEG" value="{{blankVal}}">
           </div>
           <div class="image_drag_upload_preview">
             <div class="list_uploaded" *ngFor='let url of urls; let i = index;'>
               <div class="img_items  mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ urls[i] +')'}">
               </div>
               <div class="img_control">
-                <span class="file_name" matTooltip="{{fileNamesFull[i]}}" [matTooltipPosition]="'right'">{{fileNames[i]}}</span>
+                <span class="file_name" matTooltip="{{fileNamesFull[i]}}"
+                  [matTooltipPosition]="'right'">{{fileNames[i]}}</span>
                 <a mat-icon-button class="delete_img" align="end">
                   <mat-icon (click)="removeItem(i)">delete_outline</mat-icon>
                 </a>
@@ -75,14 +81,14 @@
           <mat-tab label="Lịch sử">
             <div class="history">
               <div *ngFor='let his of history; let i = index;' class="history_item mt-1">
-                <span><a href="">{{his.user.name}}</a> 
+                <span><a href="">{{his.user.name}}</a>
                   <span *ngIf="his.type === 1"> đã bình luận</span>
                   <span *ngIf="his.type === 2"> đã chuyển bước</span>
                   <span *ngIf="his.type === 3"> đã thay đổi</span>
                   <span *ngIf="his.type === 4"> đã thêm mới</span>
                   <span *ngIf="his.type === 5"> đã xoá</span>
-                   - {{his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span>
-				<div class="history_content mt-1">
+                  - {{his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span>
+                <div class="history_content mt-1" [ngClass]="{'d-none':  his.type === 4}">
                   <div style="width: 20%">
                     <b>Trường</b>
                   </div>
@@ -93,7 +99,7 @@
                     <b>Giá trị mới</b>
                   </div>
                 </div>
-                <div class="history_content mt-1" *ngFor="let his_item of his.action">
+                <div class="history_content mt-1" *ngFor="let his_item of his.action" [ngClass]="{'d-none':  his.type === 4}">
                   <div style="width: 20%">
                     <p>{{his_item.fieldName}}</p>
                   </div>
