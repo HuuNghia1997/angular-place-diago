@@ -2,13 +2,13 @@ export const environment = {
     production: false
 };
 
-export const rootLayout = 'http://localhost:8080/';
+export const rootLayout = 'http://localhost:4200/';
 
-export const tokenURL = 'https://digo-sso.vnptigate.vn/oauth/token';
+export const tokenURL = 'http://10.82.33.35:8081/oauth/token';
 
 export const rootURL = 'https://digo-api.vnptigate.vn/';
 
-export const getCodeURL = 'https://digo-sso.vnptigate.vn/oauth/authorize';
+export const getCodeURL = 'http://10.82.33.35:8081/oauth/authorize';
 
 export const getCodeParams = '?grant_type=authorization_code&response_type=code&client_id=first-client&state=1234';
 

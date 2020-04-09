@@ -5,6 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { MainService } from './main.service';
 import { MatDialog } from '@angular/material/dialog';
 import { rootURL, reloadTimeout, pageSizeOptions } from '../../environments/environment';
+import { OauthService } from './oauth.service'
 
 // ====================================================== Component
 import { ConfirmDialogModel, DeleteNotificationComponent } from '../dialogs/notification/delete-notification/delete-notification.component';
@@ -33,6 +34,7 @@ export class NotificationService {
         private http: HttpClient,
         private main: MainService,
         private dialog: MatDialog,
+        private auth: OauthService
     ) { }
     public getTags = rootURL + 'bt/tag?category-id=';
     public uploadFileURL = rootURL + 'fi/file';
@@ -154,26 +156,27 @@ export class NotificationService {
     }
 
     checkErrorResponse(error: HttpErrorResponse, type: number) {
+        console.log('run error hander');
         if (error.status === 401) {
-            // this.auth.getToken().subscribe(data => {
-            //     localStorage.setItem('OAuth2TOKEN', data.access_token);
-            //     switch (type) {
-            //         case 1:
-            //             this.notificationComponent.search(0, pageSizeOptions);
-            //             break;
-            //         case 2:
-            //             this.notificationComponent.getListTags();
-            //             break;
-            //         case 3:
-            //             this.detailNotificationComponent.getNotificationDetail();
-            //             break;
-            //         case 4:
-            //             this.detailNotificationComponent.getNotificationHistory();
-            //             break;
-            //     }
-            // }, err => {
-            //     console.log(err);
-            // });
+            this.auth.refeshToken((result) => {
+                if (result) {
+                    console.log('call back ' + result);
+                    switch (type) {
+                        case 1:
+                            this.notificationComponent.search(0, pageSizeOptions);
+                            break;
+                        case 2:
+                            this.notificationComponent.getListTags();
+                            break;
+                        case 3:
+                            this.detailNotificationComponent.getNotificationDetail();
+                            break;
+                        case 4:
+                            this.detailNotificationComponent.getNotificationHistory();
+                            break;
+                    }
+                }
+            });
         }
     }
 

@@ -17,7 +17,7 @@ const routes: Routes = [
     loadChildren: './components/notification/detail-notification/detail-notification.module#DetailNotificationModule'
   },
   {
-    path: 'temp/oauth',
+    path: 'oauth',
     component: TokenAuthComponent
   }
 ];
