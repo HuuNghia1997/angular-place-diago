@@ -12,20 +12,22 @@ import { getCodeURL, getCodeParams } from '../environments/environment';
 export class AppComponent implements OnInit {
   title = 'Chính Quyền Số';
   token = localStorage.getItem('OAuth2TOKEN');
+  refresh = localStorage.getItem('TOKEN_Refresh');
 
-  constructor( private auth: OauthService ) {
-
-  }
+  constructor( private auth: OauthService ) {}
 
   ngOnInit() {
     if (this.token != null ) {
       const helper = new JwtHelperService();
       const isExpired = helper.isTokenExpired(this.token);
       if (isExpired) {
-        console.log('het han');
+        console.log('token is exp');
         this.auth.refeshToken(callback => {
-          console.log('refresh thanh cong');
+          console.log('refresh success');
         });
+      } else if (helper.isTokenExpired(this.refresh)) {
+        localStorage.setItem('OAuth2TOKEN', '');
+        window.location.href = getCodeURL + getCodeParams + '&redirect_uri=http://localhost:4200/oauth';
       }
     } else {
       localStorage.setItem('OAuth2TOKEN', '');

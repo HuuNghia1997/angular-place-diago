@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 
-import { AUTH, rootLayout, tokenURL } from '../../environments/environment';
+import { AUTH, rootLayout, tokenURL, getCodeURL, getCodeParams } from '../../environments/environment';
+
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -9,35 +11,41 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class OauthService {
 
+  helper = new JwtHelperService();
+
   constructor( public http: HttpClient) { }
 
   refeshToken(callback) {
-    const params = new URLSearchParams();
-    params.set('grant_type', 'refresh_token');
-    params.set('refresh_token', localStorage.getItem('TOKEN_Refresh'));
 
-    const headers =
-      new HttpHeaders({
-        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
-        // tslint:disable-next-line:object-literal-key-quotes
-        'Authorization': 'Basic ' + btoa( AUTH.CLIENT_ID + ':' + AUTH.CLIENT_SECRET)
-      });
+    if (this.helper.isTokenExpired(localStorage.getItem('TOKEN_Refresh'))) {
 
-    this.http.post(
-      tokenURL + '?redirect_uri=http://localhost:4200/oauth',
-      params.toString(), { headers }).subscribe(
-        data => {
-          // tslint:disable-next-line:no-string-literal
-          localStorage.setItem('OAuth2TOKEN', data['access_token']);
-          // refresh_token
-          // tslint:disable-next-line:no-string-literal
-          localStorage.setItem('TOKEN_Refresh', data['refresh_token']);
+      const params = new URLSearchParams();
+      params.set('grant_type', 'refresh_token');
+      params.set('refresh_token', localStorage.getItem('TOKEN_Refresh'));
 
-          callback(true);
-        }, err => {
-          console.log(err);
-          // alert('refesh fails');
+      const headers =
+        new HttpHeaders({
+          'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+          // tslint:disable-next-line:object-literal-key-quotes
+          'Authorization': 'Basic ' + btoa( AUTH.CLIENT_ID + ':' + AUTH.CLIENT_SECRET)
         });
+
+      this.http.post(
+        tokenURL + '?redirect_uri=http://localhost:4200/oauth',
+        params.toString(), { headers }).subscribe(
+          data => {
+            // tslint:disable-next-line:no-string-literal
+            localStorage.setItem('OAuth2TOKEN', data['access_token']);
+            // refresh_token
+            // tslint:disable-next-line:no-string-literal
+            localStorage.setItem('TOKEN_Refresh', data['refresh_token']);
+
+            callback(true);
+          }, err => {
+            console.log(err);
+            // alert('refesh fails');
+          });
+    }
   }
 
   retrieveToken(code, success) {
