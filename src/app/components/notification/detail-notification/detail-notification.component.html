@@ -75,7 +75,13 @@
           <mat-tab label="Lịch sử">
             <div class="history">
               <div *ngFor='let his of history; let i = index;' class="history_item mt-1">
-                <span><a href="">{{his.user.name}}</a> đã thay đổi - {{his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span>
+                <span><a href="">{{his.user.name}}</a> 
+                  <span *ngIf="his.type === 1"> đã bình luận</span>
+                  <span *ngIf="his.type === 2"> đã chuyển bước</span>
+                  <span *ngIf="his.type === 3"> đã cập nhật thông tin</span>
+                  <span *ngIf="his.type === 4"> đã thêm mới</span>
+                  <span *ngIf="his.type === 5"> đã xoá</span>
+                   - {{his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span>
 				<div class="history_content mt-1">
                   <div style="width: 20%">
                     <b>Trường</b>
