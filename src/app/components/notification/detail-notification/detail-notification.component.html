@@ -88,7 +88,7 @@
                   <span *ngIf="his.type === 4"> đã thêm mới</span>
                   <span *ngIf="his.type === 5"> đã xoá</span>
                   - {{his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}</span>
-                <div class="history_content mt-1" [ngClass]="{'d-none':  his.type === 4}">
+                <div class="history_content mt-1" [ngClass]="{'d-none': isEmptyObject(his.action) }">
                   <div style="width: 20%">
                     <b>Trường</b>
                   </div>
@@ -99,7 +99,7 @@
                     <b>Giá trị mới</b>
                   </div>
                 </div>
-                <div class="history_content mt-1" *ngFor="let his_item of his.action" [ngClass]="{'d-none':  his.action === null}">
+                <div class="history_content mt-1" *ngFor="let his_item of his.action" [ngClass]="{'d-none': isEmptyObject(his.action)}">
                   <div style="width: 20%">
                     <p>{{his_item.fieldName}}</p>
                   </div>
