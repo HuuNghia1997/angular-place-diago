@@ -11,7 +11,6 @@ import { OauthService } from 'src/app/services/oauth.service';
 })
 export class TokenAuthComponent implements OnInit {
   private orderObj;
-  public redirectUri = 'http://localhost:8080/';
 
   constructor(private route: ActivatedRoute, private authService: OauthService) {
   }
@@ -19,7 +18,6 @@ export class TokenAuthComponent implements OnInit {
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
       this.orderObj = { ...params.keys, ...params };
-
       this.authService.retrieveToken(this.orderObj.params.code, (success) => {
         // this is a wait for full refresh
       });

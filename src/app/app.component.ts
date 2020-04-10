@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { OauthService } from './services/oauth.service';
-import { getCodeURL, getCodeParams } from '../environments/environment';
+import { getCodeURL, getCodeParams, tempRedirect } from '../environments/environment';
 
 
 @Component({
@@ -14,7 +14,9 @@ export class AppComponent implements OnInit {
   token = localStorage.getItem('OAuth2TOKEN');
   refresh = localStorage.getItem('TOKEN_Refresh');
 
-  constructor( private auth: OauthService ) {}
+  constructor( private auth: OauthService ) {
+
+  }
 
   ngOnInit() {
     if (this.token != null ) {
@@ -22,16 +24,14 @@ export class AppComponent implements OnInit {
       const isExpired = helper.isTokenExpired(this.token);
       if (isExpired) {
         console.log('token is exp');
-        this.auth.refeshToken(callback => {
-          console.log('refresh success');
-        });
+        // this.auth.refeshToken(callback => {
+        //   console.log('refresh success');
+        // });
       } else if (helper.isTokenExpired(this.refresh)) {
-        localStorage.setItem('OAuth2TOKEN', '');
-        window.location.href = getCodeURL + getCodeParams + '&redirect_uri=http://localhost:4200/oauth';
+        console.log('token is exp 2');
+        // localStorage.setItem('OAuth2TOKEN', '');
+        // window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
       }
-    } else {
-      localStorage.setItem('OAuth2TOKEN', '');
-      window.location.href = getCodeURL + getCodeParams + '&redirect_uri=http://localhost:4200/oauth';
     }
   }
 }

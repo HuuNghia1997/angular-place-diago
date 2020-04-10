@@ -2,23 +2,27 @@ export const environment = {
     production: false
 };
 
+export const tempRedirect = 'redirect_uri=http://localhost:4200/oauth';
+
 export const rootLayout = 'http://localhost:4200/';
 
-export const tokenURL = 'http://10.82.33.35:8081/oauth/token';
+export const tokenURL = 'https://digo-sso.vnptigate.vn/oauth/token';
 
 export const rootURL = 'https://digo-api.vnptigate.vn/';
 
-export const getCodeURL = 'http://10.82.33.35:8081/oauth/authorize';
-
-export const getCodeParams = '?grant_type=authorization_code&response_type=code&client_id=first-client&state=1234';
+export const getCodeURL = 'https://digo-sso.vnptigate.vn/oauth/authorize';
 
 export const AUTH = {
-    GRANT_TYPE: 'client_credentials',
+    GRANT_TYPE_CLIENT: 'client_credentials',
     CLIENT_ID: 'first-client',
     CLIENT_SECRET: '123',
     USER_NAME: '+84941707439',
-    PWD: 'Vnpt@123654'
+    PWD: 'Vnpt@123654',
+    GRANT_TYPE_CODE : 'authorization_code'
 };
+
+
+export const getCodeParams = '?grant_type=' + AUTH.GRANT_TYPE_CODE + '&response_type=code&client_id=' + AUTH.CLIENT_ID + '&state=1234';
 
 export const siteName = 'Chính Quyền Số';
 

@@ -5,7 +5,7 @@ import { catchError } from 'rxjs/operators';
 import { MainService } from './main.service';
 import { MatDialog } from '@angular/material/dialog';
 import { rootURL, reloadTimeout, pageSizeOptions } from '../../environments/environment';
-import { OauthService } from './oauth.service'
+import { OauthService } from './oauth.service';
 
 // ====================================================== Component
 import { ConfirmDialogModel, DeleteNotificationComponent } from '../dialogs/notification/delete-notification/delete-notification.component';
@@ -157,7 +157,10 @@ export class NotificationService {
 
     checkErrorResponse(error: HttpErrorResponse, type: number) {
         console.log('run error hander');
-        if (error.status === 401) {
+        console.log(error.status);
+        if (error.status == 401) {
+            console.log('refresh');
+            console.log(type);
             this.auth.refeshToken((result) => {
                 if (result) {
                     console.log('call back ' + result);
