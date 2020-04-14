@@ -158,7 +158,7 @@ export class NotificationService {
     checkErrorResponse(error: HttpErrorResponse, type: number) {
         console.log('run error hander');
         console.log(error.status);
-        if (error.status == 401) {
+        if (error.status === 401) {
             console.log('refresh');
             console.log(type);
             this.auth.refeshToken((result) => {
@@ -189,6 +189,7 @@ export class NotificationService {
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getTags + id, { headers }).pipe();
     }
 
@@ -198,6 +199,7 @@ export class NotificationService {
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getDetailURL + id + '/--full', { headers }).pipe();
     }
 
@@ -255,6 +257,7 @@ export class NotificationService {
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getFileURL + imageId, { headers, responseType: 'blob' }).pipe();
     }
 
@@ -264,6 +267,7 @@ export class NotificationService {
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getFileURL + imageId + '/filename+size', { headers }).pipe();
     }
 
@@ -273,6 +277,7 @@ export class NotificationService {
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getHistory + groupId + '&item-id=' + itemId + '&page=' + page + '&size=' + size, { headers }).pipe();
     }
 
@@ -282,6 +287,7 @@ export class NotificationService {
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.searchURL + searchString, { headers }).pipe();
     }
 }

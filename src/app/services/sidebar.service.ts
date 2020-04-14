@@ -15,6 +15,8 @@ export class SidebarService {
 
     private getUserInfoPath = rootURL + 'hu/user/';
 
+    private getUserfilePath = rootURL + 'fi/file/';
+
     getUserInfo(id: string) {
       const token = localStorage.getItem('OAuth2TOKEN');
       let headers = new HttpHeaders();
@@ -22,6 +24,14 @@ export class SidebarService {
       headers = headers.append('Content-Type', 'application/json');
       headers.append('Access-Control-Allow-Origin', '*');
       return this.http.get(this.getUserInfoPath + id, { headers }).pipe();
+    }
+
+    getUserAvatar(id: string) {
+      const token = localStorage.getItem('OAuth2TOKEN');
+      let headers = new HttpHeaders();
+      headers = headers.append('Authorization', 'Bearer ' + token);
+      headers.append('Access-Control-Allow-Origin', '*');
+      return this.http.get(this.getUserfilePath + id, {responseType: 'blob' as 'json', headers });
     }
 
 }

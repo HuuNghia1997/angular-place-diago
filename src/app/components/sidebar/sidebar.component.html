@@ -53,9 +53,10 @@
                     <!-- Account -->
                     <a mat-button id="account_btn" [matMenuTriggerFor]="userLog">
                         <span id="account_name">
-                            <div class="avatar" style="background-image: url('../assets/img/avt.jpg');"></div>
-                            {{ getAvatar() }}
-                            tên người
+                            {{ nickname }} 
+                            <div class="avatar" style="background-image: url('../assets/img/avt.jpg');">
+                                <img class="avatar" [src]="avatar"/>
+                            </div>
                         </span>
                     </a>
                     <mat-menu #userLog="matMenu" xPosition="before">
@@ -64,7 +65,6 @@
                             <span>Đăng Xuất</span>
                         </button>
                     </mat-menu>
-
 
                 </mat-toolbar-row>
             </mat-toolbar>

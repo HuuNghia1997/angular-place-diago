@@ -16,13 +16,13 @@ export class TokenAuthComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    console.log('it run');
     this.route.queryParamMap.subscribe(params => {
       this.orderObj = { ...params.keys, ...params };
       this.authService.retrieveToken(this.orderObj.params.code, (success) => {
         // this is a wait for full refresh
+        console.log('it run');
       });
     });
-
   }
-
 }
