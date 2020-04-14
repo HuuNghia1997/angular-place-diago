@@ -8,6 +8,8 @@ export const rootLayout = 'http://localhost:4200/';
 
 export const tokenURL = 'https://digo-sso.vnptigate.vn/oauth/token';
 
+export const logoutURL = 'https://digo-sso.vnptigate.vn';
+
 export const rootURL = 'https://digo-api.vnptigate.vn/';
 
 export const getCodeURL = 'https://digo-sso.vnptigate.vn/oauth/authorize';

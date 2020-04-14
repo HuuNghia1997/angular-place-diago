@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AUTH, tokenURL, tempRedirect, getCodeURL, getCodeParams, auth_token, token_refresh } from '../../environments/environment';
+import { AUTH, tokenURL, tempRedirect, getCodeURL, logoutURL, auth_token, token_refresh } from '../../environments/environment';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -127,10 +127,10 @@ export class OauthService {
       params.toString(), { headers }).subscribe(
         data => {
           console.log(data);
-          window.location.href = tokenURL;
+          window.location.href = logoutURL;
         }, err => {
           console.log(err);
-          window.location.href = tokenURL;
+          window.location.href = logoutURL;
         });
 
   }
