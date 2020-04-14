@@ -22,7 +22,7 @@
         <mat-form-field class="input-half-width ml-1" appearance="outline">
           <mat-label>Chuyên mục</mat-label>
           <mat-select formControlName="tag" multiple>
-            <mat-option *ngFor='let tag of listTags;' value="{{tag.id}}">{{tag.name}}</mat-option>
+            <mat-option *ngFor='let tagg of listTags;' value="{{tagg.id}}">{{tagg.name}}</mat-option>
           </mat-select>
         </mat-form-field>
         <!-- Đơn vị -->
@@ -55,7 +55,7 @@
           <mat-datepicker #endDate></mat-datepicker>
         </mat-form-field>
         <button mat-raised-button class="primary-blue-btn" type="submit" align="start">Tìm kiếm</button>
-        <button mat-raised-button class="ml-1" align="start" (click)="searchForm.reset();">Làm mới</button>
+        <button mat-raised-button class="ml-1" align="start" (click)="searchFormReset();">Làm mới</button>
       </form>
     </mat-expansion-panel>
   </mat-accordion>

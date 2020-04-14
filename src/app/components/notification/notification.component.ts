@@ -176,8 +176,12 @@ export class NotificationComponent implements OnInit, AfterViewInit {
         searchString = searchString + '&size=' + pageSize;
         searchString = searchString + '&title=' + formObj.title;
 
-        for (const i of formObj.tag) {
-            searchString = searchString + '&tag-id=' + i;
+        if (formObj.tag === null) {
+            searchString = searchString + '&tag-id=';
+        } else {
+            for (const i of formObj.tag) {
+                searchString = searchString + '&tag-id=' + i;
+            }
         }
 
         searchString = searchString + '&agency-id=' + formObj.agency;
@@ -209,6 +213,18 @@ export class NotificationComponent implements OnInit, AfterViewInit {
             this.selectedPageSize = pageSize;
         }, err => {
             this.service.checkErrorResponse(err, 1);
+        });
+    }
+
+    searchFormReset() {
+        this.searchForm.reset();
+        this.searchForm = new FormGroup({
+            title: new FormControl(''),
+            tag: new FormControl(''),
+            agency: new FormControl(''),
+            publish: new FormControl(''),
+            startDate: new FormControl(''),
+            endDate: new FormControl('')
         });
     }
 }
