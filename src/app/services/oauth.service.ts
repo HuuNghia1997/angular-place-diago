@@ -28,6 +28,8 @@ export class OauthService {
       localStorage.setItem('USER_INFO_ID', userinfo['user']['id'] );
       localStorage.setItem('USER_INFO_NAME', userinfo['user']['fullname'] );
       localStorage.setItem('USER_INFO_ACCOUNT', userinfo['user']['account'] );
+
+      localStorage.setItem('jti', userinfo['jti'] );
     }
     const user: User = {
       // tslint:disable-next-line:no-string-literal
@@ -47,6 +49,7 @@ export class OauthService {
 
       const headers =
         new HttpHeaders({
+
           'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
           // tslint:disable-next-line:object-literal-key-quotes
           'Authorization': 'Basic ' + btoa( AUTH.CLIENT_ID + ':' + AUTH.CLIENT_SECRET)
@@ -105,6 +108,30 @@ export class OauthService {
     localStorage.removeItem('USER_INFO_NAME');
     localStorage.removeItem('USER_INFO_ACCOUNT');
     alert('Đăng xuất thành công');
-    // window.location.reload();
+    
+
+
+
+    const params = new URLSearchParams();
+    params.set('_csrf', localStorage.getItem('jti'));
+
+    const headers =
+      new HttpHeaders({
+        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+        // tslint:disable-next-line:object-literal-key-quotes
+        // 'Authorization': 'Basic ' + btoa( AUTH.CLIENT_ID + ':' + AUTH.CLIENT_SECRET) 
+      });
+
+    this.http.post(
+      'https://digo-sso.vnptigate.vn/account/perform-logout',
+      params.toString(), { headers }).subscribe(
+        data => {
+          console.log(data);
+          window.location.href = tokenURL;
+        }, err => {
+          console.log(err);
+          window.location.href = tokenURL;
+        });
+
   }
 }
