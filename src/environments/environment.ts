@@ -30,6 +30,10 @@ export const notificationHistoryGroupId = 3;
 
 export const notificationCategoryId = '6';
 
+export const token_refresh = 'token_refresh';
+
+export const auth_token = 'auth_token';
+
 // Dịch các lable của phân trang
 export const translatePaginator = ['Số dòng', 'Trang đầu', 'Trang trước', 'Trang tiếp theo', 'Trang cuối', 'của'];
 

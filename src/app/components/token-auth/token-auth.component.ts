@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { rootLayout } from '../../../environments/environment';
+
+
 import { OauthService } from 'src/app/services/oauth.service';
 
 @Component({
@@ -16,12 +18,14 @@ export class TokenAuthComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('it run');
     this.route.queryParamMap.subscribe(params => {
       this.orderObj = { ...params.keys, ...params };
       this.authService.retrieveToken(this.orderObj.params.code, (success) => {
-        // this is a wait for full refresh
-        console.log('it run');
+        
+        if (success) {
+          this.authService.getUserInfo();
+          window.location.href = rootLayout;
+        }
       });
     });
   }

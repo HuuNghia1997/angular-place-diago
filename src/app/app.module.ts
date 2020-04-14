@@ -14,14 +14,12 @@ import { TranslateService } from './services/translate.service';
 import { OauthService } from './services/oauth.service';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TokenAuthComponent } from './components/token-auth/token-auth.component';
-import { LoaddingPageComponent } from './loadding-page/loadding-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     TokenAuthComponent,
-    LoaddingPageComponent,
   ],
   imports: [
     BrowserModule,

@@ -184,7 +184,7 @@ export class NotificationService {
     }
 
     getListTags(id: string): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -194,7 +194,7 @@ export class NotificationService {
     }
 
     getNotificationDetail(id: string): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -217,7 +217,7 @@ export class NotificationService {
     }
 
     uploadImages(imgFile, ccountId): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         // headers = headers.append('Content-Type', 'multipart/form-data');
@@ -232,7 +232,7 @@ export class NotificationService {
     }
 
     postNotification(requestBody) {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -242,7 +242,7 @@ export class NotificationService {
     }
 
     updateNotification(requestBody, id) {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -252,7 +252,7 @@ export class NotificationService {
     }
 
     getImage(imageId) {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -262,7 +262,7 @@ export class NotificationService {
     }
 
     getImageName_Size(imageId) {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -272,7 +272,7 @@ export class NotificationService {
     }
 
     getNotificationHistory(groupId: number, itemId: string, page: number, size: number): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -282,7 +282,7 @@ export class NotificationService {
     }
 
     search(searchString: string): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');

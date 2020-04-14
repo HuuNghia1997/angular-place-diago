@@ -45,10 +45,7 @@ export class SidebarComponent implements OnInit  {
         
     }
     ngOnInit(): void {
-
-        this.auth.getUserInfo();
         this.getAvatar();
-        
     }
 
     ngOnDestroy(): void {
@@ -60,13 +57,14 @@ export class SidebarComponent implements OnInit  {
         this.auth.logout();
     }
 
-    getName() {
-
-    }
-
     getAvatar() {
-        this.sidebarService.getUserInfo('5df87cb8b4c1ef0001dc30f3').subscribe(data => {
-            console.log(data['avatarId']);
+        
+        this.nickname = this.auth.getUserInfo().fullname;
+        this.sidebarService.getUserInfo(this.auth.getUserInfo().id).subscribe(data => {
+
+            if (data['avatarId'] === null) {
+                this.avatar = '../../../assets/img/avt.jpg'
+            }
 
             this.sidebarService.getUserAvatar(data['avatarId']).subscribe((response: any) => {
                 let dataType = response.type;
@@ -76,13 +74,9 @@ export class SidebarComponent implements OnInit  {
                 downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
                 document.body.appendChild(downloadLink);
                 this.avatar = this.sanitizer.bypassSecurityTrustUrl(downloadLink.href);
-
-                this.nickname = this.auth.getUserInfo().fullname;
             });
-
-            // 5e538c7154bc5030af6b3a7a
         }, error => {
-
+            console.log(error);
         });
     }
 }

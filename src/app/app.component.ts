@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { OauthService } from './services/oauth.service';
-import { getCodeURL, getCodeParams, tempRedirect } from '../environments/environment';
+import { getCodeURL, getCodeParams, tempRedirect, auth_token } from '../environments/environment';
 import { callbackify } from 'util';
 
 
@@ -12,36 +12,35 @@ import { callbackify } from 'util';
 })
 export class AppComponent implements OnInit {
   title = 'Chính Quyền Số';
-  token = localStorage.getItem('OAuth2TOKEN');
-  refresh = localStorage.getItem('TOKEN_Refresh');
-
-  isLogging: boolean;
+  token = localStorage.getItem('auth_token');
+  refresh = localStorage.getItem('token_refresh');
 
   constructor( private auth: OauthService ) {
 
   }
 
   ngOnInit() {
-    console.log(this.isLogging);
-    if (this.token != null ) {
 
+    if (localStorage.getItem(auth_token) === '') {
+      alert('yêu cầu đăng nhập để tiếp tục');
+    }
+
+    if (this.token != null ) {
       const helper = new JwtHelperService();
       const isExpired = helper.isTokenExpired(this.token);
-      this.isLogging = !isExpired;
-      if (isExpired) {
-        console.log('token is exp');
+      if (!isExpired) {
+        console.log('token is exp '+ isExpired);
         this.auth.refeshToken(callback => {
-          this.isLogging = callback;
-
-          console.log('this.isLogging');
         });
-      } else if (helper.isTokenExpired(this.refresh)) {
-        console.log('token is exp 2');
-        localStorage.setItem('OAuth2TOKEN', '');
+      } else if (!helper.isTokenExpired(this.refresh)) {
+        console.log('token is exp '+ isExpired);
+        alert('chuyển đến trang đăng nhập để tiếp tục')
+        localStorage.setItem('auth_token', '');
         window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
       }
     } else {
-        localStorage.setItem('OAuth2TOKEN', '');
+        alert('chuyển đến trang đăng nhập để tiếp tục')
+        localStorage.setItem(auth_token, '');
         window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
     }
   }

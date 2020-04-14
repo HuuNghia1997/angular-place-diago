@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { AUTH, tokenURL, tempRedirect, getCodeURL, getCodeParams, rootLayout } from '../../environments/environment';
+import { AUTH, tokenURL, tempRedirect, getCodeURL, getCodeParams, auth_token, token_refresh } from '../../environments/environment';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -23,7 +23,7 @@ export class OauthService {
 
   getUserInfo(): User {
     if (localStorage.getItem('USER_INFO_ID') === null){
-      let userinfo = this.helper.decodeToken(localStorage.getItem('OAuth2TOKEN'));
+      let userinfo = this.helper.decodeToken(localStorage.getItem('auth_token'));
       // tslint:disable-next-line:no-string-literal
       localStorage.setItem('USER_INFO_ID', userinfo['user']['id'] );
       localStorage.setItem('USER_INFO_NAME', userinfo['user']['fullname'] );
@@ -45,7 +45,7 @@ export class OauthService {
   refeshToken(callback) {
       const params = new URLSearchParams();
       params.set('grant_type', 'refresh_token');
-      params.set('refresh_token', localStorage.getItem('TOKEN_Refresh'));
+      params.set('refresh_token', localStorage.getItem('token_refresh'));
 
       const headers =
         new HttpHeaders({
@@ -55,21 +55,20 @@ export class OauthService {
         });
 
       this.http.post(
-        tokenURL + '?' + tempRedirect,
+        tokenURL,
         params.toString(), { headers }).subscribe(
           data => {
             // tslint:disable-next-line:no-string-literal
-            localStorage.setItem('OAuth2TOKEN', data['access_token']);
+            localStorage.setItem(auth_token, data['access_token']);
             // refresh_token
             // tslint:disable-next-line:no-string-literal
-            localStorage.setItem('TOKEN_Refresh', data['refresh_token']);
+            localStorage.setItem(token_refresh, data['refresh_token']);
 
-            console.log('refresh is run');
             callback(true);
           }, err => {
-            console.log(err);
-            localStorage.setItem('OAuth2TOKEN', '');
-            window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
+            // alert('hết hạn đăng nhập')
+            // localStorage.setItem(auth_token, '');
+            // window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
           });
   }
 
@@ -91,12 +90,9 @@ export class OauthService {
       params.toString(), { headers }).subscribe(
         data => {
           // tslint:disable-next-line:no-string-literal
-          localStorage.setItem('OAuth2TOKEN', data['access_token']);
-          // refresh_token
+          localStorage.setItem(auth_token, data['access_token']);
           // tslint:disable-next-line:no-string-literal
-          localStorage.setItem('TOKEN_Refresh', data['refresh_token']);
-
-          window.location.href = rootLayout;
+          localStorage.setItem(token_refresh, data['refresh_token']);
           success(true);
         }, err => {
           console.log(err);
@@ -105,7 +101,12 @@ export class OauthService {
   }
 
   logout() {
-    localStorage.removeItem('OAuth2TOKEN');
-    localStorage.removeItem('TOKEN_Refresh');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('token_refresh');
+    localStorage.removeItem('USER_INFO_ID');
+    localStorage.removeItem('USER_INFO_NAME');
+    localStorage.removeItem('USER_INFO_ACCOUNT');
+    alert('Đăng xuất thành công');
+    // window.location.reload();
   }
 }
