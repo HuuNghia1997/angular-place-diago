@@ -47,7 +47,7 @@ export class AddNotificationComponent implements OnInit {
 
     listAgency = [
         { id: 1, imageId: '765f1f77bcf86cd799439011', name: 'UBND Tỉnh Tiền Giang' },
-        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cái Bè' },
+        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
         { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
     ];
 
