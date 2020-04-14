@@ -2,10 +2,10 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError } from 'rxjs/operators';
-import { AuthService } from './auth.service';
 import { MainService } from './main.service';
 import { MatDialog } from '@angular/material/dialog';
 import { rootURL, reloadTimeout, pageSizeOptions } from '../../environments/environment';
+import { OauthService } from './oauth.service';
 
 // ====================================================== Component
 import { ConfirmDialogModel, DeleteNotificationComponent } from '../dialogs/notification/delete-notification/delete-notification.component';
@@ -32,9 +32,9 @@ export class NotificationService {
 
     constructor(
         private http: HttpClient,
-        private auth: AuthService,
         private main: MainService,
         private dialog: MatDialog,
+        private auth: OauthService
     ) { }
     public getTags = rootURL + 'bt/tag?category-id=';
     public uploadFileURL = rootURL + 'fi/file';
@@ -156,44 +156,50 @@ export class NotificationService {
     }
 
     checkErrorResponse(error: HttpErrorResponse, type: number) {
+        console.log('run error hander');
+        console.log(error.status);
         if (error.status === 401) {
-            this.auth.getToken().subscribe(data => {
-                localStorage.setItem('OAuth2TOKEN', data.access_token);
-                switch (type) {
-                    case 1:
-                        this.notificationComponent.search(0, pageSizeOptions);
-                        break;
-                    case 2:
-                        this.notificationComponent.getListTags();
-                        break;
-                    case 3:
-                        this.detailNotificationComponent.getNotificationDetail();
-                        break;
-                    case 4:
-                        this.detailNotificationComponent.getNotificationHistory();
-                        break;
+            console.log('refresh');
+            console.log(type);
+            this.auth.refeshToken((result) => {
+                if (result) {
+                    console.log('call back ' + result);
+                    switch (type) {
+                        case 1:
+                            this.notificationComponent.search(0, pageSizeOptions);
+                            break;
+                        case 2:
+                            this.notificationComponent.getListTags();
+                            break;
+                        case 3:
+                            this.detailNotificationComponent.getNotificationDetail();
+                            break;
+                        case 4:
+                            this.detailNotificationComponent.getNotificationHistory();
+                            break;
+                    }
                 }
-            }, err => {
-                console.log(err);
             });
         }
     }
 
     getListTags(id: string): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getTags + id, { headers }).pipe();
     }
 
     getNotificationDetail(id: string): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getDetailURL + id + '/--full', { headers }).pipe();
     }
 
@@ -201,20 +207,17 @@ export class NotificationService {
         switch (id) {
             case 1:
                 return 'Vui lòng nhập tiêu đề thông báo';
-                break;
             case 2:
                 return 'Vui lòng nhập nội dung thông báo';
-                break;
             case 3:
                 return 'Vui lòng chọn đơn vị';
-                break;
             default:
                 return 'You must enter a valid value';
         }
     }
 
     uploadImages(imgFile, ccountId): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         // headers = headers.append('Content-Type', 'multipart/form-data');
@@ -229,7 +232,7 @@ export class NotificationService {
     }
 
     postNotification(requestBody) {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -239,7 +242,7 @@ export class NotificationService {
     }
 
     updateNotification(requestBody, id) {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
@@ -249,38 +252,42 @@ export class NotificationService {
     }
 
     getImage(imageId) {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getFileURL + imageId, { headers, responseType: 'blob' }).pipe();
     }
 
     getImageName_Size(imageId) {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getFileURL + imageId + '/filename+size', { headers }).pipe();
     }
 
     getNotificationHistory(groupId: number, itemId: string, page: number, size: number): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.getHistory + groupId + '&item-id=' + itemId + '&page=' + page + '&size=' + size, { headers }).pipe();
     }
 
     search(searchString: string): Observable<any> {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
         headers.append('Access-Control-Allow-Origin', '*');
+
         return this.http.get(this.searchURL + searchString, { headers }).pipe();
     }
 }

@@ -67,7 +67,7 @@ export class NotificationComponent implements OnInit, AfterViewInit {
 
     listAgency = [
         { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Thành phố Mỹ Tho' },
-        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Thành phố Cần Thơ' },
+        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
         { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
     ];
 

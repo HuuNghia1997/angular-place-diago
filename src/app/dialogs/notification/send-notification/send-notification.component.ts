@@ -31,7 +31,7 @@ export class SendNotificationComponent implements OnInit {
     }
 
     onConfirm(): void {
-        const token = localStorage.getItem('OAuth2TOKEN');
+        const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
         headers = headers.append('Content-Type', 'application/json');
