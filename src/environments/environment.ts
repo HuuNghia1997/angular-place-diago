@@ -2,9 +2,11 @@ export const environment = {
     production: false
 };
 
-export const tempRedirect = 'redirect_uri=http://localhost:4200/oauth';
+//export const tempRedirect = 'redirect_uri=http://localhost:4200/oauth';
+export const tempRedirect = 'https://digo-citizens-admin.vnptigate.vn/oauth';
 
-export const rootLayout = 'http://localhost:4200/';
+//export const rootLayout = 'http://localhost:4200/';
+export const rootLayout = 'https://digo-citizens-admin.vnptigate.vn/';
 
 export const tokenURL = 'https://digo-sso.vnptigate.vn/oauth/token';
 

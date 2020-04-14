@@ -107,7 +107,7 @@ export class OauthService {
     localStorage.removeItem('USER_INFO_ID');
     localStorage.removeItem('USER_INFO_NAME');
     localStorage.removeItem('USER_INFO_ACCOUNT');
-    alert('Đăng xuất thành công');
+    //alert('Đăng xuất thành công');
     
 
 
