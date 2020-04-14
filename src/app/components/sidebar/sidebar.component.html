@@ -53,10 +53,11 @@
                     <!-- Account -->
                     <a mat-button id="account_btn" [matMenuTriggerFor]="userLog">
                         <span id="account_name">
-                            {{ nickname }} 
+                            
                             <div id="avatar_sidebar" class="avatar" style="background-image: url('../assets/img/avt.jpg');">
                                 <img class="avatar" [src]="avatar"/>
                             </div>
+                            {{ nickname }} 
                         </span>
                     </a>
                     <mat-menu #userLog="matMenu" xPosition="before">

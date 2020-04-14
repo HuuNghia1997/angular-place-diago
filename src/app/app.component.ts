@@ -21,10 +21,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
 
-    if (localStorage.getItem(auth_token) === '') {
-      alert('yêu cầu đăng nhập để tiếp tục');
-    }
-
     if (this.token != null ) {
       const helper = new JwtHelperService();
       const isExpired = helper.isTokenExpired(this.token);
@@ -34,12 +30,10 @@ export class AppComponent implements OnInit {
         });
       } else if (!helper.isTokenExpired(this.refresh)) {
         console.log('token is exp '+ isExpired);
-        alert('chuyển đến trang đăng nhập để tiếp tục')
         localStorage.setItem('auth_token', '');
         window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
       }
     } else {
-        alert('chuyển đến trang đăng nhập để tiếp tục')
         localStorage.setItem(auth_token, '');
         window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
     }

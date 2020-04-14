@@ -32,9 +32,7 @@ export class OauthService {
     const user: User = {
       // tslint:disable-next-line:no-string-literal
       id: localStorage.getItem('USER_INFO_ID'),
-      // tslint:disable-next-line:no-string-literal
       fullname: localStorage.getItem('USER_INFO_NAME'),
-      // tslint:disable-next-line:no-string-literal
       account: localStorage.getItem('USER_INFO_ACCOUNT'),
     };
 

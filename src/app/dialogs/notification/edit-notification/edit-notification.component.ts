@@ -52,7 +52,7 @@ export class EditNotificationComponent implements OnInit {
     fileNamesFull = [];
 
     listAgency = [
-        { id: 1, imageId: '765f1f77bcf86cd799439011', name: 'Công an Tiền Giang' },
+        { id: 1, imageId: '765f1f77bcf86cd799439011', name: 'UBND Tỉnh Tiền Giang' },
         { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Thành phố Cần Thơ' },
         { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
     ];
