@@ -132,6 +132,5 @@ export class OauthService {
           console.log(err);
           window.location.href = logoutURL;
         });
-
   }
 }
