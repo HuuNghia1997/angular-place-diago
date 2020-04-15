@@ -183,4 +183,8 @@ export class DetailNotificationComponent implements OnInit {
         this.files.splice(index, 1);
         this.blankVal = '';
     }
+
+    isEmptyObject(obj) {
+        return (obj && (Object.keys(obj).length === 0));
+    }
 }
