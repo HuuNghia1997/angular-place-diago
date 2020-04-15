@@ -3,7 +3,7 @@ export const environment = {
 };
 
 //export const tempRedirect = 'redirect_uri=http://localhost:4200/oauth';
-export const tempRedirect = 'https://digo-citizens-admin.vnptigate.vn/oauth';
+export const tempRedirect = 'redirect_uri=https://digo-citizens-admin.vnptigate.vn/oauth';
 
 //export const rootLayout = 'http://localhost:4200/';
 export const rootLayout = 'https://digo-citizens-admin.vnptigate.vn/';
