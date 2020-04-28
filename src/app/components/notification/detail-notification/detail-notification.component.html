@@ -8,14 +8,14 @@
     <h2 id="title" class="mb-1">{{notificationTitle}}</h2>
     <div class="control mb-2">
         <button mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="updateRecord()">
-        <mat-icon>edit</mat-icon> Cập nhật
-      </button>
+            <mat-icon>edit</mat-icon> Cập nhật
+        </button>
         <button class="ml-1" mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="deleteRecord()">
-        <mat-icon>delete</mat-icon> Xoá
-      </button>
+            <mat-icon>delete</mat-icon> Xoá
+        </button>
         <button class="ml-1 primary-blue-btn" mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="sendNotification()">
-        <mat-icon>send</mat-icon> Gửi đi
-      </button>
+            <mat-icon>send</mat-icon> Gửi đi
+        </button>
     </div>
     <div class="notification_content">
         <!-- Left -->
@@ -49,9 +49,9 @@
                 <div [ngClass]="{'img_uploaded': uploaded == true}">
                     <div class="drag_upload_btn" [ngClass]="{'no_boder': uploaded == true}">
                         <button mat-button [ngClass]="{'btn_uploaded': uploaded == true, 'clear_img_queue': uploaded == false}">
-                <mat-icon>cloud_upload</mat-icon>
-                Kéo thả tệp tin hoặc <a href="">Chọn từ thư viện</a> hoặc <a href="">Tải lên</a>
-              </button>
+                            <mat-icon>cloud_upload</mat-icon>
+                            Kéo thả tệp tin hoặc <a href="">Chọn từ thư viện</a> hoặc <a href="">Tải lên</a>
+                        </button>
                         <input id="img_upload" name="img_upload[]" type='file' (change)="onSelectFile($event)" multiple accept=".JPG, .PNG, .JPEG" value="{{blankVal}}">
                     </div>
                     <div class="image_drag_upload_preview">
@@ -76,7 +76,7 @@
                         <div class="history">
                             <div *ngFor='let his of history; let i = index;' class="history_item mt-1">
                                 <span><a href="">{{his.user.name}}</a>
-                    <span *ngIf="his.type === 1"> đã bình luận</span>
+                                <span *ngIf="his.type === 1"> đã bình luận</span>
                                 <span *ngIf="his.type === 2"> đã chuyển bước</span>
                                 <span *ngIf="his.type === 3"> đã thay đổi</span>
                                 <span *ngIf="his.type === 4"> đã thêm mới</span>

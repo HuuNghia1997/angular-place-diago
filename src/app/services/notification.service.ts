@@ -13,7 +13,7 @@ import { ConfirmAddDialogModel, AddNotificationComponent } from '../dialogs/noti
 import { ConfirmUpdateDialogModel, EditNotificationComponent } from '../dialogs/notification/edit-notification/edit-notification.component';
 import { ConfirmSendDialogModel, SendNotificationComponent } from '../dialogs/notification/send-notification/send-notification.component';
 
-import { NotificationComponent } from '../components/notification/notification.component';
+import { ListNotificationComponent } from '../components/notification/list-notification/list-notification.component';
 import { DetailNotificationComponent } from '../components/notification/detail-notification/detail-notification.component';
 
 export interface PeriodicElement {
@@ -37,7 +37,7 @@ export class NotificationService {
         private auth: OauthService
     ) { }
     public getTags = rootURL + 'bt/tag?category-id=';
-    public uploadFileURL = rootURL + 'fi/file';
+    public uploadFileURL = rootURL + 'fi/file/';
     public postURL = rootURL + 'po/notification';
     public getDetailURL = rootURL + 'po/notification/';
     public putURL = rootURL + 'po/notification/';
@@ -47,10 +47,10 @@ export class NotificationService {
 
     result: boolean;
 
-    private notificationComponent: NotificationComponent;
+    private notificationComponent: ListNotificationComponent;
 
     private detailNotificationComponent: DetailNotificationComponent;
-    registerMyApp(myNotification: NotificationComponent) {
+    registerMyApp(myNotification: ListNotificationComponent) {
         this.notificationComponent = myNotification;
     }
     registerDetail(myNotificationDetail: DetailNotificationComponent) {
@@ -62,12 +62,13 @@ export class NotificationService {
         const dialogRef = this.dialog.open(AddNotificationComponent, {
             maxWidth: '60%',
             height: '600px',
-            data: dialogData
+            data: dialogData,
+            disableClose: true
         });
 
-        const message = 'Thêm thông báo';
+        const message = 'Thông báo';
         const content = '';
-        const result = 'thành công';
+        const result = 'được thêm thành công';
         const reason = '';
         dialogRef.afterClosed().subscribe(dialogResult => {
             const data = dialogResult;
@@ -88,12 +89,13 @@ export class NotificationService {
         const dialogData = new ConfirmDialogModel('Xoá thông báo', name, id);
         const dialogRef = this.dialog.open(DeleteNotificationComponent, {
             width: '500px',
-            data: dialogData
+            data: dialogData,
+            disableClose: true
         });
 
-        const message = 'Xoá thông báo';
+        const message = 'Thông báo';
         const content = name;
-        const result = 'thành công';
+        const result = 'đã được xóa';
         const reason = '';
         dialogRef.afterClosed().subscribe(dialogResult => {
             this.result = dialogResult;
@@ -101,7 +103,7 @@ export class NotificationService {
                 this.main.openSnackBar(message, content, result, reason, 'success_notification');
             }
             if (this.result === false) {
-                this.main.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+                this.main.openSnackBar(message, content, 'xóa thất bại', reason, 'error_notification');
             }
         });
     }
@@ -111,7 +113,8 @@ export class NotificationService {
         const dialogRef = this.dialog.open(EditNotificationComponent, {
             maxWidth: '60%',
             height: '600px',
-            data: dialogData
+            data: dialogData,
+            disableClose: true
         });
 
         const message = 'Cập nhật thông báo';
@@ -137,12 +140,13 @@ export class NotificationService {
         const dialogData = new ConfirmSendDialogModel('Gửi thông báo', name, id);
         const dialogRef = this.dialog.open(SendNotificationComponent, {
             width: '500px',
-            data: dialogData
+            data: dialogData,
+            disableClose: true
         });
 
-        const message = 'Gửi thông báo';
+        const message = 'Thông báo';
         const content = name;
-        const result = 'thành công';
+        const result = 'gửi thành công';
         const reason = '';
         dialogRef.afterClosed().subscribe(dialogResult => {
             this.result = dialogResult;
@@ -150,7 +154,7 @@ export class NotificationService {
                 this.main.openSnackBar(message, content, result, reason, 'success_notification');
             }
             if (this.result === false) {
-                this.main.openSnackBar(message, content, 'không thành công', reason, 'error_notification');
+                this.main.openSnackBar(message, content, 'gửi không thành công', reason, 'error_notification');
             }
         });
     }
@@ -216,7 +220,7 @@ export class NotificationService {
         }
     }
 
-    uploadImages(imgFile, ccountId): Observable<any> {
+    uploadImages(imgFile, accountId): Observable<any> {
         const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
@@ -227,11 +231,14 @@ export class NotificationService {
         const formData: FormData = new FormData();
         const file: File = imgFile;
         formData.append('file', file, file.name);
+        // formData.append('accountId', accountId);
 
         return this.http.post(this.uploadFileURL, formData, { headers }).pipe();
     }
 
     postNotification(requestBody) {
+
+        console.log(requestBody);
         const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
@@ -242,6 +249,8 @@ export class NotificationService {
     }
 
     updateNotification(requestBody, id) {
+
+        console.log(requestBody);
         const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);

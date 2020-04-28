@@ -23,22 +23,22 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
 
 import { NotificationRoutingModule } from './notification-routing.module';
-import { NotificationComponent } from './notification.component';
 
 import { AddNotificationComponent } from '../../dialogs/notification/add-notification/add-notification.component';
 import { DeleteNotificationComponent } from '../../dialogs/notification/delete-notification/delete-notification.component';
 import { EditNotificationComponent } from '../../dialogs/notification/edit-notification/edit-notification.component';
 import { SendNotificationComponent } from '../../dialogs/notification/send-notification/send-notification.component';
 import { CustomSnakebarComponent } from '../../custom-snakebar/custom-snakebar.component';
+import { ListNotificationComponent } from './list-notification/list-notification.component';
 
 @NgModule({
   declarations: [
-    NotificationComponent,
     CustomSnakebarComponent,
     AddNotificationComponent,
     DeleteNotificationComponent,
     EditNotificationComponent,
-    SendNotificationComponent
+    SendNotificationComponent,
+    ListNotificationComponent
   ],
   imports: [
     CommonModule,
@@ -65,6 +65,11 @@ import { CustomSnakebarComponent } from '../../custom-snakebar/custom-snakebar.c
     MatTooltipModule,
     MatTabsModule
   ],
-  schemas: [NO_ERRORS_SCHEMA]
+  entryComponents:[
+    AddNotificationComponent,
+    DeleteNotificationComponent,
+    EditNotificationComponent,
+    SendNotificationComponent
+  ]
 })
 export class NotificationModule { }

@@ -8,12 +8,12 @@ import { formatDate, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 
 // ====================================================== Services
-import { NotificationService } from '../../services/notification.service';
-import { TranslateService } from '../../services/translate.service';
-import { MainService } from '../../services/main.service';
+import { NotificationService } from '../../../services/notification.service';
+import { TranslateService } from '../../../services/translate.service';
+import { MainService } from '../../../services/main.service';
 
 // ====================================================== Environment
-import { PICK_FORMATS, pageSizeOptions, notificationCategoryId } from '../../../environments/environment';
+import { PICK_FORMATS, pageSizeOptions, notificationCategoryId } from '../../../../environments/environment';
 
 // ====================================================== Table dataSource
 
@@ -32,20 +32,19 @@ class PickDateAdapter extends NativeDateAdapter {
 
 @Component({
     selector: 'app-notification',
-    templateUrl: './notification.component.html',
-    styleUrls: ['./notification.component.scss', '../../app.component.scss'],
+    templateUrl: './list-notification.component.html',
+    styleUrls: ['./list-notification.component.scss', '../../../app.component.scss'],
     providers: [
         { provide: DateAdapter, useClass: PickDateAdapter },
         { provide: MAT_DATE_FORMATS, useValue: PICK_FORMATS },
         DatePipe
     ]
 })
-export class NotificationComponent implements OnInit, AfterViewInit {
+export class ListNotificationComponent implements OnInit, AfterViewInit {
     displayedColumns: string[] = ['stt', 'title', 'agency', 'catalogy', 'created_at', 'status', 'endDate', 'options'];
     ELEMENTDATA: PeriodicElement[] = [];
     dataSource: MatTableDataSource<PeriodicElement>;
     @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-    @ViewChild(MatSort, { static: true }) sort: MatSort;
 
     categoryId = notificationCategoryId;
     pageSizes = pageSizeOptions;
@@ -66,8 +65,8 @@ export class NotificationComponent implements OnInit, AfterViewInit {
     listTags = [];
 
     listAgency = [
-        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Thành phố Mỹ Tho' },
-        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Thành phố Cần Thơ' },
+        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
+        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
         { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
     ];
 
@@ -91,15 +90,14 @@ export class NotificationComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.dataSource.paginator = this.paginator;
-        this.paginator.pageSize = pageSizeOptions[1];
-        this.dataSource.sort = this.sort;
-        this.translator.translatePaginator(this.paginator);
         this.paginator.nextPage = () => this.paginatorChange(this.currentPage + 1, this.paginator.pageSize, 1);
         this.paginator.previousPage = () => this.paginatorChange(this.currentPage - 1, this.paginator.pageSize, 2);
         this.paginator.lastPage = () => this.paginatorChange(this.totalPages - 1, this.paginator.pageSize, 3);
         this.paginator.firstPage = () => this.paginatorChange(0, this.paginator.pageSize, 4);
         this.cdRef.detectChanges();
+        this.dataSource.paginator = this.paginator;
+        this.paginator.pageSize = pageSizeOptions[1];
+        this.translator.translatePaginator(this.paginator);
     }
 
     onPaginateChange($event) {
@@ -135,7 +133,6 @@ export class NotificationComponent implements OnInit, AfterViewInit {
                 break;
         }
     }
-
     public resetPageSize() {
         setTimeout(() => {
             this.paginator.pageIndex = this.currentPage;
@@ -149,6 +146,7 @@ export class NotificationComponent implements OnInit, AfterViewInit {
             for (let i = 0; i < size; i++) {
                 this.listTags.push(data.content[i]);
             }
+            console.log(this.listTags);
         }, err => {
             this.service.checkErrorResponse(err, 2);
         });
@@ -174,26 +172,37 @@ export class NotificationComponent implements OnInit, AfterViewInit {
         const formObj = this.searchForm.getRawValue();
         let searchString = 'page=' + page;
         searchString = searchString + '&size=' + pageSize;
-        searchString = searchString + '&title=' + formObj.title;
-
-        for (const i of formObj.tag) {
-            searchString = searchString + '&tag-id=' + i;
-        }
-
-        searchString = searchString + '&agency-id=' + formObj.agency;
-
-        searchString = searchString + '&publish=' + formObj.publish;
 
         formObj.startDate = this.datepipe.transform(formObj.startDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
+        formObj.endDate = this.datepipe.transform(formObj.endDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
+
+        if (formObj.title != null ) {
+            searchString = searchString + '&title=' + formObj.title;
+        }
+        if (formObj.tag != null ) {
+            for (const i of formObj.tag) {
+                searchString = searchString + '&tag-id=' + i;
+            }
+        }
+        if (formObj.agency != null) {
+            searchString = searchString + '&agency-id=' + formObj.agency;
+        }
         if (formObj.startDate != null) {
             formObj.startDate = formObj.startDate.replace('+', '%2B');
         }
-        formObj.endDate = this.datepipe.transform(formObj.endDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
         if (formObj.endDate != null) {
             formObj.endDate = formObj.endDate.replace('+', '%2B');
         }
-        searchString = searchString + '&start-date=' + formObj.startDate;
-        searchString = searchString + '&end-date=' + formObj.endDate;
+        if (formObj.startDate != null) {
+            searchString = searchString + '&start-date=' + formObj.startDate;
+        }
+        if (formObj.startDate != null) {
+            searchString = searchString + '&end-date=' + formObj.endDate;
+        }
+        if (formObj.publish != null) {
+            searchString = searchString + '&publish=' + formObj.publish;
+        }
+        // console.log(searchString);
 
         this.service.search(searchString).subscribe(data => {
             this.ELEMENTDATA = [];
@@ -207,8 +216,11 @@ export class NotificationComponent implements OnInit, AfterViewInit {
             this.currentPage = data.number;
             this.totalPages = data.totalPages;
             this.selectedPageSize = pageSize;
+
+            this.resetPageSize();
         }, err => {
             this.service.checkErrorResponse(err, 1);
         });
+        searchString = '';
     }
 }

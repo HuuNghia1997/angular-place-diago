@@ -13,8 +13,8 @@ import { NotificationService } from '../../../services/notification.service';
     templateUrl: './detail-notification.component.html',
     styleUrls: [
         './detail-notification.component.scss',
-        '../notification.component.scss',
-        '../../../app.component.scss'
+        '../../../app.component.scss',
+        '../list-notification/list-notification.component.scss'
     ]
 })
 export class DetailNotificationComponent implements OnInit {
@@ -75,8 +75,8 @@ export class DetailNotificationComponent implements OnInit {
         this.notificationTags = this.response[0].tag;
 
         if (this.response[0].imageId.length > 0) {
-            for (var i = 0; i < this.response[0].imageId.length; ++i) {
-                this.service.getImage(this.response[0].imageId[i]).subscribe(data => {
+            this.response[0].imageId.forEach(imageId => {
+                this.service.getImage(imageId).subscribe(data => {
                     const reader = new FileReader();
                     reader.addEventListener('load', () => {
                         this.urls.push(reader.result);
@@ -87,23 +87,23 @@ export class DetailNotificationComponent implements OnInit {
                 }, err => {
                     console.log(err);
                 });
-                this.service.getImageName_Size(this.response[0].imageId[i]).subscribe(data => {
-                    if (data['filename'].length > 20) {
+                this.service.getImageName_Size(imageId).subscribe((data: any ) => {
+                    if (data.filename.length > 20) {
                         // Tên file quá dài
-                        const startText = data['filename'].substr(0, 5);
-                        const shortText = data['filename'].substr(data['filename'].length - 7, data['filename'].length);
+                        const startText = data.filename.substr(0, 5);
+                        const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
                         console.log(startText + '...' + shortText);
                         this.fileNames.push(startText + '...' + shortText);
                         // Tên file gốc - hiển thị tooltip
-                        this.fileNamesFull.push(data['filename']);
+                        this.fileNamesFull.push(data.filename);
                     } else {
-                        this.fileNames.push(data['filename']);
-                        this.fileNamesFull.push(data['filename']);
+                        this.fileNames.push(data.filename);
+                        this.fileNamesFull.push(data.filename);
                     }
                 }, err => {
                     console.log(err);
                 });
-            }
+            });
         }
     }
 
@@ -144,6 +144,9 @@ export class DetailNotificationComponent implements OnInit {
 
     sendNotification(): void {
         this.service.sendNotification(this.notificationId, this.notificationTitle);
+        this.notificationStatus.forEach((status) => {
+            status.status = 1;
+        });
     }
 
     // File upload

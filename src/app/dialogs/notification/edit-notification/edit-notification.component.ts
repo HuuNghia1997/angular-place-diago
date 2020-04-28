@@ -13,7 +13,7 @@ import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/e
 class PickDateAdapter extends NativeDateAdapter {
     format(date: Date, displayFormat): string {
         if (displayFormat === 'input') {
-            return formatDate(date, 'dd/MM/yyyy', this.locale);;
+            return formatDate(date, 'dd/MM/yyyy', this.locale);
         } else {
             return date.toDateString();
         }
@@ -141,6 +141,8 @@ export class EditNotificationComponent implements OnInit {
         const selectedAgency = formObj.agency;
         formObj.agency = this.listAgency.find(p => p.id == selectedAgency);
 
+        console.log(formObj.agency);
+
         // Add Tags
         for (const i of formObj.tag) {
             // tslint:disable-next-line: triple-equals
@@ -162,9 +164,6 @@ export class EditNotificationComponent implements OnInit {
 
         // Final result
         const resultJson = JSON.stringify(formObj, null, 2);
-
-        // console.log(resultJson);
-
         this.updateNotification(resultJson);
     }
 
@@ -267,10 +266,16 @@ export class EditNotificationComponent implements OnInit {
         }
         tagSelected = tagSelected.map(String);
 
-        if (this.response[0].publish.status == 0) {
+        if (this.response[0].publish.status === 0) {
             sent = false;
         } else {
             sent = true;
+        }
+
+        let expiredDateControl = new FormControl();
+
+        if (this.response[0].expiredDate != null) {
+            expiredDateControl = new FormControl(new Date(this.response[0].expiredDate));
         }
 
         this.updateForm = new FormGroup({
@@ -278,7 +283,7 @@ export class EditNotificationComponent implements OnInit {
             content: new FormControl(this.response[0].content),
             agency: new FormControl('' + this.response[0].agency.id),
             tag: new FormControl(tagSelected),
-            expiredDate: new FormControl(new Date(this.response[0].expiredDate)),
+            expiredDate: expiredDateControl,
             publish: new FormControl(sent),
         });
 
