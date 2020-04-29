@@ -20,6 +20,13 @@ class PickDateAdapter extends NativeDateAdapter {
     }
 }
 
+interface ImageInfo {
+    id: any;
+    url: any;
+    name: string;
+    fullName: string;
+}
+
 @Component({
     selector: 'app-edit-notification',
     templateUrl: './edit-notification.component.html',
@@ -47,12 +54,13 @@ export class EditNotificationComponent implements OnInit {
     listTags = [];
     itemsListTags = [];
     files = [];
-    urls = [];
-    fileNames = [];
-    fileNamesFull = [];
+    filesInfo: ImageInfo[] = [];
+    // urls = [];
+    // fileNames = [];
+    // fileNamesFull = [];
 
     listAgency = [
-        { id: 1, imageId: '765f1f77bcf86cd799439011', name: 'UBND Tỉnh Tiền Giang' },
+        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
         { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
         { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
     ];
@@ -91,17 +99,23 @@ export class EditNotificationComponent implements OnInit {
         if (this.countDefaultImage > 0) {
             this.files.splice(0, this.countDefaultImage);
             if (this.files.length > 0) {
-                for (const j of this.files) {
-                    this.uploadImage(j);
-                }
+                this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
+                    data.forEach(imgInfo => {
+                        this.uploadedImage.push(imgInfo.id);
+                    });
+                    this.formToJSON();
+                });
             } else {
                 this.formToJSON();
             }
         } else {
             if (this.files.length > 0) {
-                for (const j of this.files) {
-                    this.uploadImage(j);
-                }
+                this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
+                    data.forEach(imgInfo => {
+                        this.uploadedImage.push(imgInfo.id);
+                    });
+                    this.formToJSON();
+                });
             } else {
                 this.formToJSON();
             }
@@ -114,6 +128,7 @@ export class EditNotificationComponent implements OnInit {
             if (this.uploadedImage.length === this.files.length) {
                 this.formToJSON();
             }
+            console.log(this.uploadedImage);
         }, err => {
             console.log(err);
         });
@@ -121,7 +136,6 @@ export class EditNotificationComponent implements OnInit {
 
     formToJSON() {
         const formObj = this.updateForm.getRawValue();
-
         // Format publish
         if (formObj.publish) {
             formObj.publish = 1;
@@ -141,7 +155,7 @@ export class EditNotificationComponent implements OnInit {
         const selectedAgency = formObj.agency;
         formObj.agency = this.listAgency.find(p => p.id == selectedAgency);
 
-        console.log(formObj.agency);
+        // console.log(formObj.agency);
 
         // Add Tags
         for (const i of formObj.tag) {
@@ -181,9 +195,8 @@ export class EditNotificationComponent implements OnInit {
     }
 
     resetForm(): void {
-        this.urls = [];
-        this.fileNames = [];
-        this.fileNamesFull = [];
+
+        this.filesInfo = [];
         this.uploaded = false;
         this.uploadedImage = [];
         this.files = [];
@@ -192,29 +205,42 @@ export class EditNotificationComponent implements OnInit {
     // File uploads
     onSelectFile(event) {
         if (event.target.files && event.target.files[0]) {
-            for (let i = 0; i < event.target.files.length; ++i) {
-                this.files.push(event.target.files[i]);
-            }
             const filesAmount = event.target.files.length;
-            for (let i = 0; i < filesAmount; i++) {
+            for (let i = 0; i < filesAmount; ++i) {
+                // =============================================
+                let urlResult: any;
+                let fileName = '';
+                let fileNamesFull = '';
+
+                // =============================================
+                this.files.push(event.target.files[i]);
                 const reader = new FileReader();
-                reader.onload = (event: any) => {
+                reader.onload = (eventLoad) => {
                     this.uploaded = true;
-                    this.urls.push(event.target.result);
+                    urlResult = eventLoad.target.result;
+                    // console.log(urlResult);
+
+                    if (event.target.files[i].name.length > 20) {
+                        // Tên file quá dài
+                        const startText = event.target.files[i].name.substr(0, 5);
+                        // tslint:disable-next-line:max-line-length
+                        const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
+                        fileName = startText + '...' + shortText;
+                        // Tên file gốc - hiển thị tooltip
+                        fileNamesFull = event.target.files[i].name;
+                    } else {
+                        fileName = event.target.files[i].name;
+                        fileNamesFull = event.target.files[i].name ;
+                    }
+                    this.filesInfo.push( {
+                        id: i,
+                        url: urlResult,
+                        name: fileName,
+                        fullName: fileNamesFull
+                    });
                 };
-                if (event.target.files[i].name.length > 20) {
-                    // Tên file quá dài
-                    const startText = event.target.files[i].name.substr(0, 5);
-                    // tslint:disable-next-line:max-line-length
-                    const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
-                    this.fileNames.push(startText + '...' + shortText);
-                    // Tên file gốc - hiển thị tooltip
-                    this.fileNamesFull.push(event.target.files[i].name);
-                } else {
-                    this.fileNames.push(event.target.files[i].name);
-                    this.fileNamesFull.push(event.target.files[i].name);
-                }
                 reader.readAsDataURL(event.target.files[i]);
+
             }
         }
     }
@@ -224,9 +250,7 @@ export class EditNotificationComponent implements OnInit {
         if (index == 0) {
             filesIndex = 0;
         }
-        this.urls.splice(index, 1);
-        this.fileNames.splice(index, 1);
-        this.fileNamesFull.splice(index, 1);
+        this.filesInfo.splice(index, 1);
         this.files.splice(filesIndex, 1);
         this.uploadedImage.splice(index, 1);
         this.blankVal = '';
@@ -271,7 +295,6 @@ export class EditNotificationComponent implements OnInit {
         } else {
             sent = true;
         }
-
         let expiredDateControl = new FormControl();
 
         if (this.response[0].expiredDate != null) {
@@ -292,34 +315,52 @@ export class EditNotificationComponent implements OnInit {
 
         if (this.response[0].imageId.length > 0) {
             for (const i of this.response[0].imageId) {
+                // ============================================
+                let urlResult: any;
+                let fileName = '';
+                let fileNamesFull = '';
+
+                // ============================================
                 this.service.getImage(i).subscribe(data => {
+                    console.log(data);
                     const reader = new FileReader();
                     reader.addEventListener('load', () => {
-                        this.urls.push(reader.result);
+                        urlResult = reader.result;
+                        // console.log(urlResult);
                         this.files.push(reader.result);
                     }, false);
                     if (data) {
                         reader.readAsDataURL(data);
                     }
-                }, err => {
-                    console.log(err);
-                });
-                this.service.getImageName_Size(i).subscribe(data => {
-                    if (data['filename'].length > 20) {
-                        // Tên file quá dài
-                        const startText = data['filename'].substr(0, 5);
-                        const shortText = data['filename'].substr(data['filename'].length - 7, data['filename'].length);
-                        this.fileNames.push(startText + '...' + shortText);
-                        // Tên file gốc - hiển thị tooltip
-                        this.fileNamesFull.push(data['filename']);
-                    } else {
-                        this.fileNames.push(data['filename']);
-                        this.fileNamesFull.push(data['filename']);
-                    }
+
+                    this.service.getImageName_Size(i).subscribe((data: any) => {
+                        console.log(data);
+                        if (data.filename.length > 20) {
+                            // Tên file quá dài
+                            const startText = data.filename.substr(0, 5);
+                            const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                            fileName = startText + '...' + shortText;
+                            // // Tên file gốc - hiển thị tooltip
+                            fileNamesFull = data.filename;
+                            
+                        } else {
+                            fileName = data.filename;
+                            fileNamesFull = data.filename;
+                        }
+                        this.filesInfo.push({
+                            id: i,
+                            url: urlResult,
+                            name: fileName,
+                            fullName: fileNamesFull
+                        });
+                    }, err => {
+                        console.log(err);
+                    });
                 }, err => {
                     console.log(err);
                 });
             }
+            console.log(this.filesInfo);
         }
         this.uploaded = true;
     }
@@ -329,6 +370,7 @@ export class EditNotificationComponent implements OnInit {
         this.dialogRef.close();
     }
 }
+
 export class ConfirmUpdateDialogModel {
     constructor(public title: string, public id: string) {
     }

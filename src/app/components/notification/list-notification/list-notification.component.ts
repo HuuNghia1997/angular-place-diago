@@ -146,7 +146,6 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
             for (let i = 0; i < size; i++) {
                 this.listTags.push(data.content[i]);
             }
-            console.log(this.listTags);
         }, err => {
             this.service.checkErrorResponse(err, 2);
         });

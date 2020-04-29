@@ -44,6 +44,7 @@ export class NotificationService {
     public getFileURL = rootURL + 'fi/file/';
     public getHistory = rootURL + 'lo/history?group-id=';
     public searchURL = rootURL + 'po/notification/--search?';
+    public uploadFilesURL = rootURL + 'fi/file/--multiple';
 
     result: boolean;
 
@@ -236,9 +237,25 @@ export class NotificationService {
         return this.http.post(this.uploadFileURL, formData, { headers }).pipe();
     }
 
-    postNotification(requestBody) {
+    uploadMultiImages(imgFiles, accountId): Observable<any> {
+        const token = localStorage.getItem('auth_token');
+        let headers = new HttpHeaders();
+        headers = headers.append('Authorization', 'Bearer ' + token);
+        // headers = headers.append('Content-Type', 'multipart/form-data');
+        headers = headers.append('Accept', 'application/json');
+        headers.append('Access-Control-Allow-Origin', '*');
 
-        console.log(requestBody);
+        const formData: FormData = new FormData();
+        imgFiles.forEach(img => {
+            const file: File = img;
+            formData.append('files', file, file.name);
+        });
+        // formData.append('accountId', accountId);
+
+        return this.http.post(this.uploadFilesURL, formData, { headers }).pipe();
+    }
+
+    postNotification(requestBody) {
         const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
@@ -249,8 +266,6 @@ export class NotificationService {
     }
 
     updateNotification(requestBody, id) {
-
-        console.log(requestBody);
         const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);

@@ -46,7 +46,7 @@ export class AddNotificationComponent implements OnInit {
     fileNamesFull = [];
 
     listAgency = [
-        { id: 1, imageId: '765f1f77bcf86cd799439011', name: 'UBND Tỉnh Tiền Giang' },
+        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
         { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
         { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
     ];
@@ -95,23 +95,17 @@ export class AddNotificationComponent implements OnInit {
 
     onConfirm(): void {
         if (this.files.length > 0) {
-            for (let j = 0; j < this.files.length; ++j) {
-                this.uploadImage(this.files[j]);
-            }
+            this.service.uploadMultiImages(this.files, this.accountId).subscribe((data: any) => {
+                data.forEach(imgInfo => {
+                    this.uploadedImage.push(imgInfo.id);
+                });
+                this.formToJSON();
+            }, (error) => {
+                console.log(error);
+            });
         } else {
             this.formToJSON();
         }
-    }
-
-    uploadImage(imgFile) {
-        this.service.uploadImages(imgFile, this.accountId).subscribe(data => {
-            this.uploadedImage.push(data.id);
-            if (this.uploadedImage.length === this.files.length) {
-                this.formToJSON();
-            }
-        }, err => {
-            console.log(err);
-        });
     }
 
     formToJSON() {
@@ -151,14 +145,13 @@ export class AddNotificationComponent implements OnInit {
             return item;
         });
         formObj.tag = this.itemsListTags;
-
         // Add Image
         formObj.imageId = this.uploadedImage;
 
         // Final result
         const resultJson = JSON.stringify(formObj, null, 2);
 
-        // console.log(resultJson);
+        console.log(resultJson);
 
         this.postNotification(resultJson);
     }
@@ -171,8 +164,6 @@ export class AddNotificationComponent implements OnInit {
             // Close dialog, return false
             this.dialogRef.close(false);
             // Call api delete file
-
-            console.log(err);
         });
     }
 
@@ -191,23 +182,20 @@ export class AddNotificationComponent implements OnInit {
     // File upload
     onSelectFile(event) {
         if (event.target.files && event.target.files[0]) {
-            // console.log(event.target.files);
-            for (let i = 0; i < event.target.files.length; ++i) {
-                this.files.push(event.target.files[i]);
+            for (const file of event.target.files){
+                this.files.push(file);
             }
-
             const filesAmount = event.target.files.length;
             for (let i = 0; i < filesAmount; i++) {
                 const reader = new FileReader();
-                reader.onload = event => {
+                reader.onload = ((event) => {
                     this.uploaded = true;
                     this.urls.push(event.target.result);
-                };
+                });
                 if (event.target.files[i].name.length > 20) {
                     // Tên file quá dài
                     const startText = event.target.files[i].name.substr(0, 5);
-                    const shortText = event.target.files[i]
-                    .name
+                    const shortText = event.target.files[i].name
                     .substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
                     this.fileNames.push(startText + '...' + shortText);
                     // Tên file gốc - hiển thị tooltip
@@ -217,7 +205,6 @@ export class AddNotificationComponent implements OnInit {
                     this.fileNamesFull.push(event.target.files[i].name);
                 }
                 reader.readAsDataURL(event.target.files[i]);
-
             }
         }
     }
