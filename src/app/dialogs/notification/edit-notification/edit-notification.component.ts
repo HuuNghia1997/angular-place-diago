@@ -10,6 +10,9 @@ import { NotificationService } from '../../../services/notification.service';
 // ====================================================== Environment
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
 
+// ===================================================== Model
+import { ImageInfo } from '../../../model/image-info';
+
 class PickDateAdapter extends NativeDateAdapter {
     format(date: Date, displayFormat): string {
         if (displayFormat === 'input') {
@@ -20,12 +23,6 @@ class PickDateAdapter extends NativeDateAdapter {
     }
 }
 
-interface ImageInfo {
-    id: any;
-    url: any;
-    name: string;
-    fullName: string;
-}
 
 @Component({
     selector: 'app-edit-notification',
@@ -245,13 +242,21 @@ export class EditNotificationComponent implements OnInit {
         }
     }
     // Xoá file
-    removeItem(index: number) {
-        let filesIndex = index;
-        if (index == 0) {
-            filesIndex = 0;
-        }
+    removeItem(id: string) {
+        let counter = 0;
+        let index = 0;
+        this.filesInfo.forEach(file => {
+            if(file.id === id){
+                index = counter;
+            }
+            counter++;
+        });
+        console.log(index);
+        // if (index == 0) {
+        //     filesIndex = 0;
+        // }
         this.filesInfo.splice(index, 1);
-        this.files.splice(filesIndex, 1);
+        this.files.splice(index, 1);
         this.uploadedImage.splice(index, 1);
         this.blankVal = '';
     }
