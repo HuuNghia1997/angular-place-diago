@@ -73,8 +73,9 @@ export class NotificationService {
         const reason = '';
         dialogRef.afterClosed().subscribe(dialogResult => {
             const data = dialogResult;
-            if (data.id != null) {
-                this.main.openSnackBar(message, content, result, reason, 'success_notification');
+            if (data.data.id != null) {
+                const body = JSON.parse(data.body);
+                this.main.openSnackBar(message, body.title, result, reason, 'success_notification');
                 // tslint:disable-next-line:only-arrow-functions
                 setTimeout(function() {
                     window.location.replace('/notification/detail/' + data.id);
@@ -147,7 +148,7 @@ export class NotificationService {
 
         const message = 'Thông báo';
         const content = name;
-        const result = 'gửi thành công';
+        const result = ' đã được gửi';
         const reason = '';
         dialogRef.afterClosed().subscribe(dialogResult => {
             this.result = dialogResult;

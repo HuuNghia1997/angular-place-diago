@@ -52,9 +52,6 @@ export class EditNotificationComponent implements OnInit {
     itemsListTags = [];
     files = [];
     filesInfo: ImageInfo[] = [];
-    // urls = [];
-    // fileNames = [];
-    // fileNamesFull = [];
 
     listAgency = [
         { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
@@ -94,7 +91,6 @@ export class EditNotificationComponent implements OnInit {
 
     onConfirm(): void {
         if (this.countDefaultImage > 0) {
-            this.files.splice(0, this.countDefaultImage);
             if (this.files.length > 0) {
                 this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
                     data.forEach(imgInfo => {
@@ -139,21 +135,15 @@ export class EditNotificationComponent implements OnInit {
         } else {
             formObj.publish = 0;
         }
-
         // Format expiredDate
         formObj.expiredDate = this.datepipe.transform(formObj.expiredDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
-
         // Add publishedDate
         let newPublishedDate: string;
         newPublishedDate = new Date().toString();
         formObj.publishedDate = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
-
         // Add agency
         const selectedAgency = formObj.agency;
         formObj.agency = this.listAgency.find(p => p.id == selectedAgency);
-
-        // console.log(formObj.agency);
-
         // Add Tags
         for (const i of formObj.tag) {
             // tslint:disable-next-line: triple-equals
@@ -169,10 +159,8 @@ export class EditNotificationComponent implements OnInit {
             return item;
         });
         formObj.tag = this.itemsListTags;
-
         // Add Image
         formObj.imageId = this.uploadedImage;
-
         // Final result
         const resultJson = JSON.stringify(formObj, null, 2);
         this.updateNotification(resultJson);
@@ -186,7 +174,6 @@ export class EditNotificationComponent implements OnInit {
             // Close dialog, return false
             this.dialogRef.close(false);
             // Call api delete file
-
             console.log(err);
         });
     }
@@ -215,8 +202,6 @@ export class EditNotificationComponent implements OnInit {
                 reader.onload = (eventLoad) => {
                     this.uploaded = true;
                     urlResult = eventLoad.target.result;
-                    // console.log(urlResult);
-
                     if (event.target.files[i].name.length > 20) {
                         // Tên file quá dài
                         const startText = event.target.files[i].name.substr(0, 5);
@@ -237,7 +222,6 @@ export class EditNotificationComponent implements OnInit {
                     });
                 };
                 reader.readAsDataURL(event.target.files[i]);
-
             }
         }
     }

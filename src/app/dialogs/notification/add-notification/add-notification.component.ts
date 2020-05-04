@@ -150,16 +150,17 @@ export class AddNotificationComponent implements OnInit {
 
         // Final result
         const resultJson = JSON.stringify(formObj, null, 2);
-
-        console.log(resultJson);
-
         this.postNotification(resultJson);
     }
 
     postNotification(requestBody) {
         this.service.postNotification(requestBody).subscribe(data => {
             // Close dialog, return true
-            this.dialogRef.close(data);
+            let result = {
+                body: requestBody,
+                data: data
+            }
+            this.dialogRef.close(result);
         }, err => {
             // Close dialog, return false
             this.dialogRef.close(false);
