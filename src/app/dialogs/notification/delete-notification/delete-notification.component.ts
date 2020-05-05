@@ -39,7 +39,7 @@ export class DeleteNotificationComponent implements OnInit {
                 window.location.replace('/notification');
             }, reloadTimeout);
         }, err => {
-            console.log(err);
+            console.error(err);
             this.dialogRef.close(false);
         });
     }

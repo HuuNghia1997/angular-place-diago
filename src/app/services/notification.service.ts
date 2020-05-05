@@ -162,14 +162,9 @@ export class NotificationService {
     }
 
     checkErrorResponse(error: HttpErrorResponse, type: number) {
-        console.log('run error hander');
-        console.log(error.status);
         if (error.status === 401) {
-            console.log('refresh');
-            console.log(type);
             this.auth.refeshToken((result) => {
                 if (result) {
-                    console.log('call back ' + result);
                     switch (type) {
                         case 1:
                             this.notificationComponent.search(0, pageSizeOptions);
@@ -252,6 +247,8 @@ export class NotificationService {
             formData.append('files', file, file.name);
         });
         // formData.append('accountId', accountId);
+
+        console.log('push multi files');
 
         return this.http.post(this.uploadFilesURL, formData, { headers }).pipe();
     }

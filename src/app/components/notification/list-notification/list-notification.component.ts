@@ -201,7 +201,6 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
         if (formObj.publish != null) {
             searchString = searchString + '&publish=' + formObj.publish;
         }
-        // console.log(searchString);
 
         this.service.search(searchString).subscribe(data => {
             this.ELEMENTDATA = [];

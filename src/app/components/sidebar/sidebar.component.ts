@@ -42,18 +42,18 @@ export class SidebarComponent implements OnInit  {
         this.mobileQuery = media.matchMedia('(max-width: 600px)');
         this.mobileQueryListener = () => changeDetectorRef.detectChanges();
         this.mobileQuery.addListener(this.mobileQueryListener);
-        
     }
     ngOnInit(): void {
         this.getAvatar();
     }
 
-    ngOnDestroy(): void {
+    ngOnDestroy() {
         this.mobileQuery.removeListener(this.mobileQueryListener);
     }
 
     logout() {
-        console.log('logout');
+        // tslint:disable-next-line: no-console
+        console.info('logout');
         this.auth.logout();
     }
 
@@ -76,7 +76,7 @@ export class SidebarComponent implements OnInit  {
                 this.avatar = this.sanitizer.bypassSecurityTrustUrl(downloadLink.href);
             });
         }, error => {
-            console.log(error);
+            console.error(error);
         });
     }
 }

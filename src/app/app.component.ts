@@ -25,11 +25,9 @@ export class AppComponent implements OnInit {
       const helper = new JwtHelperService();
       const isExpired = helper.isTokenExpired(this.token);
       if (!isExpired) {
-        console.log('token is exp '+ isExpired);
         this.auth.refeshToken(callback => {
         });
       } else if (!helper.isTokenExpired(this.refresh)) {
-        console.log('token is exp '+ isExpired);
         localStorage.setItem('auth_token', '');
         window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
       }

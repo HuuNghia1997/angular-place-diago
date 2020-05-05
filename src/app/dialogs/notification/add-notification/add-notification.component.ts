@@ -101,7 +101,7 @@ export class AddNotificationComponent implements OnInit {
                 });
                 this.formToJSON();
             }, (error) => {
-                console.log(error);
+                console.error(error);
             });
         } else {
             this.formToJSON();

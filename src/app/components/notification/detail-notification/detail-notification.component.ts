@@ -92,7 +92,6 @@ export class DetailNotificationComponent implements OnInit {
                                 // Tên file quá dài
                                 const startText = data.filename.substr(0, 5);
                                 const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
-                                console.log(startText + '...' + shortText);
                                 fileName = startText + '...' + shortText;
                                 // Tên file gốc - hiển thị tooltip
                                 fileNamesFull = data.filename;
@@ -106,14 +105,13 @@ export class DetailNotificationComponent implements OnInit {
                                 name: fileName,
                                 fullName: fileNamesFull
                             });
-                            console.log(this.filesInfo);
                         }, err => {
-                            console.log(err);
+                            console.error(err);
                         });
                     }, false);
                     reader.readAsDataURL(data);
                 }, err => {
-                    console.log(err);
+                    console.error(err);
                 });
             });
         }
@@ -124,7 +122,7 @@ export class DetailNotificationComponent implements OnInit {
             this.response.push(data);
             this.setViewData();
         }, err => {
-            console.log(err);
+            console.error(err);
             this.service.checkErrorResponse(err, 3);
         });
     }
@@ -137,7 +135,7 @@ export class DetailNotificationComponent implements OnInit {
                 this.history.push(data.content[i]);
             }
         }, err => {
-            console.log(err);
+            console.error(err);
             this.service.checkErrorResponse(err, 4);
         });
     }
@@ -181,7 +179,6 @@ export class DetailNotificationComponent implements OnInit {
                         const shortText = event.target.files[i]
                         .name
                         .substr(event.target.files[i].name.length - 7, event.target.files[i].name.length);
-                        console.log(startText + '...' + shortText);
                         fileName = startText + '...' + shortText;
                         // Tên file gốc - hiển thị tooltip
                         fileNamesFull = event.target.files[i].name;
@@ -211,7 +208,6 @@ export class DetailNotificationComponent implements OnInit {
             }
             counter++;
         });
-        console.log(index);
         this.filesInfo.splice(index, 1);
         this.files.splice(index, 1);
         this.blankVal = '';

@@ -96,7 +96,7 @@ export class OauthService {
           localStorage.setItem(token_refresh, data['refresh_token']);
           success(true);
         }, err => {
-          console.log(err);
+          console.error(err);
           // alert('Invalid Credentials');
         });
   }
@@ -126,10 +126,9 @@ export class OauthService {
       'https://digo-sso.vnptigate.vn/account/perform-logout',
       params.toString(), { headers }).subscribe(
         data => {
-          console.log(data);
           window.location.href = logoutURL;
         }, err => {
-          console.log(err);
+          console.error(err);
           window.location.href = logoutURL;
         });
   }

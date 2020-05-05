@@ -90,9 +90,16 @@ export class EditNotificationComponent implements OnInit {
     }
 
     onConfirm(): void {
+        this.countDefaultImage = this.uploadedImage.length;
         if (this.countDefaultImage > 0) {
+            console.log('it run');
+            console.log('count default' + this.countDefaultImage);
+            console.log('files lenght ' + this.files.length);
+            this.files.splice(0, this.countDefaultImage);
             if (this.files.length > 0) {
+                console.log('it continue run');
                 this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
+                    console.log(data);
                     data.forEach(imgInfo => {
                         this.uploadedImage.push(imgInfo.id);
                     });
@@ -113,18 +120,6 @@ export class EditNotificationComponent implements OnInit {
                 this.formToJSON();
             }
         }
-    }
-
-    uploadImage(imgFile) {
-        this.service.uploadImages(imgFile, this.accountId).subscribe(data => {
-            this.uploadedImage.push(data.id);
-            if (this.uploadedImage.length === this.files.length) {
-                this.formToJSON();
-            }
-            console.log(this.uploadedImage);
-        }, err => {
-            console.log(err);
-        });
     }
 
     formToJSON() {
@@ -163,6 +158,8 @@ export class EditNotificationComponent implements OnInit {
         formObj.imageId = this.uploadedImage;
         // Final result
         const resultJson = JSON.stringify(formObj, null, 2);
+
+        console.log(resultJson);
         this.updateNotification(resultJson);
     }
 
@@ -174,7 +171,7 @@ export class EditNotificationComponent implements OnInit {
             // Close dialog, return false
             this.dialogRef.close(false);
             // Call api delete file
-            console.log(err);
+            console.error(err);
         });
     }
 
@@ -235,10 +232,6 @@ export class EditNotificationComponent implements OnInit {
             }
             counter++;
         });
-        console.log(index);
-        // if (index == 0) {
-        //     filesIndex = 0;
-        // }
         this.filesInfo.splice(index, 1);
         this.files.splice(index, 1);
         this.uploadedImage.splice(index, 1);
@@ -266,7 +259,7 @@ export class EditNotificationComponent implements OnInit {
             this.response.push(data);
             this.setViewData();
         }, err => {
-            console.log(err);
+            console.error(err);
             this.service.checkErrorResponse(err, 3);
         });
     }
@@ -300,6 +293,7 @@ export class EditNotificationComponent implements OnInit {
         });
 
         this.uploadedImage = this.response[0].imageId;
+
         this.countDefaultImage = this.uploadedImage.length;
 
         if (this.response[0].imageId.length > 0) {
@@ -311,11 +305,9 @@ export class EditNotificationComponent implements OnInit {
 
                 // ============================================
                 this.service.getImage(i).subscribe(data => {
-                    console.log(data);
                     const reader = new FileReader();
                     reader.addEventListener('load', () => {
                         urlResult = reader.result;
-                        // console.log(urlResult);
                         this.files.push(reader.result);
                     }, false);
                     if (data) {
@@ -323,7 +315,6 @@ export class EditNotificationComponent implements OnInit {
                     }
 
                     this.service.getImageName_Size(i).subscribe((data: any) => {
-                        console.log(data);
                         if (data.filename.length > 20) {
                             // Tên file quá dài
                             const startText = data.filename.substr(0, 5);
@@ -331,7 +322,6 @@ export class EditNotificationComponent implements OnInit {
                             fileName = startText + '...' + shortText;
                             // // Tên file gốc - hiển thị tooltip
                             fileNamesFull = data.filename;
-                            
                         } else {
                             fileName = data.filename;
                             fileNamesFull = data.filename;
@@ -343,13 +333,12 @@ export class EditNotificationComponent implements OnInit {
                             fullName: fileNamesFull
                         });
                     }, err => {
-                        console.log(err);
+                        console.error(err);
                     });
                 }, err => {
-                    console.log(err);
+                    console.error(err);
                 });
             }
-            console.log(this.filesInfo);
         }
         this.uploaded = true;
     }
