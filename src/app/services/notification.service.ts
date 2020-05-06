@@ -78,10 +78,10 @@ export class NotificationService {
                 this.main.openSnackBar(message, body.title, result, reason, 'success_notification');
                 // tslint:disable-next-line:only-arrow-functions
                 setTimeout(function() {
-                    window.location.replace('/notification/detail/' + data.id);
+                    window.location.replace('/notification/detail/' + data.data.id);
                 }, reloadTimeout);
             }
-            if (data.id === null) {
+            if (data.data.id === null) {
                 this.main.openSnackBar('Thêm thông báo', content, 'thất bại', reason, 'error_notification');
             }
         });
@@ -145,7 +145,6 @@ export class NotificationService {
             data: dialogData,
             disableClose: true
         });
-
         const message = 'Thông báo';
         const content = name;
         const result = ' đã được gửi';
@@ -154,6 +153,8 @@ export class NotificationService {
             this.result = dialogResult;
             if (this.result === true) {
                 this.main.openSnackBar(message, content, result, reason, 'success_notification');
+                // tslint:disable-next-line: deprecation
+                window.location.reload(true);
             }
             if (this.result === false) {
                 this.main.openSnackBar(message, content, 'gửi không thành công', reason, 'error_notification');
@@ -217,21 +218,21 @@ export class NotificationService {
         }
     }
 
-    uploadImages(imgFile, accountId): Observable<any> {
-        const token = localStorage.getItem('auth_token');
-        let headers = new HttpHeaders();
-        headers = headers.append('Authorization', 'Bearer ' + token);
-        // headers = headers.append('Content-Type', 'multipart/form-data');
-        headers = headers.append('Accept', 'application/json');
-        headers.append('Access-Control-Allow-Origin', '*');
+    // uploadImages(imgFile, accountId): Observable<any> {
+    //     const token = localStorage.getItem('auth_token');
+    //     let headers = new HttpHeaders();
+    //     headers = headers.append('Authorization', 'Bearer ' + token);
+    //     // headers = headers.append('Content-Type', 'multipart/form-data');
+    //     headers = headers.append('Accept', 'application/json');
+    //     headers.append('Access-Control-Allow-Origin', '*');
 
-        const formData: FormData = new FormData();
-        const file: File = imgFile;
-        formData.append('file', file, file.name);
-        // formData.append('accountId', accountId);
+    //     const formData: FormData = new FormData();
+    //     const file: File = imgFile;
+    //     formData.append('file', file, file.name);
+    //     // formData.append('accountId', accountId);
 
-        return this.http.post(this.uploadFileURL, formData, { headers }).pipe();
-    }
+    //     return this.http.post(this.uploadFileURL, formData, { headers }).pipe();
+    // }
 
     uploadMultiImages(imgFiles, accountId): Observable<any> {
         const token = localStorage.getItem('auth_token');
@@ -247,8 +248,6 @@ export class NotificationService {
             formData.append('files', file, file.name);
         });
         // formData.append('accountId', accountId);
-
-        console.log('push multi files');
 
         return this.http.post(this.uploadFilesURL, formData, { headers }).pipe();
     }

@@ -154,9 +154,6 @@ export class DetailNotificationComponent implements OnInit {
 
     sendNotification(): void {
         this.service.sendNotification(this.notificationId, this.notificationTitle);
-        this.notificationStatus.forEach((status) => {
-            status.status = 1;
-        });
     }
 
     // File upload
@@ -176,9 +173,8 @@ export class DetailNotificationComponent implements OnInit {
                     if (event.target.files[i].name.length > 20) {
                         // Tên file quá dài
                         const startText = event.target.files[i].name.substr(0, 5);
-                        const shortText = event.target.files[i]
-                        .name
-                        .substr(event.target.files[i].name.length - 7, event.target.files[i].name.length);
+                        const shortText = event.target.files[i].name
+                            .substr(event.target.files[i].name.length - 7, event.target.files[i].name.length);
                         fileName = startText + '...' + shortText;
                         // Tên file gốc - hiển thị tooltip
                         fileNamesFull = event.target.files[i].name;
@@ -203,13 +199,14 @@ export class DetailNotificationComponent implements OnInit {
         let counter = 0;
         let index = 0;
         this.filesInfo.forEach(file => {
-            if(file.id === id){
+            if(file.id === id) {
                 index = counter;
             }
             counter++;
         });
+
+
         this.filesInfo.splice(index, 1);
-        this.files.splice(index, 1);
         this.blankVal = '';
     }
 }

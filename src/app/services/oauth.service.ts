@@ -1,6 +1,13 @@
 import { Injectable } from '@angular/core';
 
-import { AUTH, tokenURL, tempRedirect, getCodeURL, logoutURL, auth_token, token_refresh } from '../../environments/environment';
+import { AUTH,
+        tokenURL,
+        tempRedirect,
+        getCodeURL,
+        logoutURL,
+        auth_token,
+        token_refresh,
+        getCodeParams } from '../../environments/environment';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -49,7 +56,6 @@ export class OauthService {
 
       const headers =
         new HttpHeaders({
-
           'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
           // tslint:disable-next-line:object-literal-key-quotes
           'Authorization': 'Basic ' + btoa( AUTH.CLIENT_ID + ':' + AUTH.CLIENT_SECRET)
@@ -69,7 +75,7 @@ export class OauthService {
           }, err => {
             // alert('hết hạn đăng nhập')
             // localStorage.setItem(auth_token, '');
-            // window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
+            // window.location.href = getCodeURL +  getCodeParams + '&' + tempRedirect;
           });
   }
 
@@ -97,7 +103,6 @@ export class OauthService {
           success(true);
         }, err => {
           console.error(err);
-          // alert('Invalid Credentials');
         });
   }
 
@@ -107,19 +112,13 @@ export class OauthService {
     localStorage.removeItem('USER_INFO_ID');
     localStorage.removeItem('USER_INFO_NAME');
     localStorage.removeItem('USER_INFO_ACCOUNT');
-    //alert('Đăng xuất thành công');
-    
-
-
 
     const params = new URLSearchParams();
     params.set('_csrf', localStorage.getItem('jti'));
 
     const headers =
       new HttpHeaders({
-        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
-        // tslint:disable-next-line:object-literal-key-quotes
-        // 'Authorization': 'Basic ' + btoa( AUTH.CLIENT_ID + ':' + AUTH.CLIENT_SECRET) 
+        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8'
       });
 
     this.http.post(

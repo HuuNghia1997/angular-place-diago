@@ -92,14 +92,8 @@ export class EditNotificationComponent implements OnInit {
     onConfirm(): void {
         this.countDefaultImage = this.uploadedImage.length;
         if (this.countDefaultImage > 0) {
-            console.log('it run');
-            console.log('count default' + this.countDefaultImage);
-            console.log('files lenght ' + this.files.length);
-            this.files.splice(0, this.countDefaultImage);
             if (this.files.length > 0) {
-                console.log('it continue run');
                 this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
-                    console.log(data);
                     data.forEach(imgInfo => {
                         this.uploadedImage.push(imgInfo.id);
                     });
@@ -159,7 +153,6 @@ export class EditNotificationComponent implements OnInit {
         // Final result
         const resultJson = JSON.stringify(formObj, null, 2);
 
-        console.log(resultJson);
         this.updateNotification(resultJson);
     }
 
@@ -185,21 +178,21 @@ export class EditNotificationComponent implements OnInit {
 
     // File uploads
     onSelectFile(event) {
+        let i = 0;
         if (event.target.files && event.target.files[0]) {
-            const filesAmount = event.target.files.length;
-            for (let i = 0; i < filesAmount; ++i) {
+            for (const file of event.target.files) {
                 // =============================================
                 let urlResult: any;
                 let fileName = '';
                 let fileNamesFull = '';
 
                 // =============================================
-                this.files.push(event.target.files[i]);
+                this.files.push(file);
                 const reader = new FileReader();
                 reader.onload = (eventLoad) => {
                     this.uploaded = true;
                     urlResult = eventLoad.target.result;
-                    if (event.target.files[i].name.length > 20) {
+                    if (file.name.length > 20) {
                         // Tên file quá dài
                         const startText = event.target.files[i].name.substr(0, 5);
                         // tslint:disable-next-line:max-line-length
@@ -208,8 +201,8 @@ export class EditNotificationComponent implements OnInit {
                         // Tên file gốc - hiển thị tooltip
                         fileNamesFull = event.target.files[i].name;
                     } else {
-                        fileName = event.target.files[i].name;
-                        fileNamesFull = event.target.files[i].name ;
+                        fileName = file.name;
+                        fileNamesFull = file.name ;
                     }
                     this.filesInfo.push( {
                         id: i,
@@ -219,6 +212,7 @@ export class EditNotificationComponent implements OnInit {
                     });
                 };
                 reader.readAsDataURL(event.target.files[i]);
+                i++;
             }
         }
     }
@@ -227,14 +221,16 @@ export class EditNotificationComponent implements OnInit {
         let counter = 0;
         let index = 0;
         this.filesInfo.forEach(file => {
-            if(file.id === id){
+            if(file.id === id) {
                 index = counter;
             }
             counter++;
         });
+        this.uploadedImage = this.uploadedImage.filter(item => item != id);
+
         this.filesInfo.splice(index, 1);
         this.files.splice(index, 1);
-        this.uploadedImage.splice(index, 1);
+
         this.blankVal = '';
     }
 
@@ -308,7 +304,6 @@ export class EditNotificationComponent implements OnInit {
                     const reader = new FileReader();
                     reader.addEventListener('load', () => {
                         urlResult = reader.result;
-                        this.files.push(reader.result);
                     }, false);
                     if (data) {
                         reader.readAsDataURL(data);
@@ -320,7 +315,7 @@ export class EditNotificationComponent implements OnInit {
                             const startText = data.filename.substr(0, 5);
                             const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
                             fileName = startText + '...' + shortText;
-                            // // Tên file gốc - hiển thị tooltip
+                            // Tên file gốc - hiển thị tooltip
                             fileNamesFull = data.filename;
                         } else {
                             fileName = data.filename;
