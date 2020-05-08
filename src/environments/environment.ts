@@ -2,11 +2,11 @@ export const environment = {
     production: false
 };
 
-//export const tempRedirect = 'redirect_uri=http://localhost:4200/oauth';
-export const tempRedirect = 'redirect_uri=https://digo-citizens-admin.vnptigate.vn/oauth';
+export const tempRedirect = 'redirect_uri=http://localhost:4200/oauth';
+// export const tempRedirect = 'redirect_uri=https://digo-citizens-admin.vnptigate.vn/oauth';
 
-//export const rootLayout = 'http://localhost:4200/';
-export const rootLayout = 'https://digo-citizens-admin.vnptigate.vn/';
+export const rootLayout = 'http://localhost:4200/';
+// export const rootLayout = 'https://digo-citizens-admin.vnptigate.vn/';
 
 export const tokenURL = 'https://digo-sso.vnptigate.vn/oauth/token';
 
@@ -15,6 +15,8 @@ export const logoutURL = 'https://digo-sso.vnptigate.vn';
 export const rootURL = 'https://digo-api.vnptigate.vn/';
 
 export const getCodeURL = 'https://digo-sso.vnptigate.vn/oauth/authorize';
+
+export const logoutPath = 'https://digo-sso.vnptigate.vn/account/perform-logout';
 
 export const AUTH = {
     GRANT_TYPE_CLIENT: 'client_credentials',
@@ -53,5 +55,5 @@ export const PICK_FORMATS = {
 };
 
 export const reloadTimeout = 2500; // milisecond
-export const pageSizeOptions = [5, 10, 20, 50, 100];
+export const pageSizeOptions = [5, 10, 20, 50];
 

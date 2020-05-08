@@ -13,7 +13,7 @@ import { ConfirmAddDialogModel, AddNotificationComponent } from '../dialogs/noti
 import { ConfirmUpdateDialogModel, EditNotificationComponent } from '../dialogs/notification/edit-notification/edit-notification.component';
 import { ConfirmSendDialogModel, SendNotificationComponent } from '../dialogs/notification/send-notification/send-notification.component';
 
-import { NotificationComponent } from '../components/notification/notification.component';
+import { ListNotificationComponent } from '../components/notification/list-notification/list-notification.component';
 import { DetailNotificationComponent } from '../components/notification/detail-notification/detail-notification.component';
 
 export interface PeriodicElement {
@@ -37,20 +37,21 @@ export class NotificationService {
         private auth: OauthService
     ) { }
     public getTags = rootURL + 'bt/tag?category-id=';
-    public uploadFileURL = rootURL + 'fi/file';
+    public uploadFileURL = rootURL + 'fi/file/';
     public postURL = rootURL + 'po/notification';
     public getDetailURL = rootURL + 'po/notification/';
     public putURL = rootURL + 'po/notification/';
     public getFileURL = rootURL + 'fi/file/';
     public getHistory = rootURL + 'lo/history?group-id=';
     public searchURL = rootURL + 'po/notification/--search?';
+    public uploadFilesURL = rootURL + 'fi/file/--multiple';
 
     result: boolean;
 
-    private notificationComponent: NotificationComponent;
+    private notificationComponent: ListNotificationComponent;
 
     private detailNotificationComponent: DetailNotificationComponent;
-    registerMyApp(myNotification: NotificationComponent) {
+    registerMyApp(myNotification: ListNotificationComponent) {
         this.notificationComponent = myNotification;
     }
     registerDetail(myNotificationDetail: DetailNotificationComponent) {
@@ -62,23 +63,25 @@ export class NotificationService {
         const dialogRef = this.dialog.open(AddNotificationComponent, {
             maxWidth: '60%',
             height: '600px',
-            data: dialogData
+            data: dialogData,
+            disableClose: true
         });
 
-        const message = 'Thêm thông báo';
+        const message = 'Thông báo';
         const content = '';
-        const result = 'thành công';
+        const result = 'được thêm thành công';
         const reason = '';
         dialogRef.afterClosed().subscribe(dialogResult => {
             const data = dialogResult;
-            if (data.id != null) {
-                this.main.openSnackBar(message, content, result, reason, 'success_notification');
+            if (data.data.id != null) {
+                const body = JSON.parse(data.body);
+                this.main.openSnackBar(message, body.title, result, reason, 'success_notification');
                 // tslint:disable-next-line:only-arrow-functions
                 setTimeout(function() {
-                    window.location.replace('/notification/detail/' + data.id);
+                    window.location.replace('/notification/detail/' + data.data.id);
                 }, reloadTimeout);
             }
-            if (data.id === null) {
+            if (data.data.id === null) {
                 this.main.openSnackBar('Thêm thông báo', content, 'thất bại', reason, 'error_notification');
             }
         });
@@ -88,12 +91,13 @@ export class NotificationService {
         const dialogData = new ConfirmDialogModel('Xoá thông báo', name, id);
         const dialogRef = this.dialog.open(DeleteNotificationComponent, {
             width: '500px',
-            data: dialogData
+            data: dialogData,
+            disableClose: true
         });
 
-        const message = 'Xoá thông báo';
+        const message = 'Thông báo';
         const content = name;
-        const result = 'thành công';
+        const result = 'đã được xóa';
         const reason = '';
         dialogRef.afterClosed().subscribe(dialogResult => {
             this.result = dialogResult;
@@ -101,7 +105,7 @@ export class NotificationService {
                 this.main.openSnackBar(message, content, result, reason, 'success_notification');
             }
             if (this.result === false) {
-                this.main.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+                this.main.openSnackBar(message, content, 'xóa thất bại', reason, 'error_notification');
             }
         });
     }
@@ -111,7 +115,8 @@ export class NotificationService {
         const dialogRef = this.dialog.open(EditNotificationComponent, {
             maxWidth: '60%',
             height: '600px',
-            data: dialogData
+            data: dialogData,
+            disableClose: true
         });
 
         const message = 'Cập nhật thông báo';
@@ -137,33 +142,30 @@ export class NotificationService {
         const dialogData = new ConfirmSendDialogModel('Gửi thông báo', name, id);
         const dialogRef = this.dialog.open(SendNotificationComponent, {
             width: '500px',
-            data: dialogData
+            data: dialogData,
+            disableClose: true
         });
-
-        const message = 'Gửi thông báo';
+        const message = 'Thông báo';
         const content = name;
-        const result = 'thành công';
+        const result = ' đã được gửi';
         const reason = '';
         dialogRef.afterClosed().subscribe(dialogResult => {
             this.result = dialogResult;
             if (this.result === true) {
                 this.main.openSnackBar(message, content, result, reason, 'success_notification');
+                // tslint:disable-next-line: deprecation
+                window.location.reload(true);
             }
             if (this.result === false) {
-                this.main.openSnackBar(message, content, 'không thành công', reason, 'error_notification');
+                this.main.openSnackBar(message, content, 'gửi không thành công', reason, 'error_notification');
             }
         });
     }
 
     checkErrorResponse(error: HttpErrorResponse, type: number) {
-        console.log('run error hander');
-        console.log(error.status);
         if (error.status === 401) {
-            console.log('refresh');
-            console.log(type);
             this.auth.refeshToken((result) => {
                 if (result) {
-                    console.log('call back ' + result);
                     switch (type) {
                         case 1:
                             this.notificationComponent.search(0, pageSizeOptions);
@@ -216,7 +218,23 @@ export class NotificationService {
         }
     }
 
-    uploadImages(imgFile, ccountId): Observable<any> {
+    // uploadImages(imgFile, accountId): Observable<any> {
+    //     const token = localStorage.getItem('auth_token');
+    //     let headers = new HttpHeaders();
+    //     headers = headers.append('Authorization', 'Bearer ' + token);
+    //     // headers = headers.append('Content-Type', 'multipart/form-data');
+    //     headers = headers.append('Accept', 'application/json');
+    //     headers.append('Access-Control-Allow-Origin', '*');
+
+    //     const formData: FormData = new FormData();
+    //     const file: File = imgFile;
+    //     formData.append('file', file, file.name);
+    //     // formData.append('accountId', accountId);
+
+    //     return this.http.post(this.uploadFileURL, formData, { headers }).pipe();
+    // }
+
+    uploadMultiImages(imgFiles, accountId): Observable<any> {
         const token = localStorage.getItem('auth_token');
         let headers = new HttpHeaders();
         headers = headers.append('Authorization', 'Bearer ' + token);
@@ -225,10 +243,13 @@ export class NotificationService {
         headers.append('Access-Control-Allow-Origin', '*');
 
         const formData: FormData = new FormData();
-        const file: File = imgFile;
-        formData.append('file', file, file.name);
+        imgFiles.forEach(img => {
+            const file: File = img;
+            formData.append('files', file, file.name);
+        });
+        // formData.append('accountId', accountId);
 
-        return this.http.post(this.uploadFileURL, formData, { headers }).pipe();
+        return this.http.post(this.uploadFilesURL, formData, { headers }).pipe();
     }
 
     postNotification(requestBody) {

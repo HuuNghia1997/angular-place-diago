@@ -8,13 +8,16 @@ import { rootURL, notificationHistoryGroupId } from '../../../../environments/en
 // ====================================================== Services
 import { NotificationService } from '../../../services/notification.service';
 
+// ===================================================== Model
+import { ImageInfo } from '../../../model/image-info';
+
 @Component({
     selector: 'app-detail-notification',
     templateUrl: './detail-notification.component.html',
     styleUrls: [
         './detail-notification.component.scss',
-        '../notification.component.scss',
-        '../../../app.component.scss'
+        '../../../app.component.scss',
+        '../list-notification/list-notification.component.scss'
     ]
 })
 export class DetailNotificationComponent implements OnInit {
@@ -37,9 +40,8 @@ export class DetailNotificationComponent implements OnInit {
 
     // image
     files = [];
-    urls = [];
-    fileNames = [];
-    fileNamesFull = [];
+
+    filesInfo: ImageInfo[] = [];
     uploaded = true;
     // Lịch sử
     history = [];
@@ -75,35 +77,43 @@ export class DetailNotificationComponent implements OnInit {
         this.notificationTags = this.response[0].tag;
 
         if (this.response[0].imageId.length > 0) {
-            for (var i = 0; i < this.response[0].imageId.length; ++i) {
-                this.service.getImage(this.response[0].imageId[i]).subscribe(data => {
+            this.response[0].imageId.forEach(imageId => {
+
+                let urlResult: any;
+                let fileName = '';
+                let fileNamesFull = '';
+
+                this.service.getImage(imageId).subscribe(data => {
                     const reader = new FileReader();
                     reader.addEventListener('load', () => {
-                        this.urls.push(reader.result);
+                        urlResult = reader.result;
+                        this.service.getImageName_Size(imageId).subscribe((data: any ) => {
+                            if (data.filename.length > 20) {
+                                // Tên file quá dài
+                                const startText = data.filename.substr(0, 5);
+                                const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                                fileName = startText + '...' + shortText;
+                                // Tên file gốc - hiển thị tooltip
+                                fileNamesFull = data.filename;
+                            } else {
+                                fileName = data.filename;
+                                fileNamesFull = data.filename;
+                            }
+                            this.filesInfo.push({
+                                id: imageId,
+                                url: urlResult,
+                                name: fileName,
+                                fullName: fileNamesFull
+                            });
+                        }, err => {
+                            console.error(err);
+                        });
                     }, false);
-                    if (data) {
-                        reader.readAsDataURL(data);
-                    }
+                    reader.readAsDataURL(data);
                 }, err => {
-                    console.log(err);
+                    console.error(err);
                 });
-                this.service.getImageName_Size(this.response[0].imageId[i]).subscribe(data => {
-                    if (data['filename'].length > 20) {
-                        // Tên file quá dài
-                        const startText = data['filename'].substr(0, 5);
-                        const shortText = data['filename'].substr(data['filename'].length - 7, data['filename'].length);
-                        console.log(startText + '...' + shortText);
-                        this.fileNames.push(startText + '...' + shortText);
-                        // Tên file gốc - hiển thị tooltip
-                        this.fileNamesFull.push(data['filename']);
-                    } else {
-                        this.fileNames.push(data['filename']);
-                        this.fileNamesFull.push(data['filename']);
-                    }
-                }, err => {
-                    console.log(err);
-                });
-            }
+            });
         }
     }
 
@@ -112,7 +122,7 @@ export class DetailNotificationComponent implements OnInit {
             this.response.push(data);
             this.setViewData();
         }, err => {
-            console.log(err);
+            console.error(err);
             this.service.checkErrorResponse(err, 3);
         });
     }
@@ -125,7 +135,7 @@ export class DetailNotificationComponent implements OnInit {
                 this.history.push(data.content[i]);
             }
         }, err => {
-            console.log(err);
+            console.error(err);
             this.service.checkErrorResponse(err, 4);
         });
     }
@@ -151,36 +161,52 @@ export class DetailNotificationComponent implements OnInit {
         if (event.target.files && event.target.files[0]) {
             const filesAmount = event.target.files.length;
             for (let i = 0; i < filesAmount; i++) {
+
+                let urlResult: any;
+                let fileName = '';
+                let fileNamesFull = '';
+
                 const reader = new FileReader();
-                reader.onload = (event) => {
+                reader.onload = (eventLoad) => {
                     this.uploaded = true;
-                    this.urls.push(event.target.result);
+                    urlResult = eventLoad.target.result;
+                    if (event.target.files[i].name.length > 20) {
+                        // Tên file quá dài
+                        const startText = event.target.files[i].name.substr(0, 5);
+                        const shortText = event.target.files[i].name
+                            .substr(event.target.files[i].name.length - 7, event.target.files[i].name.length);
+                        fileName = startText + '...' + shortText;
+                        // Tên file gốc - hiển thị tooltip
+                        fileNamesFull = event.target.files[i].name;
+                    } else {
+                        fileName = event.target.files[i].name;
+                        fileNamesFull = event.target.files[i].name;
+                    }
+                    this.filesInfo.push({
+                        id: i,
+                        url: urlResult,
+                        name: fileName,
+                        fullName: fileNamesFull
+                    });
                 };
-                if (event.target.files[i].name.length > 20) {
-                    // Tên file quá dài
-                    const startText = event.target.files[i].name.substr(0, 5);
-                    const shortText = event.target.files[i]
-                    .name
-                    .substr(event.target.files[i].name.length - 7, event.target.files[i].name.length);
-                    console.log(startText + '...' + shortText);
-                    this.fileNames.push(startText + '...' + shortText);
-                    // Tên file gốc - hiển thị tooltip
-                    this.fileNamesFull.push(event.target.files[i].name);
-                } else {
-                    this.fileNames.push(event.target.files[i].name);
-                    this.fileNamesFull.push(event.target.files[i].name);
-                }
                 reader.readAsDataURL(event.target.files[i]);
             }
         }
     }
 
     // Xoá file
-    removeItem(index: number) {
-        this.urls.splice(index, 1);
-        this.fileNames.splice(index, 1);
-        this.fileNamesFull.splice(index, 1);
-        this.files.splice(index, 1);
+    removeItem(id: string) {
+        let counter = 0;
+        let index = 0;
+        this.filesInfo.forEach(file => {
+            if(file.id === id) {
+                index = counter;
+            }
+            counter++;
+        });
+
+
+        this.filesInfo.splice(index, 1);
         this.blankVal = '';
     }
 }

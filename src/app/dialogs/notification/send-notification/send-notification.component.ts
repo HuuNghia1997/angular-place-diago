@@ -40,7 +40,7 @@ export class SendNotificationComponent implements OnInit {
         this.http.put(this.publishURL + this.id + '/--publish', null, { headers }).subscribe(data => {
             this.dialogRef.close(true);
         }, err => {
-            console.log(err);
+            console.error(err);
             this.dialogRef.close(false);
         });
     }

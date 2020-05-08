@@ -6,15 +6,11 @@ import { TokenAuthComponent } from './components/token-auth/token-auth.component
 const routes: Routes = [
   {
     path: '',
-    loadChildren: './components/notification/notification.module#NotificationModule'
+    loadChildren: () => import('./components/notification/notification.module').then( m => m.NotificationModule)
   },
   {
     path: 'notification',
-    loadChildren: './components/notification/notification.module#NotificationModule'
-  },
-  {
-    path: 'notification/detail/:id',
-    loadChildren: './components/notification/detail-notification/detail-notification.module#DetailNotificationModule'
+    loadChildren: () => import('./components/notification/notification.module').then( m => m.NotificationModule)
   },
   {
     path: 'oauth',

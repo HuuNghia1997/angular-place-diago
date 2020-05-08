@@ -1,11 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { NotificationComponent } from './notification.component';
+import { ListNotificationComponent } from './list-notification/list-notification.component';
+import { DetailNotificationComponent } from './detail-notification/detail-notification.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: NotificationComponent
+    component: ListNotificationComponent
+  },
+  {
+    path: 'detail/:id',
+    component: DetailNotificationComponent
   }
 ];
 
