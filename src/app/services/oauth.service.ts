@@ -7,7 +7,8 @@ import { AUTH,
         logoutURL,
         auth_token,
         token_refresh,
-        getCodeParams } from '../../environments/environment';
+        getCodeParams,
+        logoutPath } from '../../environments/environment';
 
 import { JwtHelperService } from '@auth0/angular-jwt';
 
@@ -26,16 +27,20 @@ export class OauthService {
 
   helper = new JwtHelperService();
 
-  constructor( public http: HttpClient) { }
+  constructor( public http: HttpClient) {
+
+  }
 
   getUserInfo(): User {
     if (localStorage.getItem('USER_INFO_ID') === null){
       let userinfo = this.helper.decodeToken(localStorage.getItem('auth_token'));
       // tslint:disable-next-line:no-string-literal
       localStorage.setItem('USER_INFO_ID', userinfo['user']['id'] );
+      // tslint:disable-next-line:no-string-literal
       localStorage.setItem('USER_INFO_NAME', userinfo['user']['fullname'] );
+      // tslint:disable-next-line:no-string-literal
       localStorage.setItem('USER_INFO_ACCOUNT', userinfo['user']['account'] );
-
+      // tslint:disable-next-line:no-string-literal
       localStorage.setItem('jti', userinfo['jti'] );
     }
     const user: User = {
@@ -50,33 +55,30 @@ export class OauthService {
   }
 
   refeshToken(callback) {
-      const params = new URLSearchParams();
-      params.set('grant_type', 'refresh_token');
-      params.set('refresh_token', localStorage.getItem('token_refresh'));
+    const params = new URLSearchParams();
+    params.set('grant_type', 'refresh_token');
+    params.set('refresh_token', localStorage.getItem('token_refresh'));
 
-      const headers =
-        new HttpHeaders({
-          'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
-          // tslint:disable-next-line:object-literal-key-quotes
-          'Authorization': 'Basic ' + btoa( AUTH.CLIENT_ID + ':' + AUTH.CLIENT_SECRET)
+    const headers =
+      new HttpHeaders({
+        'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+        // tslint:disable-next-line:object-literal-key-quotes
+        'Authorization': 'Basic ' + btoa( AUTH.CLIENT_ID + ':' + AUTH.CLIENT_SECRET)
+      });
+
+    this.http.post(
+      tokenURL,
+      params.toString(), { headers }).subscribe(
+        data => {
+          // tslint:disable-next-line:no-string-literal
+          localStorage.setItem(auth_token, data['access_token']);
+          // refresh_token
+          // tslint:disable-next-line:no-string-literal
+          localStorage.setItem(token_refresh, data['refresh_token']);
+          callback(true);
+        }, err => {
+          console.error(err);
         });
-
-      this.http.post(
-        tokenURL,
-        params.toString(), { headers }).subscribe(
-          data => {
-            // tslint:disable-next-line:no-string-literal
-            localStorage.setItem(auth_token, data['access_token']);
-            // refresh_token
-            // tslint:disable-next-line:no-string-literal
-            localStorage.setItem(token_refresh, data['refresh_token']);
-
-            callback(true);
-          }, err => {
-            // alert('hết hạn đăng nhập')
-            // localStorage.setItem(auth_token, '');
-            // window.location.href = getCodeURL +  getCodeParams + '&' + tempRedirect;
-          });
   }
 
   retrieveToken(code, success) {
@@ -106,12 +108,13 @@ export class OauthService {
         });
   }
 
-  logout() {
+  public logout() {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('token_refresh');
     localStorage.removeItem('USER_INFO_ID');
     localStorage.removeItem('USER_INFO_NAME');
     localStorage.removeItem('USER_INFO_ACCOUNT');
+    localStorage.removeItem('jti');
 
     const params = new URLSearchParams();
     params.set('_csrf', localStorage.getItem('jti'));
@@ -122,7 +125,7 @@ export class OauthService {
       });
 
     this.http.post(
-      'https://digo-sso.vnptigate.vn/account/perform-logout',
+      logoutPath,
       params.toString(), { headers }).subscribe(
         data => {
           window.location.href = logoutURL;

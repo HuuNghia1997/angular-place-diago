@@ -16,6 +16,8 @@ export const rootURL = 'https://digo-api.vnptigate.vn/';
 
 export const getCodeURL = 'https://digo-sso.vnptigate.vn/oauth/authorize';
 
+export const logoutPath = 'https://digo-sso.vnptigate.vn/account/perform-logout';
+
 export const AUTH = {
     GRANT_TYPE_CLIENT: 'client_credentials',
     CLIENT_ID: 'first-client',

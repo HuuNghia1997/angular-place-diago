@@ -168,14 +168,6 @@ export class EditNotificationComponent implements OnInit {
         });
     }
 
-    resetForm(): void {
-
-        this.filesInfo = [];
-        this.uploaded = false;
-        this.uploadedImage = [];
-        this.files = [];
-    }
-
     // File uploads
     onSelectFile(event) {
         let i = 0;

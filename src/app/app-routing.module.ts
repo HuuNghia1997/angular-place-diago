@@ -6,7 +6,7 @@ import { TokenAuthComponent } from './components/token-auth/token-auth.component
 const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent
+    loadChildren: () => import('./components/notification/notification.module').then( m => m.NotificationModule)
   },
   {
     path: 'notification',

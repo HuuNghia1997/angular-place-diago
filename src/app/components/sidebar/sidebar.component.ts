@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 import { OauthService } from '../../services/oauth.service';
 import { SidebarService } from '../../services/sidebar.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-sidebar',
@@ -12,6 +13,8 @@ import { SidebarService } from '../../services/sidebar.service';
     styleUrls: ['./sidebar.component.scss', '../../app.component.scss']
 })
 export class SidebarComponent implements OnInit  {
+
+    position: string;
 
     title = siteName;
 
@@ -24,6 +27,7 @@ export class SidebarComponent implements OnInit  {
         {
             mainMenu: 'Cổng thông tin',
             icon: 'file_copy', // From https://material.io/resources/icons
+            code: 'notification',
             listSubMenu: [
                 { title: 'Quản trị thông báo', route: 'notification' }
             ]
@@ -45,6 +49,7 @@ export class SidebarComponent implements OnInit  {
     }
     ngOnInit(): void {
         this.getAvatar();
+        this.setOpenAccordion();
     }
 
     ngOnDestroy() {
@@ -58,7 +63,6 @@ export class SidebarComponent implements OnInit  {
     }
 
     getAvatar() {
-        
         this.nickname = this.auth.getUserInfo().fullname;
         this.sidebarService.getUserInfo(this.auth.getUserInfo().id).subscribe(data => {
 
@@ -79,4 +83,11 @@ export class SidebarComponent implements OnInit  {
             console.error(error);
         });
     }
+
+    setOpenAccordion() {
+        console.log('asdfasdfasdf');
+        const path = window.location.pathname;
+        this.position = path.split('/', 2)[1];
+    }
 }
+

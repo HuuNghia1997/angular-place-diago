@@ -27,9 +27,12 @@ export class AppComponent implements OnInit {
       if (!isExpired) {
         this.auth.refeshToken(callback => {
         });
-      } else if (!helper.isTokenExpired(this.refresh)) {
+      } else if (helper.isTokenExpired(this.refresh)) {
         localStorage.setItem('auth_token', '');
-        window.location.href = getCodeURL + getCodeParams + '&' + tempRedirect;
+        localStorage.setItem('token_refresh', '');
+        setTimeout(() => {
+          this.auth.logout();
+        }, 2000);
       }
     } else {
         localStorage.setItem(auth_token, '');
