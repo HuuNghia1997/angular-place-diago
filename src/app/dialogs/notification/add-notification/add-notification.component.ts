@@ -123,7 +123,6 @@ export class AddNotificationComponent implements OnInit {
 
         // Add publishedDate
         let newPublishedDate: string;
-        newPublishedDate = new Date().toString();
         formObj.publishedDate = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
 
         // Add agency
