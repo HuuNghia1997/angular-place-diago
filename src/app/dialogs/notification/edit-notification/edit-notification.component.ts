@@ -293,38 +293,35 @@ export class EditNotificationComponent implements OnInit {
 
                 // ============================================
                 this.service.getImage(i).subscribe(data => {
-                    const reader = new FileReader();
-                    reader.addEventListener('load', () => {
-                        urlResult = reader.result;
-                    }, false);
-                    if (data) {
-                        reader.readAsDataURL(data);
-                    }
-
-                    this.service.getImageName_Size(i).subscribe((data: any) => {
-                        if (data.filename.length > 20) {
-                            // Tên file quá dài
-                            const startText = data.filename.substr(0, 5);
-                            const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
-                            fileName = startText + '...' + shortText;
-                            // Tên file gốc - hiển thị tooltip
-                            fileNamesFull = data.filename;
-                        } else {
-                            fileName = data.filename;
-                            fileNamesFull = data.filename;
-                        }
-                        this.filesInfo.push({
-                            id: i,
-                            url: urlResult,
-                            name: fileName,
-                            fullName: fileNamesFull
-                        });
-                    }, err => {
-                        console.error(err);
-                    });
-                }, err => {
-                    console.error(err);
-                });
+                  const reader = new FileReader();
+                  reader.addEventListener('load', () => {
+                      urlResult = reader.result;
+                      this.service.getImageName_Size(i).subscribe((data: any ) => {
+                          if (data.filename.length > 20) {
+                              // Tên file quá dài
+                              const startText = data.filename.substr(0, 5);
+                              const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                              fileName = startText + '...' + shortText;
+                              // Tên file gốc - hiển thị tooltip
+                              fileNamesFull = data.filename;
+                          } else {
+                              fileName = data.filename;
+                              fileNamesFull = data.filename;
+                          }
+                          this.filesInfo.push({
+                              id: i,
+                              url: urlResult,
+                              name: fileName,
+                              fullName: fileNamesFull
+                          });
+                      }, err => {
+                          console.error(err);
+                      });
+                  }, false);
+                  reader.readAsDataURL(data);
+              }, err => {
+                  console.error(err);
+              });
             }
         }
         this.uploaded = true;
