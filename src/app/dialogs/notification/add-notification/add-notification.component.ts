@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Injectable } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NativeDateAdapter, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
@@ -10,7 +10,8 @@ import { NotificationService } from '../../../services/notification.service';
 // ====================================================== Environment
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
 
-class PickDateAdapter extends NativeDateAdapter {
+@Injectable()
+export class PickDateAdapter extends NativeDateAdapter {
     format(date: Date, displayFormat): string {
         if (displayFormat === 'input') {
             return formatDate(date, 'dd/MM/yyyy', this.locale);
@@ -110,21 +111,20 @@ export class AddNotificationComponent implements OnInit {
 
     formToJSON() {
         const formObj = this.addForm.getRawValue();
+        let newPublishedDate: string;
 
         // Format publish
         if (formObj.publish) {
             formObj.publish = 1;
+            newPublishedDate = new Date().toString();
+            formObj.publishedDate = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
         } else {
             formObj.publish = 0;
+            formObj.publishedDate = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
         }
 
         // Format expiredDate
         formObj.expiredDate = this.datepipe.transform(formObj.expiredDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
-
-        // Add publishedDate
-        let newPublishedDate: string;
-        newPublishedDate = new Date().toString();
-        formObj.publishedDate = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
 
         // Add agency
         const selectedAgency = formObj.agency;

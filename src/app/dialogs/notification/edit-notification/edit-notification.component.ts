@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Injectable } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NativeDateAdapter, DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
@@ -13,7 +13,8 @@ import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/e
 // ===================================================== Model
 import { ImageInfo } from '../../../model/image-info';
 
-class PickDateAdapter extends NativeDateAdapter {
+@Injectable()
+export class PickDateAdapter extends NativeDateAdapter {
     format(date: Date, displayFormat): string {
         if (displayFormat === 'input') {
             return formatDate(date, 'dd/MM/yyyy', this.locale);
@@ -118,18 +119,18 @@ export class EditNotificationComponent implements OnInit {
 
     formToJSON() {
         const formObj = this.updateForm.getRawValue();
+        let newPublishedDate: string;
         // Format publish
         if (formObj.publish) {
             formObj.publish = 1;
+            newPublishedDate = new Date().toString();
+            formObj.publishedDate = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
         } else {
             formObj.publish = 0;
+            formObj.publishedDate = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
         }
         // Format expiredDate
         formObj.expiredDate = this.datepipe.transform(formObj.expiredDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
-        // Add publishedDate
-        let newPublishedDate: string;
-        newPublishedDate = new Date().toString();
-        formObj.publishedDate = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
         // Add agency
         const selectedAgency = formObj.agency;
         formObj.agency = this.listAgency.find(p => p.id == selectedAgency);
@@ -267,6 +268,7 @@ export class EditNotificationComponent implements OnInit {
         }
         let expiredDateControl = new FormControl();
 
+        // if (this.response[0].expiredDate != null && this.response[0].expiredDate !== '1970-01-01T00:00:00.000+0000') {
         if (this.response[0].expiredDate != null) {
             expiredDateControl = new FormControl(new Date(this.response[0].expiredDate));
         }
@@ -293,38 +295,35 @@ export class EditNotificationComponent implements OnInit {
 
                 // ============================================
                 this.service.getImage(i).subscribe(data => {
-                    const reader = new FileReader();
-                    reader.addEventListener('load', () => {
-                        urlResult = reader.result;
-                    }, false);
-                    if (data) {
-                        reader.readAsDataURL(data);
-                    }
-
-                    this.service.getImageName_Size(i).subscribe((data: any) => {
-                        if (data.filename.length > 20) {
-                            // Tên file quá dài
-                            const startText = data.filename.substr(0, 5);
-                            const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
-                            fileName = startText + '...' + shortText;
-                            // Tên file gốc - hiển thị tooltip
-                            fileNamesFull = data.filename;
-                        } else {
-                            fileName = data.filename;
-                            fileNamesFull = data.filename;
-                        }
-                        this.filesInfo.push({
-                            id: i,
-                            url: urlResult,
-                            name: fileName,
-                            fullName: fileNamesFull
-                        });
-                    }, err => {
-                        console.error(err);
-                    });
-                }, err => {
-                    console.error(err);
-                });
+                  const reader = new FileReader();
+                  reader.addEventListener('load', () => {
+                      urlResult = reader.result;
+                      this.service.getImageName_Size(i).subscribe((data: any ) => {
+                          if (data.filename.length > 20) {
+                              // Tên file quá dài
+                              const startText = data.filename.substr(0, 5);
+                              const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                              fileName = startText + '...' + shortText;
+                              // Tên file gốc - hiển thị tooltip
+                              fileNamesFull = data.filename;
+                          } else {
+                              fileName = data.filename;
+                              fileNamesFull = data.filename;
+                          }
+                          this.filesInfo.push({
+                              id: i,
+                              url: urlResult,
+                              name: fileName,
+                              fullName: fileNamesFull
+                          });
+                      }, err => {
+                          console.error(err);
+                      });
+                  }, false);
+                  reader.readAsDataURL(data);
+              }, err => {
+                  console.error(err);
+              });
             }
         }
         this.uploaded = true;
