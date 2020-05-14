@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,7 +20,8 @@ import { PICK_FORMATS, pageSizeOptions, notificationCategoryId } from '../../../
 export interface PeriodicElement {
 }
 
-class PickDateAdapter extends NativeDateAdapter {
+@Injectable()
+export class PickDateAdapter extends NativeDateAdapter {
     format(date: Date, displayFormat): string {
         if (displayFormat === 'input') {
             return formatDate(date, 'dd/MM/yyyy', this.locale);
