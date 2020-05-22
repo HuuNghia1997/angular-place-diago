@@ -9,6 +9,7 @@ import { NotificationService } from '../../../services/notification.service';
 
 // ====================================================== Environment
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
+import { NgxImageCompressService } from 'ngx-image-compress';
 
 @Injectable()
 export class PickDateAdapter extends NativeDateAdapter {
@@ -45,6 +46,10 @@ export class AddNotificationComponent implements OnInit {
     urls = [];
     fileNames = [];
     fileNamesFull = [];
+    imgResultAfterCompress: string;
+    localCompressedURl: any;
+    fileImport: File;
+    urlPreview: any;
 
     listAgency = [
         { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
@@ -70,7 +75,8 @@ export class AddNotificationComponent implements OnInit {
         public dialogRef: MatDialogRef<AddNotificationComponent>,
         private service: NotificationService,
         @Inject(MAT_DIALOG_DATA) public data: ConfirmAddDialogModel,
-        public datepipe: DatePipe
+        public datepipe: DatePipe,
+        private imageCompress: NgxImageCompressService
     ) {
         this.popupTitle = data.title;
     }
@@ -182,32 +188,58 @@ export class AddNotificationComponent implements OnInit {
 
     // File upload
     onSelectFile(event) {
-        if (event.target.files && event.target.files[0]) {
-            for (const file of event.target.files){
-                this.files.push(file);
-            }
-            const filesAmount = event.target.files.length;
-            for (let i = 0; i < filesAmount; i++) {
-                const reader = new FileReader();
-                reader.onload = ((event) => {
-                    this.uploaded = true;
-                    this.urls.push(event.target.result);
-                });
-                if (event.target.files[i].name.length > 20) {
-                    // Tên file quá dài
-                    const startText = event.target.files[i].name.substr(0, 5);
-                    const shortText = event.target.files[i].name
-                    .substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
-                    this.fileNames.push(startText + '...' + shortText);
-                    // Tên file gốc - hiển thị tooltip
-                    this.fileNamesFull.push(event.target.files[i].name);
-                } else {
-                    this.fileNames.push(event.target.files[i].name);
-                    this.fileNamesFull.push(event.target.files[i].name);
-                }
-                reader.readAsDataURL(event.target.files[i]);
-            }
+      let i = 0;
+      if (event.target.files && event.target.files[0]) {
+        for (const file of event.target.files) {
+          let urlNone: any;
+          const reader = new FileReader();
+          reader.onload = (eventLoad) => {
+            this.uploaded = true;
+            urlNone = eventLoad.target.result;
+            this.imageCompress.compressFile(urlNone, -1, 75, 60).then(result => {
+              this.urlPreview = result;
+              this.urls.push(this.urlPreview);
+              this.fileImport = this.convertBase64toFile(this.urlPreview, file.name);
+              this.files.push(this.fileImport);
+
+              if (this.fileImport.name.length > 20) {
+                // Tên file quá dài
+                const startText = event.target.files[i].name.substr(0, 5);
+                // tslint:disable-next-line:max-line-length
+                const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
+                                                                       event.target.files[i].name.length);
+                this.fileNames.push(startText + '...' + shortText);
+                // Tên file gốc - hiển thị tooltip
+                this.fileNamesFull.push(event.target.files[i].name);
+              } else {
+                this.fileNames.push(this.fileImport.name);
+                this.fileNamesFull.push(this.fileImport.name);
+              }
+            });
+          };
+          reader.readAsDataURL(event.target.files[i]);
+          i++;
         }
+      }
+    }
+
+    dataURItoBlob(dataURI) {
+      const byteString = atob(dataURI.split(',')[1]);
+      const arrayBuffer = new ArrayBuffer(byteString.length);
+      const int8Array = new Uint8Array(arrayBuffer);
+      for (let i = 0; i < byteString.length; i++) {
+        int8Array[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([int8Array], { type: 'image/jpg' });
+      return blob;
+    }
+
+    convertBase64toFile(base64, fileName) {
+      const date = new Date().valueOf();
+      const imageName = date + '.jpg';
+      const imageBlob = this.dataURItoBlob(base64);
+      const imageFile = new File([imageBlob], fileName, { type: 'image/jpg' });
+      return imageFile;
     }
 
     // Xoá file

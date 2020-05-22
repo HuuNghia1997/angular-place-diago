@@ -8,12 +8,14 @@ import { SidebarModule } from './components/sidebar/sidebar.module';
 import { NotificationModule } from './components/notification/notification.module';
 import { DetailNotificationModule } from './components/notification/detail-notification/detail-notification.module';
 
-//services
+// services
 import { NotificationService } from './services/notification.service';
 import { TranslateService } from './services/translate.service';
 import { OauthService } from './services/oauth.service';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TokenAuthComponent } from './components/token-auth/token-auth.component';
+import { NgxImageCompressService } from 'ngx-image-compress';
+import { ImageCompressService, ResizeOptions, ImageUtilityService } from 'ng2-image-compress';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,10 @@ import { TokenAuthComponent } from './components/token-auth/token-auth.component
   providers: [
     NotificationService,
     TranslateService,
-    OauthService
+    OauthService,
+    NgxImageCompressService,
+    ImageCompressService,
+    ResizeOptions
   ],
   exports: [],
   bootstrap: [AppComponent]
