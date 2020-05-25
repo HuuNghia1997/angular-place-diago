@@ -6,6 +6,7 @@ import { formatDate, DatePipe } from '@angular/common';
 
 // ====================================================== Services
 import { NotificationService } from '../../../services/notification.service';
+import { MainService } from '../../../services/main.service';
 
 // ====================================================== Environment
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
@@ -72,7 +73,8 @@ export class EditNotificationComponent implements OnInit {
         private service: NotificationService,
         public datepipe: DatePipe,
         @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateDialogModel,
-        private imageCompress: NgxImageCompressService
+        private imageCompress: NgxImageCompressService,
+        private main: MainService
     ) {
         this.popupTitle = data.title;
         this.notificationId = data.id;
@@ -194,9 +196,9 @@ export class EditNotificationComponent implements OnInit {
                     this.urlPreview = result;
                     urlResult = result.split(',')[1];
                     this.fileImport = this.convertBase64toFile(result, file.name);
-                    this.files.push(this.fileImport);
-
-                    if (this.fileImport.name.length > 20) {
+                    if (this.filesInfo.length < 10) {
+                      this.files.push(this.fileImport);
+                      if (this.fileImport.name.length > 20) {
                         // Tên file quá dài
                         const startText = event.target.files[i].name.substr(0, 5);
                         // tslint:disable-next-line:max-line-length
@@ -205,17 +207,20 @@ export class EditNotificationComponent implements OnInit {
                         fileName = startText + '...' + shortText;
                         // Tên file gốc - hiển thị tooltip
                         fileNamesFull = event.target.files[i].name;
-                    } else {
-                        fileName = this.fileImport.name;
-                        fileNamesFull = this.fileImport.name ;
-                    }
+                      } else {
+                          fileName = this.fileImport.name;
+                          fileNamesFull = this.fileImport.name ;
+                      }
 
-                    this.filesInfo.push({
-                      id: i,
-                      url: this.urlPreview,
-                      name: fileName,
-                      fullName: fileNamesFull
-                    });
+                      this.filesInfo.push({
+                        id: i,
+                        url: this.urlPreview,
+                        name: fileName,
+                        fullName: fileNamesFull
+                      });
+                    } else {
+                      this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '10', 'error_notification');
+                    }
                   });
                 };
                 reader.readAsDataURL(event.target.files[i]);
@@ -254,7 +259,6 @@ export class EditNotificationComponent implements OnInit {
             counter++;
         });
         this.uploadedImage = this.uploadedImage.filter(item => item != id);
-
         this.filesInfo.splice(index, 1);
         this.files.splice(index, 1);
 

@@ -6,6 +6,7 @@ import { formatDate, DatePipe } from '@angular/common';
 
 // ====================================================== Services
 import { NotificationService } from '../../../services/notification.service';
+import { MainService } from '../../../services/main.service';
 
 // ====================================================== Environment
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
@@ -44,6 +45,7 @@ export class AddNotificationComponent implements OnInit {
     itemsListTags = [];
     files = [];
     urls = [];
+    urlsTmp = [];
     fileNames = [];
     fileNamesFull = [];
     imgResultAfterCompress: string;
@@ -76,7 +78,8 @@ export class AddNotificationComponent implements OnInit {
         private service: NotificationService,
         @Inject(MAT_DIALOG_DATA) public data: ConfirmAddDialogModel,
         public datepipe: DatePipe,
-        private imageCompress: NgxImageCompressService
+        private imageCompress: NgxImageCompressService,
+        private main: MainService
     ) {
         this.popupTitle = data.title;
     }
@@ -198,22 +201,27 @@ export class AddNotificationComponent implements OnInit {
             urlNone = eventLoad.target.result;
             this.imageCompress.compressFile(urlNone, -1, 75, 60).then(result => {
               this.urlPreview = result;
-              this.urls.push(this.urlPreview);
               this.fileImport = this.convertBase64toFile(this.urlPreview, file.name);
-              this.files.push(this.fileImport);
+              this.urlsTmp.push(this.urlPreview);
 
-              if (this.fileImport.name.length > 20) {
-                // Tên file quá dài
-                const startText = event.target.files[i].name.substr(0, 5);
-                // tslint:disable-next-line:max-line-length
-                const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
-                                                                       event.target.files[i].name.length);
-                this.fileNames.push(startText + '...' + shortText);
-                // Tên file gốc - hiển thị tooltip
-                this.fileNamesFull.push(event.target.files[i].name);
+              if (this.urlsTmp.length <= 10) {
+                this.urls.push(this.urlPreview);
+                this.files.push(this.fileImport);
+                if (this.fileImport.name.length > 20) {
+                  // Tên file quá dài
+                  const startText = event.target.files[i].name.substr(0, 5);
+                  // tslint:disable-next-line:max-line-length
+                  const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
+                                                                         event.target.files[i].name.length);
+                  this.fileNames.push(startText + '...' + shortText);
+                  // Tên file gốc - hiển thị tooltip
+                  this.fileNamesFull.push(event.target.files[i].name);
+                } else {
+                  this.fileNames.push(this.fileImport.name);
+                  this.fileNamesFull.push(this.fileImport.name);
+                }
               } else {
-                this.fileNames.push(this.fileImport.name);
-                this.fileNamesFull.push(this.fileImport.name);
+                this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '10', 'error_notification');
               }
             });
           };
@@ -244,6 +252,8 @@ export class AddNotificationComponent implements OnInit {
 
     // Xoá file
     removeItem(index: number) {
+        this.urlsTmp.splice(index, 1);
+        this.urlsTmp.splice(index, 1);
         this.urls.splice(index, 1);
         this.fileNames.splice(index, 1);
         this.fileNamesFull.splice(index, 1);
