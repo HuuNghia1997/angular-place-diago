@@ -45,7 +45,6 @@ export class AddNotificationComponent implements OnInit {
     itemsListTags = [];
     files = [];
     urls = [];
-    urlsTmp = [];
     fileNames = [];
     fileNamesFull = [];
     imgResultAfterCompress: string;
@@ -199,12 +198,10 @@ export class AddNotificationComponent implements OnInit {
           reader.onload = (eventLoad) => {
             this.uploaded = true;
             urlNone = eventLoad.target.result;
-            this.imageCompress.compressFile(urlNone, -1, 75, 60).then(result => {
+            this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
               this.urlPreview = result;
               this.fileImport = this.convertBase64toFile(this.urlPreview, file.name);
-              this.urlsTmp.push(this.urlPreview);
-
-              if (this.urlsTmp.length <= 10) {
+              if (this.urls.length + 1 <= 5) {
                 this.urls.push(this.urlPreview);
                 this.files.push(this.fileImport);
                 if (this.fileImport.name.length > 20) {
@@ -212,7 +209,7 @@ export class AddNotificationComponent implements OnInit {
                   const startText = event.target.files[i].name.substr(0, 5);
                   // tslint:disable-next-line:max-line-length
                   const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
-                                                                         event.target.files[i].name.length);
+                                                                        event.target.files[i].name.length);
                   this.fileNames.push(startText + '...' + shortText);
                   // Tên file gốc - hiển thị tooltip
                   this.fileNamesFull.push(event.target.files[i].name);
@@ -221,7 +218,7 @@ export class AddNotificationComponent implements OnInit {
                   this.fileNamesFull.push(this.fileImport.name);
                 }
               } else {
-                this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '10', 'error_notification');
+                this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
               }
             });
           };
@@ -252,8 +249,6 @@ export class AddNotificationComponent implements OnInit {
 
     // Xoá file
     removeItem(index: number) {
-        this.urlsTmp.splice(index, 1);
-        this.urlsTmp.splice(index, 1);
         this.urls.splice(index, 1);
         this.fileNames.splice(index, 1);
         this.fileNamesFull.splice(index, 1);

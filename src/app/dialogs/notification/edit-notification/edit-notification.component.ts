@@ -192,11 +192,11 @@ export class EditNotificationComponent implements OnInit {
                 reader.onload = (eventLoad) => {
                   this.uploaded = true;
                   urlNone = eventLoad.target.result;
-                  this.imageCompress.compressFile(urlNone, -1, 75, 60).then(result => {
+                  this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
                     this.urlPreview = result;
                     urlResult = result.split(',')[1];
                     this.fileImport = this.convertBase64toFile(result, file.name);
-                    if (this.filesInfo.length < 10) {
+                    if (this.filesInfo.length < 5) {
                       this.files.push(this.fileImport);
                       if (this.fileImport.name.length > 20) {
                         // Tên file quá dài
@@ -219,7 +219,7 @@ export class EditNotificationComponent implements OnInit {
                         fullName: fileNamesFull
                       });
                     } else {
-                      this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '10', 'error_notification');
+                      this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
                     }
                   });
                 };
