@@ -6,12 +6,13 @@ import { formatDate, DatePipe } from '@angular/common';
 
 // ====================================================== Services
 import { NotificationService } from '../../../services/notification.service';
+import { MainService } from '../../../services/main.service';
 
 // ====================================================== Environment
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
 
 // ===================================================== Model
-import { ImageInfo } from '../../../model/image-info';
+import { ImageInfo, AgencyInfo } from '../../../model/image-info';
 import { NgxImageCompressService } from 'ngx-image-compress';
 
 @Injectable()
@@ -58,12 +59,7 @@ export class EditNotificationComponent implements OnInit {
     localCompressedURl: any;
     fileImport: File;
     urlPreview: any;
-
-    listAgency = [
-        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
-        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
-        { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
-    ];
+    agencyList: AgencyInfo[] = [];
 
     response = [];
 
@@ -72,7 +68,8 @@ export class EditNotificationComponent implements OnInit {
         private service: NotificationService,
         public datepipe: DatePipe,
         @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateDialogModel,
-        private imageCompress: NgxImageCompressService
+        private imageCompress: NgxImageCompressService,
+        private main: MainService
     ) {
         this.popupTitle = data.title;
         this.notificationId = data.id;
@@ -94,6 +91,12 @@ export class EditNotificationComponent implements OnInit {
 
     getErrorMessage(id) {
         return this.service.formErrorMessage(id);
+    }
+
+    getAgency() {
+      this.service.getAgency().subscribe(data => {
+        this.agencyList = data.content;
+      });
     }
 
     onConfirm(): void {
@@ -139,7 +142,7 @@ export class EditNotificationComponent implements OnInit {
         formObj.expiredDate = this.datepipe.transform(formObj.expiredDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
         // Add agency
         const selectedAgency = formObj.agency;
-        formObj.agency = this.listAgency.find(p => p.id == selectedAgency);
+        formObj.agency = this.agencyList.find(p => p.id == selectedAgency);
         // Add Tags
         for (const i of formObj.tag) {
             // tslint:disable-next-line: triple-equals
@@ -190,13 +193,13 @@ export class EditNotificationComponent implements OnInit {
                 reader.onload = (eventLoad) => {
                   this.uploaded = true;
                   urlNone = eventLoad.target.result;
-                  this.imageCompress.compressFile(urlNone, -1, 75, 60).then(result => {
+                  this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
                     this.urlPreview = result;
                     urlResult = result.split(',')[1];
                     this.fileImport = this.convertBase64toFile(result, file.name);
-                    this.files.push(this.fileImport);
-
-                    if (this.fileImport.name.length > 20) {
+                    if (this.filesInfo.length < 5) {
+                      this.files.push(this.fileImport);
+                      if (this.fileImport.name.length > 20) {
                         // Tên file quá dài
                         const startText = event.target.files[i].name.substr(0, 5);
                         // tslint:disable-next-line:max-line-length
@@ -205,17 +208,20 @@ export class EditNotificationComponent implements OnInit {
                         fileName = startText + '...' + shortText;
                         // Tên file gốc - hiển thị tooltip
                         fileNamesFull = event.target.files[i].name;
-                    } else {
-                        fileName = this.fileImport.name;
-                        fileNamesFull = this.fileImport.name ;
-                    }
+                      } else {
+                          fileName = this.fileImport.name;
+                          fileNamesFull = this.fileImport.name ;
+                      }
 
-                    this.filesInfo.push({
-                      id: i,
-                      url: this.urlPreview,
-                      name: fileName,
-                      fullName: fileNamesFull
-                    });
+                      this.filesInfo.push({
+                        id: i,
+                        url: this.urlPreview,
+                        name: fileName,
+                        fullName: fileNamesFull
+                      });
+                    } else {
+                      this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
+                    }
                   });
                 };
                 reader.readAsDataURL(event.target.files[i]);
@@ -254,7 +260,6 @@ export class EditNotificationComponent implements OnInit {
             counter++;
         });
         this.uploadedImage = this.uploadedImage.filter(item => item != id);
-
         this.filesInfo.splice(index, 1);
         this.files.splice(index, 1);
 
@@ -264,6 +269,7 @@ export class EditNotificationComponent implements OnInit {
     ngOnInit(): void {
         this.getNotificationDetail();
         this.getListTags();
+        this.getAgency();
     }
 
     getListTags() {
@@ -302,7 +308,6 @@ export class EditNotificationComponent implements OnInit {
         }
         let expiredDateControl = new FormControl();
 
-        // if (this.response[0].expiredDate != null && this.response[0].expiredDate !== '1970-01-01T00:00:00.000+0000') {
         if (this.response[0].expiredDate != null) {
             expiredDateControl = new FormControl(new Date(this.response[0].expiredDate));
         }

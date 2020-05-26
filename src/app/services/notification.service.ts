@@ -45,6 +45,7 @@ export class NotificationService {
     public getHistory = rootURL + 'lo/history?group-id=';
     public searchURL = rootURL + 'po/notification/--search?';
     public uploadFilesURL = rootURL + 'fi/file/--multiple';
+    public getAgencyURL = rootURL + 'ba/agency/name+logo-id?parent-id=&tag-id=';
 
     result: boolean;
 
@@ -311,4 +312,14 @@ export class NotificationService {
 
         return this.http.get(this.searchURL + searchString, { headers }).pipe();
     }
+
+    getAgency(): Observable<any> {
+      const token = localStorage.getItem('auth_token');
+      let headers = new HttpHeaders();
+      headers = headers.append('Authorization', 'Bearer ' + token);
+      headers = headers.append('Content-Type', 'application/json');
+      headers.append('Access-Control-Allow-Origin', '*');
+
+      return this.http.get(this.getAgencyURL, { headers }).pipe();
+  }
 }

@@ -6,10 +6,12 @@ import { formatDate, DatePipe } from '@angular/common';
 
 // ====================================================== Services
 import { NotificationService } from '../../../services/notification.service';
+import { MainService } from '../../../services/main.service';
 
 // ====================================================== Environment
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { AgencyInfo } from 'src/app/model/image-info';
 
 @Injectable()
 export class PickDateAdapter extends NativeDateAdapter {
@@ -50,12 +52,7 @@ export class AddNotificationComponent implements OnInit {
     localCompressedURl: any;
     fileImport: File;
     urlPreview: any;
-
-    listAgency = [
-        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
-        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
-        { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
-    ];
+    agencyList: AgencyInfo[] = [];
 
     // Form
     public reg = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -76,13 +73,15 @@ export class AddNotificationComponent implements OnInit {
         private service: NotificationService,
         @Inject(MAT_DIALOG_DATA) public data: ConfirmAddDialogModel,
         public datepipe: DatePipe,
-        private imageCompress: NgxImageCompressService
+        private imageCompress: NgxImageCompressService,
+        private main: MainService
     ) {
         this.popupTitle = data.title;
     }
 
     ngOnInit(): void {
         this.getListTags();
+        this.getAgency();
     }
 
     public getListTags() {
@@ -115,6 +114,12 @@ export class AddNotificationComponent implements OnInit {
         }
     }
 
+    getAgency() {
+      this.service.getAgency().subscribe(data => {
+        this.agencyList = data.content;
+      });
+    }
+
     formToJSON() {
         const formObj = this.addForm.getRawValue();
         let newPublishedDate: string;
@@ -134,7 +139,7 @@ export class AddNotificationComponent implements OnInit {
 
         // Add agency
         const selectedAgency = formObj.agency;
-        formObj.agency = this.listAgency.find(p => p.id == selectedAgency);
+        formObj.agency = this.agencyList.find(p => p.id == selectedAgency);
 
         // Add Tags
         for (const i of formObj.tag) {
@@ -196,24 +201,27 @@ export class AddNotificationComponent implements OnInit {
           reader.onload = (eventLoad) => {
             this.uploaded = true;
             urlNone = eventLoad.target.result;
-            this.imageCompress.compressFile(urlNone, -1, 75, 60).then(result => {
+            this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
               this.urlPreview = result;
-              this.urls.push(this.urlPreview);
               this.fileImport = this.convertBase64toFile(this.urlPreview, file.name);
-              this.files.push(this.fileImport);
-
-              if (this.fileImport.name.length > 20) {
-                // Tên file quá dài
-                const startText = event.target.files[i].name.substr(0, 5);
-                // tslint:disable-next-line:max-line-length
-                const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
-                                                                       event.target.files[i].name.length);
-                this.fileNames.push(startText + '...' + shortText);
-                // Tên file gốc - hiển thị tooltip
-                this.fileNamesFull.push(event.target.files[i].name);
+              if (this.urls.length + 1 <= 5) {
+                this.urls.push(this.urlPreview);
+                this.files.push(this.fileImport);
+                if (this.fileImport.name.length > 20) {
+                  // Tên file quá dài
+                  const startText = event.target.files[i].name.substr(0, 5);
+                  // tslint:disable-next-line:max-line-length
+                  const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
+                                                                        event.target.files[i].name.length);
+                  this.fileNames.push(startText + '...' + shortText);
+                  // Tên file gốc - hiển thị tooltip
+                  this.fileNamesFull.push(event.target.files[i].name);
+                } else {
+                  this.fileNames.push(this.fileImport.name);
+                  this.fileNamesFull.push(this.fileImport.name);
+                }
               } else {
-                this.fileNames.push(this.fileImport.name);
-                this.fileNamesFull.push(this.fileImport.name);
+                this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
               }
             });
           };
