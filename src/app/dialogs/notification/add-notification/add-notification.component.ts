@@ -11,6 +11,7 @@ import { MainService } from '../../../services/main.service';
 // ====================================================== Environment
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { AgencyInfo } from 'src/app/model/image-info';
 
 @Injectable()
 export class PickDateAdapter extends NativeDateAdapter {
@@ -51,12 +52,7 @@ export class AddNotificationComponent implements OnInit {
     localCompressedURl: any;
     fileImport: File;
     urlPreview: any;
-
-    listAgency = [
-        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
-        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
-        { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
-    ];
+    agencyList: AgencyInfo[] = [];
 
     // Form
     public reg = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -85,6 +81,7 @@ export class AddNotificationComponent implements OnInit {
 
     ngOnInit(): void {
         this.getListTags();
+        this.getAgency();
     }
 
     public getListTags() {
@@ -117,6 +114,12 @@ export class AddNotificationComponent implements OnInit {
         }
     }
 
+    getAgency() {
+      this.service.getAgency().subscribe(data => {
+        this.agencyList = data.content;
+      });
+    }
+
     formToJSON() {
         const formObj = this.addForm.getRawValue();
         let newPublishedDate: string;
@@ -136,7 +139,7 @@ export class AddNotificationComponent implements OnInit {
 
         // Add agency
         const selectedAgency = formObj.agency;
-        formObj.agency = this.listAgency.find(p => p.id == selectedAgency);
+        formObj.agency = this.agencyList.find(p => p.id == selectedAgency);
 
         // Add Tags
         for (const i of formObj.tag) {

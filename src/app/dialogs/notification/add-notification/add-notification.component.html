@@ -18,7 +18,7 @@
   <mat-form-field class="input-2-3-width" appearance="outline">
     <mat-label>Đơn vị</mat-label>
     <mat-select formControlName="agency" required>
-      <mat-option *ngFor='let agen of listAgency;' value="{{agen.id}}" imgid="abcd">{{agen.name}}</mat-option>
+      <mat-option *ngFor='let agen of agencyList;' value="{{agen.id}}">{{agen.name}}</mat-option>
     </mat-select>
     <mat-error *ngIf="agency.invalid">{{getErrorMessage(3)}}</mat-error>
   </mat-form-field>

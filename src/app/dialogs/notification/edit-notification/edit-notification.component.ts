@@ -12,7 +12,7 @@ import { MainService } from '../../../services/main.service';
 import { PICK_FORMATS, notificationCategoryId } from '../../../../environments/environment';
 
 // ===================================================== Model
-import { ImageInfo } from '../../../model/image-info';
+import { ImageInfo, AgencyInfo } from '../../../model/image-info';
 import { NgxImageCompressService } from 'ngx-image-compress';
 
 @Injectable()
@@ -59,12 +59,7 @@ export class EditNotificationComponent implements OnInit {
     localCompressedURl: any;
     fileImport: File;
     urlPreview: any;
-
-    listAgency = [
-        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
-        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
-        { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
-    ];
+    agencyList: AgencyInfo[] = [];
 
     response = [];
 
@@ -96,6 +91,12 @@ export class EditNotificationComponent implements OnInit {
 
     getErrorMessage(id) {
         return this.service.formErrorMessage(id);
+    }
+
+    getAgency() {
+      this.service.getAgency().subscribe(data => {
+        this.agencyList = data.content;
+      });
     }
 
     onConfirm(): void {
@@ -141,7 +142,7 @@ export class EditNotificationComponent implements OnInit {
         formObj.expiredDate = this.datepipe.transform(formObj.expiredDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
         // Add agency
         const selectedAgency = formObj.agency;
-        formObj.agency = this.listAgency.find(p => p.id == selectedAgency);
+        formObj.agency = this.agencyList.find(p => p.id == selectedAgency);
         // Add Tags
         for (const i of formObj.tag) {
             // tslint:disable-next-line: triple-equals
@@ -268,6 +269,7 @@ export class EditNotificationComponent implements OnInit {
     ngOnInit(): void {
         this.getNotificationDetail();
         this.getListTags();
+        this.getAgency();
     }
 
     getListTags() {
@@ -306,7 +308,6 @@ export class EditNotificationComponent implements OnInit {
         }
         let expiredDateControl = new FormControl();
 
-        // if (this.response[0].expiredDate != null && this.response[0].expiredDate !== '1970-01-01T00:00:00.000+0000') {
         if (this.response[0].expiredDate != null) {
             expiredDateControl = new FormControl(new Date(this.response[0].expiredDate));
         }
