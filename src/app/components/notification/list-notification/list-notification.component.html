@@ -29,7 +29,7 @@
                 <mat-form-field class="input-1-4-width" appearance="outline">
                     <mat-label>Đơn vị</mat-label>
                     <mat-select formControlName="agency">
-                        <mat-option *ngFor='let agen of listAgency;' value="{{agen.id}}">{{agen.name}}</mat-option>
+                        <mat-option *ngFor='let agen of agencyList;' value="{{agen.id}}">{{agen.name}}</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <!-- Trạng thái -->
