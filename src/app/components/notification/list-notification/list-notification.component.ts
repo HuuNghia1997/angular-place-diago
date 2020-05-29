@@ -64,12 +64,7 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
     });
 
     listTags = [];
-
-    listAgency = [
-        { id: 1, imageId: '5e806566e0729747af9d136a', name: 'UBND Tỉnh Tiền Giang' },
-        { id: 2, imageId: '5e806566e0729747af9d136a', name: 'UBND Huyện Cái Bè' },
-        { id: 3, imageId: '5e806566e0729747af9d136a', name: 'UBND Thị xã Cai Lậy' }
-    ];
+    agencyList = [];
 
     result: boolean;
 
@@ -88,6 +83,7 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
     ngOnInit(): void {
         this.search(0, pageSizeOptions[1]);
         this.getListTags();
+        this.getAgency();
     }
 
     ngAfterViewInit() {
@@ -150,6 +146,12 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
         }, err => {
             this.service.checkErrorResponse(err, 2);
         });
+    }
+
+    getAgency() {
+      this.service.getAgency().subscribe(data => {
+        this.agencyList = data.content;
+      })
     }
 
     addRecord() {
