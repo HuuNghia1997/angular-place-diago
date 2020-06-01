@@ -121,45 +121,46 @@
       <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef> Thao tác </th>
         <td mat-cell *matCellDef="let element">
-          <button mat-button class="mat-icon-more-horiz" [matMenuTriggerFor]="(element.status === 'Chờ nhận xử lý' ? menu :
-                                    (element.status === 'Chờ xử lý' ? menu1 : menu2))">
+          <button mat-button class="mat-icon-more-horiz" [matMenuTriggerFor]="menu">
             <mat-icon> more_horiz </mat-icon>
           </button>
 
           <mat-menu #menu="matMenu" xPosition="before">
-            <button mat-menu-item class="btn-action">
-              <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> dns </mat-icon>
-              Nhận xử lý
-            </button>
+            <div *ngIf="element.status == 'Chờ nhận xử lý'; then receivedBlock else elseBlock"></div>
+            <ng-template #receivedBlock>
+              <button mat-menu-item class="btn-action">
+                <mat-icon fontSet="material-icons-outlined"> dns </mat-icon>
+                Nhận xử lý
+              </button>
+            </ng-template>
+            <ng-template #elseBlock>
+              <span *ngIf="element.status == 'Chờ xử lý'">
+                <button mat-menu-item class="btn-action" (click)="openDialogConfirmationCompleted()" >
+                  <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
+                  Xác nhận hoàn thành
+                </button>
+                <button mat-menu-item class="btn-action">
+                  <mat-icon fontSet="material-icons-outlined"> reply </mat-icon>
+                  Bỏ nhận xử lý
+                </button>
+              </span>
+            </ng-template>
 
-            <button mat-menu-item class="btn-action">
-              <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> delete </mat-icon>
-              Xóa
-            </button>
-          </mat-menu>
-
-          <mat-menu #menu1="matMenu" xPosition="before">
-            <button mat-menu-item class="btn-action" (click)="openDialogConfirmationCompleted()">
-              <mat-icon class="mat-icon-action"> done_outline </mat-icon>
-              Xác nhận hoàn thành
-            </button>
-
-            <button mat-menu-item class="btn-action">
-              <mat-icon class="mat-icon-action"> reply </mat-icon>
-              Bỏ nhận xử lý
-            </button>
-
-            <button mat-menu-item class="btn-action">
-              <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> delete </mat-icon>
-              Xóa
-            </button>
-          </mat-menu>
-
-          <mat-menu #menu2="matMenu" xPosition="before">
-            <button mat-menu-item class="btn-action">
-              <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> storage </mat-icon>
-              Chi tiết
-            </button>
+            <div *ngIf="element.status == 'Đã tiếp nhận'; then detailBlock else deleteBlock"></div>
+            <ng-template #detailBlock>
+              <span *ngIf="element.status === 'Đã tiếp nhận'">
+                <button mat-menu-item class="btn-action">
+                  <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> storage </mat-icon>
+                  Chi tiết
+                </button>
+              </span>
+            </ng-template>
+            <ng-template #deleteBlock>
+              <button mat-menu-item class="btn-action">
+                <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> delete </mat-icon>
+                Xóa
+              </button>
+            </ng-template>
           </mat-menu>
         </td>
       </ng-container>

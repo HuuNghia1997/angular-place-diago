@@ -15,6 +15,7 @@ import { DeleteProcessComponent } from '../../dialog/delete-process/delete-proce
 import { ShowProcessComponent } from '../../dialog/show-process/show-process.component';
 import { ApplyProcessComponent } from '../../dialog/apply-process/apply-process.component';
 import { UnapplyProcessComponent } from '../../dialog/unapply-process/unapply-process.component';
+import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
 
 @Component({
   selector: 'app-list-config-petition',
@@ -41,12 +42,25 @@ export class ListConfigPetitionComponent implements OnInit {
   topicList: string[] = ['Giáo dục', 'Y tế', 'Cơ sở hạ tầng', 'Môi trường', 'Trật tự đô thị'];
   pageSizes = pageSizeOptions;
 
-  constructor(private dialog: MatDialog) {
+  constructor(private dialog: MatDialog,
+              private service: ConfigPetitionService) {
   }
 
   ngOnInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+  }
+
+  deleteProcess(id, name): void {
+    this.service.deleteProcess(id, name);
+  }
+
+  unApplyProcess(id, name): void {
+    this.service.unApplyProcess(id, name);
+  }
+
+  applyProcess(id, name): void {
+    this.service.applyProcess(id, name);
   }
 
   openDialogAddProcess() {
@@ -68,35 +82,8 @@ export class ListConfigPetitionComponent implements OnInit {
     });
   }
 
-  openDialogDeleteProcess() {
-    const dialogRef = this.dialog.open(DeleteProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
-  }
-
   openDialogShowProcess() {
     const dialogRef = this.dialog.open(ShowProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
-  }
-
-  openDialogApplyProcess() {
-    const dialogRef = this.dialog.open(ApplyProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
-  }
-
-  openDialogUnapplyProcess() {
-    const dialogRef = this.dialog.open(UnapplyProcessComponent, {
       width: '80%'
     });
     dialogRef.afterClosed().subscribe(result => {

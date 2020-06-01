@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-draw-process',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DrawProcessComponent implements OnInit {
 
-  constructor() { }
+  constructor(public dialogRef: MatDialogRef<DrawProcessComponent>) { }
 
   ngOnInit(): void {
+  }
+
+  onDismiss(): void {
+    // Close dialog, return false
+    this.dialogRef.close();
   }
 
 }

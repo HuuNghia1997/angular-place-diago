@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddProcessComponent } from '../../dialog/add-process/add-process.component';
 import { UpdateProcessComponent } from '../../dialog/update-process/update-process.component';
 import { DeleteProcessComponent } from '../../dialog/delete-process/delete-process.component';
+import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
 
 @Component({
   selector: 'app-detail-config-petition',
@@ -18,7 +19,8 @@ export class DetailConfigPetitionComponent implements OnInit {
   status: number;
 
   constructor(private actRoute: ActivatedRoute,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private service: ConfigPetitionService) {
     this.configPetitionId = this.actRoute.snapshot.params.id;
     this.getConfigPetition(this.configPetitionId);
     this.status = this.getState(this.configPetition.status);
@@ -66,12 +68,15 @@ export class DetailConfigPetitionComponent implements OnInit {
     });
   }
 
-  openDialogDeleteProcess() {
-    const dialogRef = this.dialog.open(DeleteProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
+  deleteProcess(id, name): void {
+    this.service.deleteProcess(id, name);
+  }
+
+  unApplyProcess(id, name): void {
+    this.service.unApplyProcess(id, name);
+  }
+
+  applyProcess(id, name): void {
+    this.service.applyProcess(id, name);
   }
 }
