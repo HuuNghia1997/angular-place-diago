@@ -1,0 +1,12 @@
+<mat-expansion-panel id="sidebar_menu" *ngFor='let m of sidebarMenu; let i = index' [expanded]="m.code === position">
+  <mat-expansion-panel-header [collapsedHeight]="'20px'" [expandedHeight]="'20px'">
+    <mat-panel-title>
+      <mat-icon>{{m.icon}}</mat-icon> {{ m.mainMenu }}
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <a id="submenu" mat-button *ngFor='let submenu of m.listSubMenu' class="submenu_notification_{{i}}" routerLink="{{submenu.route}}">
+    {{ submenu.title }}
+  </a>
+</mat-expansion-panel>
+
+

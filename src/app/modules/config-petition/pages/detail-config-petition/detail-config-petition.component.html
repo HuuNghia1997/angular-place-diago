@@ -1,0 +1,144 @@
+<!--  Title  -->
+<mat-toolbar class="title">
+  <mat-toolbar-row>
+    <h6 class="name-page"> Chi tiết quy trình </h6>
+    <button mat-button class="btn-add" (click)="openDialogAddProcess()">
+      <mat-icon> add </mat-icon>
+      Thêm mới
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="container">
+  <mat-card>
+    <mat-card-title>
+      {{ configPetition.title }}
+    </mat-card-title>
+
+    <div class="button-action">
+      <!-- Btn cập nhật -->
+      <button mat-button class="fs-13" (click)="openDialogUpdateProcess()">
+        <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
+        Cập nhật
+      </button>
+
+      <!-- Btn xóa -->
+      <button mat-button class="fs-13 ml-1" (click)="openDialogDeleteProcess()">
+        <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
+        Xóa
+      </button>
+
+      <!-- Btn áp dụng -->
+      <div *ngIf="status == 0; then receivedBlock else elseBlock"></div>
+      <ng-template #receivedBlock>
+        <button mat-button class="ml-1 fs-13">
+          <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
+          Áp dụng
+        </button>
+      </ng-template>
+      <ng-template #elseBlock>
+        <span *ngIf="status == 1">
+          <button mat-button class="ml-1 fs-13">
+            <mat-icon fontSet="material-icons-outlined"> highlight_off </mat-icon>
+            Hủy áp dụng
+          </button>
+        </span>
+      </ng-template>
+    </div> <!-- div button-action -->
+
+    <table class="table-content">
+      <tr>
+        <td class="col-1-content">
+          <h4> Thông tin quy trình </h4>
+          <table class="table-info-config-petition">
+            <tr>
+              <td class="td-1 w-25"> Trạng thái: </td>
+              <td class="td-2">
+                <span [ngClass]="(configPetition.status === 'Chưa áp dụng' ? 'status_unapply' :
+                                    (configPetition.status === 'Đã áp dụng' ? 'status_applied' : ''))">
+                  {{ configPetition.status }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-1 w-25"> Chuyên mục: </td>
+              <td class="td-2">
+                <span class="topic"> {{ configPetition.topic }} </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-1 w-25"> Mã quy trình: </td>
+              <td class="td-2"> quy-trinh-mau2 </td>
+            </tr>
+          </table>
+
+          <!-- Quy trình -->
+          <h4 class="mt-2"> Quy trình </h4>
+          <div class="card-container">
+            <img src="../../../../../assets/img/sample_process.png" alt="" class="image-process">
+          </div>
+
+          <!-- Hoạt động -->
+          <h4 class="mt-2"> Hoạt động </h4>
+          <mat-tab-group>
+            <mat-tab label="Lịch sử">
+              <mat-card class="card-history">
+                <mat-card-subtitle>
+                  <span class="name-user"> Nguyễn Văn A </span>
+                  <span class="action"> &nbsp;đã thay đổi - 14/12/2019 16:00:00 </span>
+                  <table class="mt-05">
+                    <tr class="fw-500">
+                      <td class="width-19 action"> Trường </td>
+                      <td class="width-39 action"> Giá trị cũ </td>
+                      <td class="width-39 action"> Giá trị mới </td>
+                    </tr>
+                    <tr>
+                      <td class="width-19 action"> Đơn vị áp dụng </td>
+                      <td class="width-39 action"> UBND tỉnh Tiền Giang </td>
+                      <td class="width-39 action"> Tỉnh Tiền Giang </td>
+                    </tr>
+                  </table>
+                  <mat-divider></mat-divider>
+                </mat-card-subtitle>
+                <mat-card-subtitle>
+                  <span class="name-user"> Nguyễn Văn A </span>
+                  <span class="action"> &nbsp;đã thay đổi - 14/12/2019 16:00:00 </span>
+                  <table class="mt-05">
+                    <tr class="fw-500">
+                      <td class="width-19 action"> Trường </td>
+                      <td class="width-39 action"> Giá trị cũ </td>
+                      <td class="width-39 action"> Giá trị mới </td>
+                    </tr>
+                    <tr>
+                      <td class="width-19 action"> Quy trình </td>
+                      <td class="width-39 action"> quy-trinh-mau </td>
+                      <td class="width-39 action"> quy-trinh-mau2 </td>
+                    </tr>
+                  </table>
+                </mat-card-subtitle>
+              </mat-card>
+            </mat-tab>
+          </mat-tab-group>
+        </td> <!-- col-1-content -->
+
+        <td class="col-2-content"></td> <!-- col-2-content -->
+
+        <td class="col-3-content">
+          <h4> &nbsp;</h4>
+          <table class="table-date-create">
+            <tr>
+              <td class="td-1"> Ngày tạo: </td>
+              <td class="td-2"> 23/10/2019 15:00:00 </td>
+            </tr>
+            <tr>
+              <td class="fw-500"> Đơn vị áp dụng </td>
+            </tr>
+          </table>
+          <div>
+            <span class="btn-agency"> Tỉnh Tiền Giang </span>
+          </div>
+        </td> <!-- col-3-content -->
+      </tr>
+    </table> <!-- div table-content -->
+  </mat-card>
+</div> <!-- div container -->

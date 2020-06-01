@@ -1,0 +1,48 @@
+#sidebar_menu {
+  margin-top: 1em;
+  box-shadow: unset;
+  background-color: transparent;
+}
+
+#sidebar_menu mat-panel-title {
+  color: #fff;
+}
+
+::ng-deep #sidebar_menu .mat-expansion-indicator::after {
+  color: #fff;
+}
+
+::ng-deep #sidebar_menu .mat-expansion-indicator {
+  padding-bottom: .5em;
+}
+
+::ng-deep #sidebar_menu .mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+::ng-deep #sidebar_menu #submenu {
+  padding: 0 0 0 2.3em;
+  width: 100%;
+  text-align: left;
+}
+
+::ng-deep #sidebar_menu a{
+  color: #fff;
+}
+
+#sidebar_menu mat-icon {
+  font-size: 18px;
+}
+
+#sidebar_menu mat-expansion-panel-header {
+  padding: .6em;
+}
+
+.mt-2 {
+  margin-top: 2em;
+}
+
+.padding-home {
+  padding: .6em;
+  font-size: 15px;
+}

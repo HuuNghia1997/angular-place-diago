@@ -1,0 +1,25 @@
+<div mat-dialog-title class="fw-500">
+  Áp dụng quy trình
+</div>
+
+<mat-horizontal-stepper [linear]="isLinear" #stepper labelPosition="bottom" class="mt-1 ml-1">
+  <mat-step>
+    <p>
+      Cần chọn khách hàng trước khi áp dụng quy trình
+    </p>
+    <mat-dialog-actions align="center">
+      <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Hủy bỏ </button>
+      <button mat-button class="btn-save" matStepperNext> Cập nhật </button>
+    </mat-dialog-actions>
+  </mat-step>
+
+  <mat-step>
+    <p>
+      Áp dụng <b> Quy trình xử lý phản ánh chung toàn tỉnh </b> làm quy trình xử lý
+    </p>
+    <mat-dialog-actions align="center">
+      <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Đóng </button>
+      <button mat-button class="btn-save"> Đồng ý </button>
+    </mat-dialog-actions>
+  </mat-step>
+</mat-horizontal-stepper>

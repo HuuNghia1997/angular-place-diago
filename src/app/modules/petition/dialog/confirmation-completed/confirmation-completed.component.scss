@@ -1,0 +1,41 @@
+
+.fw-500 {
+  font-weight: 500;
+}
+
+::ng-deep .mat-horizontal-stepper-header-container {
+  display: none !important;
+}
+
+.pt-3 {
+  padding-top: 3%;
+}
+
+.align-right {
+  float: right;
+}
+
+.btn-update {
+  color: #ffffff;
+  background-color: #1976D2;
+}
+
+.btn-cancel {
+  border: 1px solid #333333;
+}
+
+.radio_checked {
+  padding-left: 2.5em;
+}
+
+.display-none {
+  display: none;
+}
+
+.display {
+  margin-left: 2.5em;
+}
+
+.mt-1 {
+  margin-top: -1em;
+}
