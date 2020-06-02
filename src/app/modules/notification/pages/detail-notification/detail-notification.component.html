@@ -1,10 +1,13 @@
-<div class="head">
-  <h2 id="title"> Chi tiết thông báo </h2>
-  <button mat-raised-button (click)="addRecord()">
-    <mat-icon> add </mat-icon>
-    Thêm mới
-  </button>
-</div>
+<mat-toolbar class="title-bar">
+  <mat-toolbar-row>
+    <h6 class="name-page"> Chi tiết thông báo </h6>
+    <button mat-button class="btn-add" (click)="addRecord()">
+      <mat-icon> add </mat-icon>
+      Thêm mới
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
 <div class="main-wrapper mat-elevation-z4">
   <h2 id="title" class="mb-1"> {{ notificationTitle }}</h2>
   <div class="mb-2">

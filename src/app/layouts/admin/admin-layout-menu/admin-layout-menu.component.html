@@ -1,12 +1,18 @@
-<mat-expansion-panel id="sidebar_menu" *ngFor='let m of sidebarMenu; let i = index' [expanded]="m.code === position">
+<mat-expansion-panel id="sidebar_menu" cdkDrag
+                    (opened)="panelOpenState = false"
+                    (closed)="panelOpenState = true"
+                    *ngFor='let m of sidebarMenu; let i = index'
+                    [expanded]="true">
   <mat-expansion-panel-header [collapsedHeight]="'20px'" [expandedHeight]="'20px'">
     <mat-panel-title>
-      <mat-icon>{{m.icon}}</mat-icon> {{ m.mainMenu }}
+      <mat-icon> {{ m.icon }} </mat-icon>
+      {{ m.mainMenu }}
     </mat-panel-title>
   </mat-expansion-panel-header>
-  <a id="submenu" mat-button *ngFor='let submenu of m.listSubMenu' class="submenu_notification_{{i}}" routerLink="{{submenu.route}}">
-    {{ submenu.title }}
-  </a>
+  <span *ngFor='let submenu of m.listSubMenu; let j = index'>
+    <a id="submenu" mat-button routerLinkActive="active" class="submenu_notification_{{i}}_{{j}}"
+        routerLink="{{submenu.route}}">
+      {{ submenu.title }}
+    </a>
+  </span>
 </mat-expansion-panel>
-
-

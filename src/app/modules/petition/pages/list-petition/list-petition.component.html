@@ -110,10 +110,10 @@
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Trạng thái </th>
         <td mat-cell *matCellDef="let element">
-          <button [ngClass]="(element.status === 'Chờ nhận xử lý' ? 'btn-wait-get-process' :
+          <span [ngClass]="(element.status === 'Chờ nhận xử lý' ? 'btn-wait-get-process' :
                   (element.status === 'Chờ xử lý' ? 'btn-wait-process' : 'btn-processed'))">
             {{ element.status }}
-          </button>
+          </span>
         </td>
       </ng-container>
 

@@ -69,7 +69,7 @@ export class ConfigPetitionService {
   }
 
   applyProcess(id, name): void {
-    const dialogData = new ConfirmApplyDialogModel('Hủy áp dụng quy trình', name, id);
+    const dialogData = new ConfirmApplyDialogModel('Áp dụng quy trình', name, id);
     const dialogRef = this.dialog.open(ApplyProcessComponent, {
       width: '80%',
       data: dialogData,

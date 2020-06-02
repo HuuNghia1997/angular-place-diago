@@ -132,7 +132,9 @@
             </tr>
           </table>
           <div>
-            <span class="btn-agency"> Tỉnh Tiền Giang </span>
+            <span [ngClass]="configPetition.agency !== '' ? 'btn-agency' : ''" >
+              {{ configPetition.agency }}
+            </span>
           </div>
         </td> <!-- col-3-content -->
       </tr>

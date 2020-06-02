@@ -1,8 +1,5 @@
-<div mat-dialog-title class="fw-500">
-  Cập nhật quy trình
-</div>
-
-<div mat-dialog-content class="mt-1">
+<div mat-dialog-content>
+  <h3 mat-dialog-title class="fw-500"> Cập nhật quy trình </h3>
   <form [formGroup]="updateForm">
     <!-- Tiêu đề -->
     <mat-form-field appearance="outline" class="input-full-width">
@@ -36,7 +33,7 @@
           Nhập mã quy trình
           <mat-form-field appearance="outline" class="input-1-4-width mt-3">
             <mat-label> Chọn quy trình </mat-label>
-            <mat-select multiple [formControl]="process">
+            <mat-select [formControl]="process">
               <mat-option *ngFor="let pro of processList" [value]="pro"> {{ pro }} </mat-option>
             </mat-select>
           </mat-form-field>
@@ -46,10 +43,10 @@
       </div>
     </div>
   </form>
-</div>
 
-<mat-dialog-actions align="center">
-  <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Đóng </button>
-  <button mat-button class="btn-cancel"> Lưu và Áp dụng </button>
-  <button mat-button class="btn-save"> Lưu lại </button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="center">
+    <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Đóng </button>
+    <button mat-button class="btn-cancel"> Lưu và Áp dụng </button>
+    <button mat-button class="btn-save"> Lưu lại </button>
+  </mat-dialog-actions>
+</div>

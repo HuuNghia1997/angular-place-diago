@@ -1,17 +1,18 @@
-.head {
-  display: flex;
-  align-self: center;
+.title-bar {
+  font-weight: bold;
+  background-color: #F5F8FF;
 }
 
-.head button {
+.btn-add {
   margin-left: 2em;
   background-color: #388E3C;
   color: #fff;
   height: 36px;
 }
 
-::ng-deep #sidebar_menu .submenu_notification_0 {
-  background-color: rgba(255, 255, 255, 0.3);
+.name-page {
+  margin-left: -0.5em;
+  font-weight: 500;
 }
 
 #title {
@@ -24,7 +25,6 @@
   background-color: #fff;
   width: 98%;
   padding: 1em;
-  margin-top: 1em;
 }
 
 .notification_content {

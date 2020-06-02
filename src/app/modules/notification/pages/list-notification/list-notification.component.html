@@ -1,10 +1,13 @@
-<div class="head">
-  <h2 id="title"> Danh sách thông báo </h2>
-  <button mat-raised-button (click)="addRecord()">
-    <mat-icon> add </mat-icon>
-    Thêm mới
-  </button>
-</div>
+<mat-toolbar class="title-bar">
+  <mat-toolbar-row>
+    <h6 class="name-page"> Danh sách thông báo </h6>
+    <button mat-button class="btn-add" (click)="addRecord()">
+      <mat-icon> add </mat-icon>
+      Thêm mới
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
 <div id="search">
   <mat-accordion>
     <mat-expansion-panel class="mat-elevation-z4">

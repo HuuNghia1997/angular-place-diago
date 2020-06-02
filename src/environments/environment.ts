@@ -25,8 +25,8 @@ export const environment = {
   apiProviders: [
     {
       name: 'digo-microservice',
-      // rootUrl: 'http://digo-api.vnptioffice.vn/',
-      rootUrl: 'https://digo-api.vnptigate.vn/',
+      rootUrl: 'http://digo-api.vnptioffice.vn/',
+      // rootUrl: 'https://digo-api.vnptigate.vn/',
       services: [
         {
           name: 'basedata',

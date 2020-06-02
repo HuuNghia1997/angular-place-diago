@@ -238,11 +238,11 @@ export class AddNotificationComponent implements OnInit {
 
   // Xoá file
   removeItem(index: number) {
-      this.urls.splice(index, 1);
-      this.fileNames.splice(index, 1);
-      this.fileNamesFull.splice(index, 1);
-      this.files.splice(index, 1);
-      this.blankVal = '';
+    this.urls.splice(index, 1);
+    this.fileNames.splice(index, 1);
+    this.fileNamesFull.splice(index, 1);
+    this.files.splice(index, 1);
+    this.blankVal = '';
   }
 
 }

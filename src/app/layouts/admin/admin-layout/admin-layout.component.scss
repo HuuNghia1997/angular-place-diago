@@ -10,9 +10,13 @@
 
 .main-sidenav-container mat-sidenav {
   background-color: rgba($color: #3C8DBC, $alpha: 0.8);
-  padding: .8em 1em;
+  padding: .5em .5em;
   color: #fff;
   border: unset;
+}
+
+mat-sidenav {
+  width: 260px;
 }
 
 .main-sidenav-container mat-sidenav-content {
@@ -24,7 +28,7 @@
 }
 
 .logo_img {
-  background-image: url(../../../../assets/logo/HCC.png);;
+  background-image: url(../../../../assets/logo/HCC.png);
   background-size: 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -73,6 +77,7 @@ h1.main-app-name {
   border: none;
   border-radius: 2px;
   border-right: 1px solid #BDBDBD;
+  text-transform: uppercase;
 }
 
 .btn-language {

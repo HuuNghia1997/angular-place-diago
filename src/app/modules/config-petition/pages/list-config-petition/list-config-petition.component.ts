@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { PICK_FORMATS, pageSizeOptions } from 'src/app/data/service/config.service';
@@ -11,10 +11,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { AddProcessComponent } from '../../dialog/add-process/add-process.component';
 import { UpdateProcessComponent } from '../../dialog/update-process/update-process.component';
-import { DeleteProcessComponent } from '../../dialog/delete-process/delete-process.component';
 import { ShowProcessComponent } from '../../dialog/show-process/show-process.component';
-import { ApplyProcessComponent } from '../../dialog/apply-process/apply-process.component';
-import { UnapplyProcessComponent } from '../../dialog/unapply-process/unapply-process.component';
 import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
 
 @Component({

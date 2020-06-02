@@ -107,10 +107,10 @@
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Trạng thái </th>
         <td mat-cell *matCellDef="let element">
-          <button [ngClass]="(element.status === 'Đã áp dụng' ? 'btn-applied' :
+          <span [ngClass]="(element.status === 'Đã áp dụng' ? 'btn-applied' :
                   (element.status === 'Chưa áp dụng' ? 'btn-none-apply' : 'btn-cancel-apply'))">
             {{ element.status }}
-          </button>
+          </span>
         </td>
       </ng-container>
 

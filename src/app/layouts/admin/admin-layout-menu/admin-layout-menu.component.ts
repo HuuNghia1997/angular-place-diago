@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MENU_DATA } from 'src/app/data/schema/menu';
 
 @Component({
   selector: 'app-admin-layout-menu',
@@ -8,34 +9,8 @@ import { Component, OnInit } from '@angular/core';
 export class AdminLayoutMenuComponent implements OnInit {
 
   position: string;
-  sidebarMenu = [
-    {
-      mainMenu: 'Cổng thông tin',
-      icon: 'file_copy',
-      code: 'notifications',
-      listSubMenu: [
-        {
-          title: 'Quản trị thông báo',
-          route: '/notification'
-        }
-      ]
-    },
-    {
-      mainMenu: 'Phản ánh',
-      icon: 'file_copy',
-      code: 'petitions',
-      listSubMenu: [
-        {
-          title: 'Tất cả phản ánh',
-          route: '/petition'
-        },
-        {
-          title: 'Cấu hình phản ánh',
-          route: '/config-petition'
-        }
-      ]
-    }
-  ];
+  sidebarMenu = MENU_DATA;
+  panelOpenState = true;
 
   constructor() { }
 
@@ -47,5 +22,4 @@ export class AdminLayoutMenuComponent implements OnInit {
     const path = window.location.pathname;
     this.position = path.split('/', 2)[1];
   }
-
 }

@@ -3,6 +3,7 @@ import { MediaMatcher } from '@angular/cdk/layout';
 import { KeycloakService } from 'keycloak-angular';
 import { UserService } from 'src/app/data/service/user.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { LANGUAGE_DATA } from 'src/app/data/schema/language';
 
 @Component({
   selector: 'app-admin-layout',
@@ -13,11 +14,11 @@ export class AdminLayoutComponent implements OnInit {
 
   title = 'CHÍNH QUYỀN SỐ';
   yourAgency = 'UBND Huyện Cái Bè';
-  langSelected = 'VI';
-  langIcon = 'VI.png';
   nickname: string;
   avatar: any;
   mobileQuery: MediaQueryList;
+  language = LANGUAGE_DATA;
+  langSelected = LANGUAGE_DATA[0];
   private mobileQueryListener: () => void;
 
   protected keycloakService: KeycloakService;
@@ -48,14 +49,12 @@ export class AdminLayoutComponent implements OnInit {
     this.mobileQuery.removeListener(this.mobileQueryListener);
   }
 
-  changeEngLang() {
-    this.langSelected = 'EN';
-    this.langIcon = 'EN.png';
-  }
-
-  changeViLang() {
-    this.langSelected = 'VI';
-    this.langIcon = 'VI.png';
+  changeLanguage(id) {
+    LANGUAGE_DATA.forEach(element => {
+      if (element.id === id) {
+        this.langSelected = element;
+      }
+    });
   }
 
   getUser() {

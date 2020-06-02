@@ -1,9 +1,5 @@
-<div mat-dialog-title class="fw-500">
-  Cập nhật phản ánh
-</div>
-<!-- Title dialog -->
-
-<div mat-dialog-content class="mt-1">
+<div mat-dialog-content>
+  <h3 mat-dialog-title> Cập nhật phản ánh </h3>
   <form>
     <h4 class="fs-14 fw-500"> Thông tin phản ánh </h4>
     <!-- Tiêu đề -->
@@ -117,10 +113,9 @@
     <!-- Công khai -->
     <mat-slide-toggle checked="checked" color="primary"> Công khai </mat-slide-toggle>
   </form>
-</div>
-<!-- Content dialog -->
 
-<mat-dialog-actions align="center">
-  <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Hủy bỏ </button>
-  <button mat-button class="btn-update"> Cập nhật </button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="center">
+    <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Hủy bỏ </button>
+    <button mat-button class="btn-update"> Cập nhật </button>
+  </mat-dialog-actions>
+</div> <!-- Content dialog -->

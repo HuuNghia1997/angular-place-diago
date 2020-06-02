@@ -2,8 +2,8 @@
   <mat-sidenav-container class="main-sidenav-container">
     <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" [opened]="true">
       <div class="site_logo">
-          <div class="logo_img"></div>
-          <span class="site_name"> {{ title }} </span>
+        <div class="logo_img"></div>
+        <span class="site_name"> {{ title }} </span>
       </div>
 
       <!-- menu -->
@@ -24,21 +24,20 @@
 
           <!-- Language -->
           <button mat-button [matMenuTriggerFor]="menu" class="mat-icon-arrow-down">
-            <img src="./assets/icon/{{ langIcon }}">
-            {{ langSelected }}
+            <img src="{{ langSelected.urlsIcon }}">
+            {{ langSelected.value }}
             <mat-icon> arrow_drop_down </mat-icon>
           </button>
 
           <mat-menu #menu="matMenu" xPosition="before">
-            <button mat-button class="btn-language" value="VI" (click)="changeViLang()">
-              <img src="./assets/icon/VI.png">
-              Tiếng Việt (VI)
-            </button>
-
-            <button mat-button class="btn-language" value="EN" (click)="changeEngLang()">
-              <img src="./assets/icon/EN.png">
-              Tiếng Anh (EN)
-            </button>
+            <div *ngFor='let lang of language'>
+              <button mat-button class="btn-language" (click)="changeLanguage(lang.id)">
+                <img src="{{ lang.urlsIcon }}">
+                {{ lang.lang }} (
+                <span style="text-transform: uppercase"> {{ lang.value }} </span>
+                )
+              </button>
+            </div>
           </mat-menu>
 
           <!-- Account -->
