@@ -20,7 +20,7 @@ export const MENU_DATA: Menu[] = [
       {
         title: 'Quản trị thông báo',
         route: 'notification',
-        role: ''
+        role: 'ACTIVITI_ADMIN'
       }
     ]
   },
