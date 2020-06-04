@@ -1,18 +1,23 @@
-<mat-expansion-panel id="sidebar_menu" cdkDrag
-                    (opened)="panelOpenState = false"
-                    (closed)="panelOpenState = true"
-                    *ngFor='let m of sidebarMenu; let i = index'
-                    [expanded]="true">
-  <mat-expansion-panel-header [collapsedHeight]="'20px'" [expandedHeight]="'20px'">
-    <mat-panel-title>
-      <mat-icon> {{ m.icon }} </mat-icon>
-      {{ m.mainMenu }}
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-  <span *ngFor='let submenu of m.listSubMenu; let j = index'>
-    <a id="submenu" mat-button routerLinkActive="active" class="submenu_notification_{{i}}_{{j}}"
-        routerLink="{{submenu.route}}">
-      {{ submenu.title }}
-    </a>
-  </span>
-</mat-expansion-panel>
+<mat-accordion [multi]="true">
+  <mat-expansion-panel id="sidebar_menu"
+                      *ngFor='let m of sidebarMenu; let i = index;'
+                      [expanded]="m.code === position || m.listSubMenu[i].route === position"
+                      [ngClass]="countAvailableMenu[i] === 0 ? 'display-none' : ''">
+    <mat-expansion-panel-header [collapsedHeight]="'20px'" [expandedHeight]="'20px'">
+      <mat-panel-title>
+        <mat-icon> {{ m.icon }} </mat-icon>
+        {{ m.mainMenu }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <span *ngFor='let submenu of m.listSubMenu; let j = index'>
+      <span *ngFor='let role of roleUser'>
+        <a id="submenu" mat-button
+                        [ngClass]="submenu.role === role ? '' : 'display-none'"
+                        routerLinkActive="active"
+                        routerLink="/{{ submenu.route }}">
+          {{ submenu.title }}
+        </a>
+      </span>
+    </span>
+  </mat-expansion-panel>
+</mat-accordion>

@@ -8,32 +8,36 @@ export interface Menu {
 export interface ListSubmenu {
   title: string;
   route: string;
+  role: string;
 }
 
 export const MENU_DATA: Menu[] = [
   {
     mainMenu: 'Cổng thông tin',
     icon: 'file_copy',
-    code: 'notifications',
+    code: 'notification',
     listSubMenu: [
       {
         title: 'Quản trị thông báo',
-        route: '/notification'
+        route: 'notification',
+        role: ''
       }
     ]
   },
   {
     mainMenu: 'Phản ánh',
     icon: 'file_copy',
-    code: 'petitions',
+    code: 'petition',
     listSubMenu: [
       {
         title: 'Tất cả phản ánh',
-        route: '/petition'
+        route: 'petition',
+        role: 'ACTIVITI_ADMIN'
       },
       {
         title: 'Cấu hình phản ánh',
-        route: '/config-petition'
+        route: 'config-petition',
+        role: 'ACTIVITI_ADMIN'
       }
     ]
   }

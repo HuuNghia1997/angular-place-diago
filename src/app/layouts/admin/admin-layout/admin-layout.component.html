@@ -1,25 +1,26 @@
 <div class="main-container" [class.main-is-mobile]="mobileQuery.matches">
   <mat-sidenav-container class="main-sidenav-container">
-    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'" [fixedInViewport]="mobileQuery.matches" [opened]="true">
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'"
+                 [fixedInViewport]="mobileQuery.matches" [opened]="true">
       <div class="site_logo">
         <div class="logo_img"></div>
         <span class="site_name"> {{ title }} </span>
       </div>
 
       <!-- menu -->
-      <app-admin-layout-menu></app-admin-layout-menu>
+      <app-admin-layout-menu *ngIf="isLoggedIn"></app-admin-layout-menu>
     </mat-sidenav>
 
     <mat-sidenav-content>
       <mat-toolbar class="main-toolbar">
         <mat-toolbar-row>
           <!-- Show/hide menu -->
-          <button mat-icon-button (click)="snav.toggle()">
+          <button mat-icon-button (click)="snav.toggle()" *ngIf="isLoggedIn">
             <mat-icon> menu </mat-icon>
           </button>
 
           <!-- Your agency -->
-          <h1 class="main-app-name"> {{ yourAgency }} </h1>
+          <h1 class="main-app-name" *ngIf="isLoggedIn"> {{ yourAgency }} </h1>
           <span class="toolbar-spacer"></span>
 
           <!-- Language -->
