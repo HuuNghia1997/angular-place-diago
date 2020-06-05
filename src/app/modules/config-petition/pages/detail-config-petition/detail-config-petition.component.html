@@ -52,7 +52,8 @@
             <tr>
               <td class="td-1 w-25"> Trạng thái: </td>
               <td class="td-2">
-                <span [ngClass]="(configPetition.status === 'Đã áp dụng' ? 'status_applied' : 'status_unapply' )">
+                <span [ngClass]="(configPetition.status === 'Đã áp dụng' ? 'status_applied' :
+                                  (configPetition.status === 'Chưa áp dụng' ? 'status_unapply' : 'status_cancel'))">
                   {{ configPetition.status }}
                 </span>
               </td>

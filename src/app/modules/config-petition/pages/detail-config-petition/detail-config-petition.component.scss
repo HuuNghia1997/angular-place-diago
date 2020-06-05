@@ -178,6 +178,16 @@ mat-tree-node {
 .status_unapply {
   color: #fff;
   padding: .2em .5em .2em .5em;
+  background-color: #377DCD;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-top: -0.2em;
+  font-weight: 500;
+}
+
+.status_cancel {
+  color: #fff;
+  padding: .2em .5em .2em .5em;
   background-color: #A6A6A6;
   font-size: 14px;
   border-radius: 5px;
