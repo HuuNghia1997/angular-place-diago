@@ -1,7 +1,6 @@
 import { Observable, from } from 'rxjs';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PopupService } from 'src/app/data/service/popup.service';
 import { MatDialog } from '@angular/material/dialog';
 import { reloadTimeout, pageSizeOptions } from 'src/app/data/service/config.service';
 import { ListNotificationComponent } from 'src/app/modules/notification/pages/list-notification/list-notification.component';
@@ -23,13 +22,14 @@ import {
   SendNotificationComponent
 } from 'src/app/modules/notification/dialog/send-notification/send-notification.component';
 import { ApiProviderService } from 'src/app/core/service/api-provider.service';
+import { SnackbarService } from './snackbar.service';
 
 
 @Injectable()
 export class NotificationService {
 
   constructor(private http: HttpClient,
-              private main: PopupService,
+              private main: SnackbarService,
               private dialog: MatDialog,
               private apiProviderService: ApiProviderService) { }
   public getTags = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';

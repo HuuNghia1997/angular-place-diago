@@ -30,7 +30,7 @@ export const MENU_DATA: Menu[] = [
     code: 'petition',
     listSubMenu: [
       {
-        title: 'Tất cả phản ánh',
+        title: 'Xử lý phản ánh',
         route: 'petition',
         role: 'ACTIVITI_ADMIN'
       },

@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CustomPopupComponent } from 'src/app/shared/components/custom-popup/custom-popup.component';
+import { CustomSnackbarComponent } from 'src/app/shared/components/custom-snackbar/custom-snackbar.component';
 
 @Injectable({
     providedIn: 'root'
 })
-export class PopupService {
+export class SnackbarService {
 
   constructor(private snackBar: MatSnackBar) { }
 
   openSnackBar(message: string, content: string, result: string, reason: string, panelClass: string) {
-    this.snackBar.openFromComponent(CustomPopupComponent, {
+    this.snackBar.openFromComponent(CustomSnackbarComponent, {
       data: {
         ms: message + '<b> ' + content + '</b> ' + result + reason
       },

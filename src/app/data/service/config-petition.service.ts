@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PopupService } from './popup.service';
 import {
   ConfirmDeleteDialogModel,
   DeleteProcessComponent
@@ -13,6 +12,7 @@ import {
   ApplyProcessComponent,
   ConfirmApplyDialogModel
 } from 'src/app/modules/config-petition/dialog/apply-process/apply-process.component';
+import { SnackbarService } from './snackbar.service';
 
 @Injectable()
 export class ConfigPetitionService {
@@ -20,7 +20,7 @@ export class ConfigPetitionService {
   result: boolean;
 
   constructor(private dialog: MatDialog,
-              private main: PopupService) { }
+              private main: SnackbarService) { }
 
   deleteProcess(id, name): void {
     const dialogData = new ConfirmDeleteDialogModel('Xóa quy trình', name, id);

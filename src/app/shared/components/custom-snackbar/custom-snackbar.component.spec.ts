@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CustomPopupComponent } from './custom-popup.component';
+import { CustomSnackbarComponent } from './custom-snackbar.component';
 
-describe('CustomPopupComponent', () => {
-  let component: CustomPopupComponent;
-  let fixture: ComponentFixture<CustomPopupComponent>;
+describe('CustomSnackbarComponent', () => {
+  let component: CustomSnackbarComponent;
+  let fixture: ComponentFixture<CustomSnackbarComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CustomPopupComponent ]
+      declarations: [ CustomSnackbarComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CustomPopupComponent);
+    fixture = TestBed.createComponent(CustomSnackbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

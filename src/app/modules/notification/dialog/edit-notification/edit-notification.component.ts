@@ -4,12 +4,12 @@ import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { NotificationService } from 'src/app/data/service/notification.service';
-import { PopupService } from 'src/app/data/service/popup.service';
 import { PICK_FORMATS, notificationCategoryId } from 'src/app/data/service/config.service';
 import { ImageInfo } from 'src/app/data/schema/image-info';
 import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
+import { SnackbarService } from 'src/app/data/service/snackbar.service';
 
 @Component({
   selector: 'app-edit-notification',
@@ -48,7 +48,7 @@ export class EditNotificationComponent implements OnInit {
               public datepipe: DatePipe,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateDialogModel,
               private imageCompress: NgxImageCompressService,
-              private main: PopupService) {
+              private main: SnackbarService) {
     this.popupTitle = data.title;
     this.notificationId = data.id;
     this.accountId = localStorage.getItem('USER_INFO_ID');
