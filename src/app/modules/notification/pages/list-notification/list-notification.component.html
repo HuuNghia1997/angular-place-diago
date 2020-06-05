@@ -25,10 +25,19 @@
         </mat-form-field>
 
         <!--Chuyên mục-->
-        <mat-form-field class="input-half-width ml-1" appearance="outline">
+        <mat-form-field class="input-1-4-width ml-1" appearance="outline">
           <mat-label> Chuyên mục </mat-label>
           <mat-select formControlName="tag" multiple>
             <mat-option *ngFor='let tag of listTags;' value="{{tag.id}}"> {{ tag.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Người nhận -->
+        <mat-form-field class="input-1-4-width ml-1" appearance="outline">
+          <mat-label> Người nhận </mat-label>
+          <mat-select formControlName="receiver" multiple>
+            <mat-option value="0"> Tất cả </mat-option>
+            <mat-option value="1"> Trần Văn A </mat-option>
           </mat-select>
         </mat-form-field>
 
@@ -102,6 +111,12 @@
             {{ tag.name }} {{ i === element.tag.length -1 ? '' : ',' }}
           </span>
         </td>
+      </ng-container>
+
+      <!-- Người nhận -->
+      <ng-container matColumnDef="receiver">
+        <th mat-header-cell *matHeaderCellDef> Người nhận </th>
+        <td mat-cell *matCellDef="let element"></td>
       </ng-container>
 
       <!-- Ngày tạo -->

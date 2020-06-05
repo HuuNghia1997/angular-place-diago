@@ -23,7 +23,7 @@ import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 })
 export class ListNotificationComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['stt', 'title', 'agency', 'catalogy', 'created_at', 'status', 'endDate', 'options'];
+  displayedColumns: string[] = ['stt', 'title', 'agency', 'catalogy', 'receiver', 'created_at', 'status', 'endDate', 'options'];
   ELEMENTDATA: PeriodicElement[] = [];
   dataSource: MatTableDataSource<PeriodicElement>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -41,7 +41,8 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
     agency: new FormControl(''),
     publish: new FormControl(''),
     startDate: new FormControl(''),
-    endDate: new FormControl('')
+    endDate: new FormControl(''),
+    receiver: new FormControl('')
   });
 
   listTags = [];

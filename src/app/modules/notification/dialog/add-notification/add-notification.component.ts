@@ -49,6 +49,7 @@ export class AddNotificationComponent implements OnInit {
     tag: new FormControl(''),
     expiredDate: new FormControl(''),
     publish: new FormControl(''),
+    receiver: new FormControl('')
   });
   title = new FormControl('', [Validators.required, Validators.pattern(this.reg)]);
   content = new FormControl('', [Validators.required, Validators.pattern(this.reg)]);

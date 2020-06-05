@@ -39,6 +39,15 @@
     </mat-select>
   </mat-form-field>
 
+  <!-- Người nhận -->
+  <mat-form-field class="input-full-width" appearance="outline">
+    <mat-label> Người nhận </mat-label>
+    <mat-select formControlName="receiver" multiple>
+        <mat-option value="0"> Tất cả </mat-option>
+        <mat-option value="1"> Trần Văn A </mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <!-- Slide toggle -->
   <mat-slide-toggle formControlName="publish" color="primary"> Gửi đi </mat-slide-toggle>
 
