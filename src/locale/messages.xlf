@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="a59e5a40d4dbd4f3036b028b38fbe1aea5f922b9" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{title}}"/> </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layouts/admin/admin-layout/admin-layout.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a1a6c757aa57a427f9fe700207407cf4426a2d19" datatype="html">
+        <source>
+              <x id="START_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;mat-icon&gt;"/> person_outline <x id="CLOSE_TAG_MAT-ICON" ctype="x-mat-icon" equiv-text="&lt;/mat-icon&gt;"/>
+              Đăng xuất
+            </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layouts/admin/admin-layout/admin-layout.component.html</context>
+          <context context-type="linenumber">55</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

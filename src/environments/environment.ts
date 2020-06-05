@@ -10,7 +10,7 @@ export const environment = {
     config: {
       url: 'https://digo-oidc.vnptigate.vn/auth',
       realm: 'digo',
-      clientId: 'test',
+      clientId: 'citizens-admin',
     },
     initOptions: {
       onLoad: 'check-sso'
@@ -26,7 +26,8 @@ export const environment = {
     {
       name: 'digo-microservice',
       // rootUrl: 'http://digo-api.vnptioffice.vn/',
-      rootUrl: 'https://digo-api.vnptigate.vn/',
+      // rootUrl: 'https://digo-api.vnptigate.vn/',
+      rootUrl: 'https://digo-api-01.vnptigate.vn',
       services: [
         {
           name: 'basedata',
