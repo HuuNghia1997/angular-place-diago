@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from 'env/environment';
 
 export interface Service {
-  name: string;
-  path: string;
-  rootUrl?: string;
+  name: string,
+  path: string,
+  rootUrl?: string
 }
 
 export interface Provider {
-  name: string;
-  rootUrl: string;
-  services?: Service[];
+  name: string,
+  rootUrl: string,
+  services?: Service[]
 }
 
 @Injectable({

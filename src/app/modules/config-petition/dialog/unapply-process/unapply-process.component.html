@@ -1,16 +1,16 @@
-<div mat-dialog-title class="fw-500">
-  {{ title }}
+<div mat-dialog-title class="fw-500" i18n>
+  Hủy áp dụng quy trình
 </div>
 
 <div mat-dialog-content class="mt-1">
   <p>
-    Hủy áp dụng
+    <span i18n> Hủy áp dụng </span>
     <b> {{ message }}</b>
-    làm quy trình xử lý?
+    <span i18n> làm quy trình xử lý? </span>
   </p>
 </div>
 
 <mat-dialog-actions align="center">
-  <button mat-button class="btn-cancel" (click)="onDismiss()"> Đóng </button>
-  <button mat-button class="btn-save"> Đồng ý </button>
+  <button mat-button class="btn-cancel" (click)="onDismiss()" i18n> Đóng </button>
+  <button mat-button class="btn-save" i18n> Đồng ý </button>
 </mat-dialog-actions>

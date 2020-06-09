@@ -1,29 +1,29 @@
-<div mat-dialog-title class="fw-500">
-  {{ title }}
+<div mat-dialog-title class="fw-500" i18n>
+  Áp dụng quy trình
 </div>
 
 <div [ngClass]="(configPetition.agency !== '' ? 'display-none': '')">
   <div mat-dialog-content class="mt-1">
-    <p>
+    <p i18n>
       Cần chọn khách hàng trước khi áp dụng quy trình
     </p>
   </div>
   <mat-dialog-actions align="center">
-    <button mat-button class="btn-cancel" (click)="onDismiss()"> Hủy bỏ </button>
-    <button mat-button class="btn-save" (click)="openDialogUpdateProcess()"> Cập nhật </button>
+    <button mat-button class="btn-cancel" (click)="onDismiss()" i18n> Hủy bỏ </button>
+    <button mat-button class="btn-save" (click)="openDialogUpdateProcess()" i18n> Cập nhật </button>
   </mat-dialog-actions>
 </div>
 
 <div [ngClass]="(configPetition.agency === '' ? 'display-none': '')">
   <div mat-dialog-content class="mt-1">
     <p>
-      Áp dụng
+      <span i18n> Áp dụng </span>
       <b> {{ message }} </b>
-      làm quy trình xử lý
+      <span i18n> làm quy trình xử lý </span>
     </p>
   </div>
   <mat-dialog-actions align="center">
-    <button mat-button class="btn-cancel" (click)="onDismiss()"> Đóng </button>
-    <button mat-button class="btn-save"> Đồng ý </button>
+    <button mat-button class="btn-cancel" (click)="onDismiss()" i18n> Đóng </button>
+    <button mat-button class="btn-save" i18n> Đồng ý </button>
   </mat-dialog-actions>
 </div>

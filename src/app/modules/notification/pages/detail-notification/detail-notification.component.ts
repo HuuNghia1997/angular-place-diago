@@ -38,8 +38,6 @@ export class DetailNotificationComponent implements OnInit {
   uploaded = true;
   // Lịch sử
   history = [];
-  activityAccount = 'Nguyễn Văn A';
-  dateModified = '24/10/2019 07:00:00';
 
   result: boolean;
   blankVal: any;

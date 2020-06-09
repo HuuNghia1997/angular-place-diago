@@ -9,6 +9,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   selector: 'app-add-notification',
@@ -60,14 +61,15 @@ export class AddNotificationComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: ConfirmAddDialogModel,
               public datepipe: DatePipe,
               private imageCompress: NgxImageCompressService,
-              private main: SnackbarService) {
+              private main: SnackbarService,
+              private keycloak: KeycloakService) {
     this.popupTitle = data.title;
-    this.accountId = localStorage.getItem('USER_INFO_ID');
   }
 
   ngOnInit(): void {
     this.getListTags();
     this.getAgency();
+    // console.log(this.keycloak.getKeycloakInstance().token);
   }
 
   public getListTags() {
@@ -88,17 +90,23 @@ export class AddNotificationComponent implements OnInit {
 
   onConfirm(): void {
     if (this.files.length > 0) {
-      this.service.uploadMultiImages(this.files, this.accountId).subscribe((data: any) => {
-        data.forEach(imgInfo => {
-          this.uploadedImage.push(imgInfo.id);
+      this.keycloak.loadUserProfile().then(data => {
+        // tslint:disable-next-line: no-string-literal
+        this.accountId = data['attributes'].user_id;
+
+        this.service.uploadMultiImages(this.files, this.accountId).subscribe((data: any) => {
+          data.forEach(imgInfo => {
+            this.uploadedImage.push(imgInfo.id);
+          });
+          this.formToJSON();
+        }, (error) => {
+          console.error(error);
         });
-        this.formToJSON();
-      }, (error) => {
-        console.error(error);
       });
     } else {
       this.formToJSON();
     }
+
   }
 
   getAgency() {

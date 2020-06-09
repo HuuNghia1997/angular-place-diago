@@ -4,11 +4,11 @@ import { Router, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 
 @Component({
-  selector: 'app-admin-layout-menu',
-  templateUrl: './admin-layout-menu.component.html',
-  styleUrls: ['./admin-layout-menu.component.scss']
+  selector: 'app-admin-layout-sidenav',
+  templateUrl: './admin-layout-sidenav.component.html',
+  styleUrls: ['./admin-layout-sidenav.component.scss']
 })
-export class AdminLayoutMenuComponent implements OnInit {
+export class AdminLayoutSidenavComponent implements OnInit {
 
   position: string;
   sidebarMenu = MENU_DATA;
@@ -22,6 +22,7 @@ export class AdminLayoutMenuComponent implements OnInit {
   ngOnInit(): void {
     this.setOpenAccordion();
     this.roleUser = this.keycloakService.getUserRoles(true);
+    // console.log(this.keycloakService.getKeycloakInstance().token);
 
     MENU_DATA.forEach(e => {
       e.listSubMenu.forEach(r => {

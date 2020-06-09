@@ -8,17 +8,22 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { KeycloakService, KeycloakAngularModule } from 'keycloak-angular';
 import { initializer } from './app-init';
+import { NotificationService } from './data/service/notification.service';
+import { NgxImageCompressService } from 'ngx-image-compress';
 
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
     KeycloakAngularModule,
     CoreModule,
     SharedModule,
+
+    //add more modules here
+
     AppRoutingModule,
     BrowserAnimationsModule
   ],
@@ -28,8 +33,8 @@ import { initializer } from './app-init';
       useFactory: initializer,
       multi: true,
       deps: [KeycloakService]
-    }
-
+    },
+    NgxImageCompressService
   ],
   bootstrap: [AppComponent]
 })

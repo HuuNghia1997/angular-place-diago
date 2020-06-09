@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 import { MaterialModule } from './material.module';
-import { HttpClientModule } from '@angular/common/http';
 import { SilentCheckSsoComponent } from './components/silent-check-sso/silent-check-sso.component';
+import { HttpClientModule } from '@angular/common/http';
 import { CustomSnackbarComponent } from './components/custom-snackbar/custom-snackbar.component';
+
+
 
 @NgModule({
   declarations: [

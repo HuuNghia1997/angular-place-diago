@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "showCircularDependencies": false,
             "outputPath": "dist/vn-citizens-admin-web",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -67,7 +68,7 @@
               ]
             },
             "production-vi": {
-              "outputPath": "dist/angular-skeleton-vi",
+              "outputPath": "dist/vn-citizens-admin-web-vi",
               "baseHref": "/vi/",
               "i18nFile": "src/locale/messages.vi.xlf",
               "i18nFormat": "xlf",
@@ -100,7 +101,7 @@
               ]
             },
             "production-en": {
-              "outputPath": "dist/angular-skeleton-en",
+              "outputPath": "dist/vn-citizens-admin-web-en",
               "baseHref": "/en/",
               "i18nFile": "src/locale/messages.en.xlf",
               "i18nFormat": "xlf",
@@ -142,6 +143,12 @@
           "configurations": {
             "production": {
               "browserTarget": "vn-citizens-admin-web:build:production"
+            },
+            "production-vi": {
+              "browserTarget": "vn-citizens-admin-web:build:production-vi"
+            },
+            "production-en": {
+              "browserTarget": "vn-citizens-admin-web:build:production-en"
             }
           }
         },
@@ -198,5 +205,8 @@
       }
     }
   },
-  "defaultProject": "vn-citizens-admin-web"
+  "defaultProject": "vn-citizens-admin-web",
+  "cli": {
+    "analytics": "19e983ca-63ab-4b30-a33e-129cbef7dfcd"
+  }
 }

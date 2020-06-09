@@ -14,7 +14,9 @@ import {
 } from 'src/app/modules/config-petition/dialog/apply-process/apply-process.component';
 import { SnackbarService } from './snackbar.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class ConfigPetitionService {
 
   result: boolean;

@@ -10,6 +10,7 @@ import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   selector: 'app-edit-notification',
@@ -48,10 +49,10 @@ export class EditNotificationComponent implements OnInit {
               public datepipe: DatePipe,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateDialogModel,
               private imageCompress: NgxImageCompressService,
-              private main: SnackbarService) {
+              private main: SnackbarService,
+              private keycloak: KeycloakService) {
     this.popupTitle = data.title;
     this.notificationId = data.id;
-    this.accountId = localStorage.getItem('USER_INFO_ID');
   }
 
   // Form
@@ -76,34 +77,44 @@ export class EditNotificationComponent implements OnInit {
   getAgency() {
     this.service.getAgency().subscribe(data => {
       this.agencyList = data.content;
+      for (let i = 0; i < data.content.length; i++) {
+        this.agencyList[i].imageId = data.content[i].logoId;
+        console.log(this.agencyList[i].imageId + ' ' + data.content[i].logoId);
+      }
     });
   }
 
   onConfirm(): void {
-    this.countDefaultImage = this.uploadedImage.length;
-    if (this.countDefaultImage > 0) {
-      if (this.files.length > 0) {
-        this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
-          data.forEach(imgInfo => {
-            this.uploadedImage.push(imgInfo.id);
-          });
+    this.keycloak.loadUserProfile().then(data => {
+      // tslint:disable-next-line: no-string-literal
+      this.accountId = data['attributes'].user_id;
+      this.countDefaultImage = this.uploadedImage.length;
+      if (this.countDefaultImage > 0) {
+        if (this.files.length > 0) {
+
+            this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
+              data.forEach(imgInfo => {
+                this.uploadedImage.push(imgInfo.id);
+              });
+              this.formToJSON();
+            });
+          // });
+        } else {
           this.formToJSON();
-        });
+        }
       } else {
-        this.formToJSON();
-      }
-    } else {
-      if (this.files.length > 0) {
-        this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
-          data.forEach(imgInfo => {
-            this.uploadedImage.push(imgInfo.id);
+        if (this.files.length > 0) {
+          this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
+            data.forEach(imgInfo => {
+              this.uploadedImage.push(imgInfo.id);
+            });
+            this.formToJSON();
           });
+        } else {
           this.formToJSON();
-        });
-      } else {
-        this.formToJSON();
+        }
       }
-    }
+    });
   }
 
   formToJSON() {
@@ -142,6 +153,7 @@ export class EditNotificationComponent implements OnInit {
     formObj.imageId = this.uploadedImage;
     // Final result
     const resultJson = JSON.stringify(formObj, null, 2);
+    console.log(resultJson);
     this.updateNotification(resultJson);
   }
 

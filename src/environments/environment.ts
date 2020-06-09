@@ -15,7 +15,6 @@ export const environment = {
     initOptions: {
       onLoad: 'check-sso'
     },
-    enableBearerInterceptor: false
   },
   routerConfig: {
     enableTracing: false
@@ -25,9 +24,7 @@ export const environment = {
   apiProviders: [
     {
       name: 'digo-microservice',
-      // rootUrl: 'http://digo-api.vnptioffice.vn/',
-      // rootUrl: 'https://digo-api.vnptigate.vn/',
-      rootUrl: 'https://digo-api-01.vnptigate.vn',
+      rootUrl: 'https://digo-api-01.vnptigate.vn/',
       services: [
         {
           name: 'basedata',

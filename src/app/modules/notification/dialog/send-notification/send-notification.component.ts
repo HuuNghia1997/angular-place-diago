@@ -30,13 +30,13 @@ export class SendNotificationComponent implements OnInit {
   }
 
   onConfirm(): void {
-    const token = localStorage.getItem('auth_token');
-    let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
-    headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
+    // const token = localStorage.getItem('auth_token');
+    // let headers = new HttpHeaders();
+    // headers = headers.append('Authorization', 'Bearer ' + token);
+    // headers = headers.append('Content-Type', 'application/json');
+    // headers.append('Access-Control-Allow-Origin', '*');
 
-    this.http.put(this.publishURL + this.id + '/--publish', null, { headers }).subscribe(data => {
+    this.http.put(this.publishURL + this.id + '/--publish', null).subscribe(data => {
       this.dialogRef.close(true);
     }, err => {
       console.error(err);

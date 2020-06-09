@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminLayoutMenuComponent } from './admin-layout-menu.component';
+import { AdminLayoutSidenavComponent } from './admin-layout-sidenav.component';
 
-describe('AdminLayoutMenuComponent', () => {
-  let component: AdminLayoutMenuComponent;
-  let fixture: ComponentFixture<AdminLayoutMenuComponent>;
+describe('AdminLayoutNavComponent', () => {
+  let component: AdminLayoutSidenavComponent;
+  let fixture: ComponentFixture<AdminLayoutSidenavComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AdminLayoutMenuComponent ]
+      declarations: [ AdminLayoutSidenavComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminLayoutMenuComponent);
+    fixture = TestBed.createComponent(AdminLayoutSidenavComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,32 +1,32 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { environment } from '../environments/environment';
+import { environment } from 'env/environment';
 
 const routes: Routes = [
   {
     path: 'home',
-    loadChildren: () => import('./modules/home/home.module').then(m => m.HomeModule)
+    loadChildren: () => import('modules/home/home.module').then(m => m.HomeModule)
   },
   {
     path: 'error',
-    loadChildren: () => import('./modules/error/error.module').then(m => m.ErrorModule)
+    loadChildren: () => import('modules/error/error.module').then(m => m.ErrorModule)
   },
   {
     path: 'notification',
-    loadChildren: () => import('./modules/notification/notification.module').then(m => m.NotificationModule)
+    loadChildren: () => import('modules/notification/notification.module').then(m => m.NotificationModule)
   },
   {
     path: 'petition',
-    loadChildren: () => import('./modules/petition/petition.module').then(m => m.PetitionModule)
+    loadChildren: () => import('modules/petition/petition.module').then(m => m.PetitionModule)
   },
   {
     path: 'config-petition',
-    loadChildren: () => import('./modules/config-petition/config-petition.module').then(m => m.ConfigPetitionModule)
+    loadChildren: () => import('modules/config-petition/config-petition.module').then(m => m.ConfigPetitionModule)
   },
   {
     path: '**',
     redirectTo: 'error/page-not-found'
-   },
+  },
 ];
 
 if (environment.defaultRouterLink) {
@@ -35,7 +35,7 @@ if (environment.defaultRouterLink) {
       path: '',
       redirectTo: environment.defaultRouterLink,
       pathMatch: 'full'
-    }
+    },
   );
 }
 

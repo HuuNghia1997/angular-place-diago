@@ -12,7 +12,6 @@ import { LANGUAGE_DATA } from 'src/app/data/schema/language';
 })
 export class AdminLayoutComponent implements OnInit {
 
-  title = 'CHÍNH QUYỀN SỐ';
   yourAgency = 'UBND Huyện Cái Bè';
   nickname: string;
   avatar: any;
@@ -40,6 +39,7 @@ export class AdminLayoutComponent implements OnInit {
     this.keycloakService.isLoggedIn().then(r => {
       this.isLoggedIn = r;
     });
+    // this.getUser();
     this.getAvatar();
   }
 
@@ -57,28 +57,33 @@ export class AdminLayoutComponent implements OnInit {
     });
   }
 
-  getUser() {
-    return this.nickname = localStorage.getItem('USER_INFO_NAME');
-  }
+  // getUser() {
+  //   this.keycloakService.loadUserProfile().then(data => {
+  //     this.nickname = data.firstName + ' ' + data.lastName;
+  //   });
+  //   return this.nickname;
+  // }
 
   getAvatar() {
-    this.nickname = localStorage.getItem('USER_INFO_NAME');
-    this.userService.getUserInfo(localStorage.getItem('USER_INFO_ID')).subscribe(data => {
-      if (data['avatarId'] === null) {
-        this.avatar = '../../../assets/img/avt.jpg';
-      }
+    this.keycloakService.loadUserProfile().then(user => {
+      this.userService.getUserInfo(user['attributes'].user_id).subscribe(data => {
+        this.nickname = data['fullname'];
+        if (data['avatarId'] === null) {
+          this.avatar = '../../../assets/img/avt.jpg';
+        }
 
-      this.userService.getUserAvatar(data['avatarId']).subscribe((response: any) => {
-        let dataType = response.type;
-        let binaryData = [];
-        binaryData.push(response);
-        let downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
-        document.body.appendChild(downloadLink);
-        this.avatar = this.sanitizer.bypassSecurityTrustUrl(downloadLink.href);
+        this.userService.getUserAvatar(data['avatarId']).subscribe((response: any) => {
+          let dataType = response.type;
+          let binaryData = [];
+          binaryData.push(response);
+          let downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
+          document.body.appendChild(downloadLink);
+          this.avatar = this.sanitizer.bypassSecurityTrustUrl(downloadLink.href);
+        });
+      }, error => {
+        console.error(error);
       });
-    }, error => {
-      console.error(error);
     });
   }
 

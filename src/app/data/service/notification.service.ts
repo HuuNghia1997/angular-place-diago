@@ -1,8 +1,8 @@
-import { Observable, from } from 'rxjs';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { reloadTimeout, pageSizeOptions } from 'src/app/data/service/config.service';
+import { reloadTimeout } from 'src/app/data/service/config.service';
 import { ListNotificationComponent } from 'src/app/modules/notification/pages/list-notification/list-notification.component';
 import { DetailNotificationComponent } from 'src/app/modules/notification/pages/detail-notification/detail-notification.component';
 import {
@@ -23,15 +23,17 @@ import {
 } from 'src/app/modules/notification/dialog/send-notification/send-notification.component';
 import { ApiProviderService } from 'src/app/core/service/api-provider.service';
 import { SnackbarService } from './snackbar.service';
+import { KeycloakService } from 'keycloak-angular';
 
 
-@Injectable()
+@Injectable({providedIn: 'root'})
 export class NotificationService {
 
   constructor(private http: HttpClient,
               private main: SnackbarService,
               private dialog: MatDialog,
-              private apiProviderService: ApiProviderService) { }
+              private apiProviderService: ApiProviderService,
+              private keycloak: KeycloakService) { }
   public getTags = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';
   public uploadFileURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
   public postURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification';
@@ -159,47 +161,12 @@ export class NotificationService {
     });
   }
 
-  // checkErrorResponse(error: HttpErrorResponse, type: number) {
-  //   if (error.status === 401) {
-  //     this.auth.refeshToken((result) => {
-  //       if (result) {
-  //         switch (type) {
-  //           case 1:
-  //             this.notificationComponent.search(0, pageSizeOptions);
-  //             break;
-  //           case 2:
-  //             this.notificationComponent.getListTags();
-  //             break;
-  //           case 3:
-  //             this.detailNotificationComponent.getNotificationDetail();
-  //             break;
-  //           case 4:
-  //             this.detailNotificationComponent.getNotificationHistory();
-  //             break;
-  //         }
-  //       }
-  //     });
-  //   }
-  // }
-
   getListTags(id: string): Observable<any> {
-    const token = localStorage.getItem('auth_token');
-    let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
-    headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-    console.log('getTag: ' + this.getTags);
-    return this.http.get(this.getTags + id, { headers }).pipe();
+    return this.http.get(this.getTags + id);
   }
 
   getNotificationDetail(id: string): Observable<any> {
-    const token = localStorage.getItem('auth_token');
-    let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
-    headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
-    return this.http.get(this.getDetailURL + id + '/--full', { headers }).pipe();
+    return this.http.get(this.getDetailURL + id + '/--full');
   }
 
   formErrorMessage(id: number) {
@@ -216,90 +183,52 @@ export class NotificationService {
   }
 
   uploadMultiImages(imgFiles, accountId): Observable<any> {
-    const token = localStorage.getItem('auth_token');
     let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
-    // headers = headers.append('Content-Type', 'multipart/form-data');
     headers = headers.append('Accept', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
     const formData: FormData = new FormData();
     imgFiles.forEach(img => {
         const file: File = img;
         formData.append('files', file, file.name);
     });
-    // formData.append('accountId', accountId);
-
-    return this.http.post(this.uploadFilesURL, formData, { headers }).pipe();
+    formData.append('accountId', accountId);
+    return this.http.post(this.uploadFilesURL, formData, { headers });
   }
 
   postNotification(requestBody) {
-    const token = localStorage.getItem('auth_token');
     let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
-    headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
-    return this.http.post<any>(this.postURL, requestBody, { headers }).pipe();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.post<any>(this.postURL, requestBody, { headers });
   }
 
   updateNotification(requestBody, id) {
-    const token = localStorage.getItem('auth_token');
     let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
-    headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
-    return this.http.put<any>(this.putURL + id, requestBody, { headers }).pipe();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.put<any>(this.putURL + id, requestBody, { headers });
   }
 
   getImage(imageId) {
-    const token = localStorage.getItem('auth_token');
     let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
     headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
-    return this.http.get(this.getFileURL + imageId, { headers, responseType: 'blob' }).pipe();
+    return this.http.get(this.getFileURL + imageId, { headers, responseType: 'blob' });
   }
 
   getImageName_Size(imageId) {
-    const token = localStorage.getItem('auth_token');
     let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
     headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
-    return this.http.get(this.getFileURL + imageId + '/filename+size', { headers }).pipe();
+    return this.http.get(this.getFileURL + imageId + '/filename+size', { headers });
   }
 
   getNotificationHistory(groupId: number, itemId: string, page: number, size: number): Observable<any> {
-    const token = localStorage.getItem('auth_token');
     let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
     headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
-    return this.http.get(this.getHistory + groupId + '&item-id=' + itemId + '&page=' + page + '&size=' + size, { headers }).pipe();
+    return this.http.get(this.getHistory + groupId + '&item-id=' + itemId + '&page=' + page + '&size=' + size, { headers });
   }
 
   search(searchString: string): Observable<any> {
-    const token = localStorage.getItem('auth_token');
-    let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
-    headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
-    return this.http.get(this.searchURL + searchString, { headers }).pipe();
+    return this.http.get(this.searchURL + searchString);
   }
 
   getAgency(): Observable<any> {
-    const token = localStorage.getItem('auth_token');
-    let headers = new HttpHeaders();
-    headers = headers.append('Authorization', 'Bearer ' + token);
-    headers = headers.append('Content-Type', 'application/json');
-    headers.append('Access-Control-Allow-Origin', '*');
-
-    return this.http.get(this.getAgencyURL, { headers }).pipe();
+    return this.http.get(this.getAgencyURL);
   }
 }

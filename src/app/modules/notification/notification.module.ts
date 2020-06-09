@@ -32,10 +32,6 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     DeleteNotificationComponent,
     EditNotificationComponent,
     SendNotificationComponent
-  ],
-  providers: [
-    NotificationService,
-    NgxImageCompressService
   ]
 })
 export class NotificationModule { }

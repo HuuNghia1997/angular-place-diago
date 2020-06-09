@@ -39,9 +39,6 @@ import { ConfigPetitionService } from 'src/app/data/service/config-petition.serv
     ApplyProcessComponent,
     ShowProcessComponent,
     DrawProcessComponent
-  ],
-  providers: [
-    ConfigPetitionService
   ]
 })
 export class ConfigPetitionModule { }
