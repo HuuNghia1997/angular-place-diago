@@ -9,8 +9,6 @@ import { DeleteNotificationComponent } from './dialog/delete-notification/delete
 import { EditNotificationComponent } from './dialog/edit-notification/edit-notification.component';
 import { SendNotificationComponent } from './dialog/send-notification/send-notification.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { NotificationService } from 'src/app/data/service/notification.service';
-import { NgxImageCompressService } from 'ngx-image-compress';
 
 
 @NgModule({

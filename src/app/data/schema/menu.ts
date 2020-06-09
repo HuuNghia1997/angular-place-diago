@@ -8,6 +8,11 @@ export interface Menu {
 export interface ListSubmenu {
   title: string;
   route: string;
+  role?: Role[];
+}
+
+export interface Role {
+  id: number;
   role: string;
 }
 
@@ -15,29 +20,64 @@ export const MENU_DATA: Menu[] = [
   {
     mainMenu: 'Cổng thông tin',
     icon: 'file_copy',
-    code: 'notification',
+    code: 'quan-tri-thong-bao',
     listSubMenu: [
       {
         title: 'Quản trị thông báo',
-        route: 'notification',
-        role: 'ACTIVITI_ADMIN'
+        route: 'quan-tri-thong-bao',
+        role: [
+          {
+            id: 1,
+            role: 'admin'
+          },
+          {
+            id: 2,
+            role: 'citizens_notification_manager'
+          },
+          {
+            id: 3,
+            role: 'citizens_admin'
+          }
+        ]
       }
     ]
   },
   {
     mainMenu: 'Phản ánh',
     icon: 'file_copy',
-    code: 'petition',
+    code: 'cau-hinh-phan-anh',
     listSubMenu: [
       {
         title: 'Xử lý phản ánh',
-        route: 'petition',
-        role: 'ACTIVITI_ADMIN'
+        route: 'xu-ly-phan-anh',
+        role: [
+          {
+            id: 1,
+            role: 'admin'
+          },
+          {
+            id: 2,
+            role: 'citizens_petition_resolver'
+          },
+          {
+            id: 3,
+            role: 'citizens_admin'
+          }
+        ]
       },
       {
         title: 'Cấu hình phản ánh',
-        route: 'config-petition',
-        role: 'ACTIVITI_ADMIN'
+        route: 'cau-hinh-phan-anh',
+        role: [
+          {
+            id: 1,
+            role: 'admin'
+          },
+          {
+            id: 2,
+            role: 'citizens_admin'
+          }
+        ]
       }
     ]
   }

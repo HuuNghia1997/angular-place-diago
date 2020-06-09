@@ -29,17 +29,11 @@ export class DeleteNotificationComponent implements OnInit {
   }
 
   onConfirm(id): void {
-    // const token = localStorage.getItem('auth_token');
-    // let headers = new HttpHeaders();
-    // headers = headers.append('Authorization', 'Bearer ' + token);
-    // headers = headers.append('Content-Type', 'application/json');
-    // headers.append('Access-Control-Allow-Origin', '*');
-
     this.http.delete<any>(this.deleteURL + id).subscribe(data => {
       this.dialogRef.close(true);
       // tslint:disable-next-line: only-arrow-functions
       setTimeout(function() {
-        window.location.replace('/notification');
+        window.location.replace('/quan-tri-thong-bao');
       }, reloadTimeout);
     }, err => {
       console.error(err);

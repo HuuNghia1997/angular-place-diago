@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
-import { MatDialog } from '@angular/material/dialog';
-import { DrawProcessComponent } from '../draw-process/draw-process.component';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-update-process',
@@ -30,7 +29,7 @@ export class UpdateProcessComponent implements OnInit {
   processList: string[] = ['quy-trinh-mau', 'quy-trinh-mau2', 'quy-trinh-mau3'];
 
   constructor(private service: ConfigPetitionService,
-              private dialog: MatDialog) { }
+              public dialogRef: MatDialogRef<UpdateProcessComponent>) { }
 
   ngOnInit(): void {
   }
@@ -39,13 +38,17 @@ export class UpdateProcessComponent implements OnInit {
     return this.service.formErrorMessage(id);
   }
 
-  openDialogDrawProcess() {
-    this.dialog.closeAll();
-    const dialogRef = this.dialog.open(DrawProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
+  onDismiss(): void {
+    // Đóng dialog, trả kết quả là false
+    this.dialogRef.close();
   }
+
+  drawProcess() {
+    this.service.drawProcess();
+  }
+}
+
+export class ConfirmUpdateDialogModel {
+  constructor(public title: string,
+              public id: string) { }
 }

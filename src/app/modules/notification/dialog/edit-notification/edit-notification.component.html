@@ -75,8 +75,8 @@
     </div>
   </div>
   <div mat-dialog-actions class="mt-1" align="center">
-    <a mat-raised-button (click)="onDismiss()"> Huỷ bỏ </a>
-    <span class="ml-1 mr-1"></span>
+    <a mat-raised-button class="btn-cancel" (click)="onDismiss()"> Huỷ bỏ </a>
+    <span class="ml-1 mr-1 btn-cancel"></span>
     <button mat-raised-button class="primary-blue-btn" type="submit" [disabled]="updateForm.invalid"> Cập nhật </button>
   </div>
 </form>

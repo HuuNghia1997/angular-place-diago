@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { ConfigPetitionElement, CONFIG_PETITION_DATA } from 'src/app/data/schema/config-petition-element';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { UpdateProcessComponent } from '../update-process/update-process.component';
+import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
 
 @Component({
   selector: 'app-apply-process',
@@ -18,7 +18,8 @@ export class ApplyProcessComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmApplyDialogModel,
               public dialogRef: MatDialogRef<ApplyProcessComponent>,
-              private dialog: MatDialog) {
+              private dialog: MatDialog,
+              private service: ConfigPetitionService) {
     this.title = data.title;
     this.message = data.message;
     this.id = data.id;
@@ -33,14 +34,9 @@ export class ApplyProcessComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  openDialogUpdateProcess() {
+  updateProcess(id, name) {
     this.dialog.closeAll();
-    const dialogRef = this.dialog.open(UpdateProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
+    this.service.updateProcess(id, name);
   }
 
   getConfigPetition(id): void {

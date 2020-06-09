@@ -8,7 +8,6 @@ import { CoreModule } from './core/core.module';
 import { SharedModule } from './shared/shared.module';
 import { KeycloakService, KeycloakAngularModule } from 'keycloak-angular';
 import { initializer } from './app-init';
-import { NotificationService } from './data/service/notification.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 
 

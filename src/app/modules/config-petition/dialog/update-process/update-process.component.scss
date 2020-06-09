@@ -1,6 +1,10 @@
-.fw-500 {
+.dialog_title {
+  font-style: normal;
   font-weight: 500;
+  font-size: 20px;
+  color: #000000;
 }
+
 .mt-1 {
   margin-top: 1% !important;
 }
@@ -60,6 +64,11 @@ a:active {
 
 .btn-cancel {
   border: 1px solid #333333;
+}
+
+.btn-cancel:focus {
+  background-color: #ffffff;
+  display: none;
 }
 
 .btn-save {

@@ -6,6 +6,11 @@
   border: 1px solid #333333;
 }
 
+.btn-cancel:focus {
+  background-color: #ffffff;
+  display: none;
+}
+
 .btn-save {
   color: #ffffff;
   background-color: #1976D2;

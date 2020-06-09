@@ -12,15 +12,15 @@ const routes: Routes = [
     loadChildren: () => import('modules/error/error.module').then(m => m.ErrorModule)
   },
   {
-    path: 'notification',
+    path: 'quan-tri-thong-bao',
     loadChildren: () => import('modules/notification/notification.module').then(m => m.NotificationModule)
   },
   {
-    path: 'petition',
+    path: 'xu-ly-phan-anh',
     loadChildren: () => import('modules/petition/petition.module').then(m => m.PetitionModule)
   },
   {
-    path: 'config-petition',
+    path: 'cau-hinh-phan-anh',
     loadChildren: () => import('modules/config-petition/config-petition.module').then(m => m.ConfigPetitionModule)
   },
   {

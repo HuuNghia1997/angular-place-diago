@@ -2,7 +2,7 @@
 <mat-toolbar class="title">
   <mat-toolbar-row>
     <h6 class="name-page"> Danh sách quy trình </h6>
-    <button mat-button class="btn-add" (click)="openDialogAddProcess()">
+    <button mat-button class="btn-add" (click)="addProcess()">
       <mat-icon> add </mat-icon>
       <span i18n> Thêm mới </span>
     </button>
@@ -87,7 +87,7 @@
       <ng-container matColumnDef="title">
         <th mat-header-cell *matHeaderCellDef i18n> Tiêu đề </th>
         <td mat-cell *matCellDef="let element">
-          <a href="/config-petition/detail/{{element.id}}"> {{ element.title }} </a>
+          <a href="/cau-hinh-phan-anh/chi-tiet/{{element.id}}"> {{ element.title }} </a>
         </td>
       </ng-container>
 
@@ -134,7 +134,7 @@
               <span i18n> Xem quy trình </span>
             </button>
 
-            <button mat-menu-item class="btn-action" (click)="openDialogUpdateProcess()">
+            <button mat-menu-item class="btn-action" (click)="updateProcess(element.id, element.title)">
               <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> edit </mat-icon>
               <span i18n> Cập nhật </span>
             </button>

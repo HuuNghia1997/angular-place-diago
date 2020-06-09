@@ -17,13 +17,13 @@ const routes: Routes = [
         component: ListNotificationComponent
       },
       {
-        path: 'detail/:id',
+        path: 'chi-tiet/:id',
         component: DetailNotificationComponent
       }
     ],
     canActivate: [AuthGuard],
     data: {
-      roles: ['ACTIVITI_ADMIN']
+      anyRoles: ['admin', 'citizens_notification_manager', 'citizens_admin']
     }
   }
 ];

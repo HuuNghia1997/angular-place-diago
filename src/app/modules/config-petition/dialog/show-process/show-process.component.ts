@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApplyProcessComponent } from '../apply-process/apply-process.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-show-process',
@@ -9,9 +9,15 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class ShowProcessComponent implements OnInit {
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private dialog: MatDialog,
+              public dialogRef: MatDialogRef<ShowProcessComponent>) { }
 
   ngOnInit(): void {
+  }
+
+  onDismiss(): void {
+    // Close dialog, return false
+    this.dialogRef.close();
   }
 
   openDialogApplyProcess() {

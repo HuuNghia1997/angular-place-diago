@@ -19,3 +19,6 @@ export class DrawProcessComponent implements OnInit {
   }
 
 }
+export class ConfirmDrawDialogModel {
+  constructor(public title: string) {}
+}

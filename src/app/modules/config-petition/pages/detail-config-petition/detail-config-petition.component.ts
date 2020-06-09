@@ -2,9 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ConfigPetitionElement, CONFIG_PETITION_DATA } from 'src/app/data/schema/config-petition-element';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { AddProcessComponent } from '../../dialog/add-process/add-process.component';
-import { UpdateProcessComponent } from '../../dialog/update-process/update-process.component';
-import { DeleteProcessComponent } from '../../dialog/delete-process/delete-process.component';
 import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
 
 @Component({
@@ -49,23 +46,12 @@ export class DetailConfigPetitionComponent implements OnInit {
     }
   }
 
-  openDialogAddProcess() {
-    const dialogRef = this.dialog.open(AddProcessComponent, {
-      width: '80%'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
+  addProcess() {
+    this.service.addProcess();
   }
 
-  openDialogUpdateProcess() {
-    const dialogRef = this.dialog.open(UpdateProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
+  updateProcess(id, name): void {
+    this.service.updateProcess(id, name);
   }
 
   deleteProcess(id, name): void {

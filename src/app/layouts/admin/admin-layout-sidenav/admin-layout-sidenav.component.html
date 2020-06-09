@@ -9,15 +9,27 @@
         {{ m.mainMenu }}
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <span *ngFor='let submenu of m.listSubMenu; let j = index'>
-      <span *ngFor='let role of roleUser'>
-        <a id="submenu" mat-button
-                        [ngClass]="submenu.role === role ? '' : 'display-none'"
-                        routerLinkActive="active"
-                        routerLink="/{{ submenu.route }}">
-          {{ submenu.title }}
-        </a>
+    <!-- <span *ngFor='let submenu of m.listSubMenu; let j = index'>
+      <span *ngFor='let role of submenu.role'>
+        <span *ngFor='let r of roleUser'>
+          <a id="submenu" mat-button
+                          [ngClass]="role.role === r ? '' : 'display-none'"
+                          routerLinkActive="active"
+                          routerLink="/{{ submenu.route }}">
+            {{ submenu.title }}
+          </a>
       </span>
+      </span>
+    </span> -->
+    <span *ngFor='let submenu of m.listSubMenu; let j = index'>
+
+          <a id="submenu" mat-button
+                          [ngClass]="match(roleUser, submenu.role) === true ? '' : 'display-none'"
+                          routerLinkActive="active"
+                          routerLink="/{{ submenu.route }}">
+            {{ submenu.title }}
+          </a>
+
     </span>
   </mat-expansion-panel>
 </mat-accordion>

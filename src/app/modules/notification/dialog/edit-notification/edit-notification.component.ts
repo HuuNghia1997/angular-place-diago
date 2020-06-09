@@ -79,7 +79,6 @@ export class EditNotificationComponent implements OnInit {
       this.agencyList = data.content;
       for (let i = 0; i < data.content.length; i++) {
         this.agencyList[i].imageId = data.content[i].logoId;
-        console.log(this.agencyList[i].imageId + ' ' + data.content[i].logoId);
       }
     });
   }

@@ -2,7 +2,7 @@
 <mat-toolbar class="title">
   <mat-toolbar-row>
     <h6 class="name-page" i18n> Chi tiết quy trình </h6>
-    <button mat-button class="btn-add" (click)="openDialogAddProcess()">
+    <button mat-button class="btn-add" (click)="addProcess()">
       <mat-icon> add </mat-icon>
       <span i18n> Thêm mới </span>
     </button>
@@ -17,7 +17,7 @@
 
     <div class="button-action">
       <!-- Btn cập nhật -->
-      <button mat-button class="fs-13" (click)="openDialogUpdateProcess()">
+      <button mat-button class="fs-13" (click)="updateProcess(configPetitionId, configPetition.title)">
         <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
         <span i18n> Cập nhật </span>
       </button>

@@ -60,7 +60,7 @@ export class NotificationService {
   addRecord(): void {
     const dialogData = new ConfirmAddDialogModel('Thêm mới thông báo');
     const dialogRef = this.dialog.open(AddNotificationComponent, {
-      maxWidth: '60%',
+      maxWidth: '80%',
       height: '600px',
       data: dialogData,
       disableClose: true
@@ -77,7 +77,7 @@ export class NotificationService {
         this.main.openSnackBar(message, body.title, result, reason, 'success_notification');
         // tslint:disable-next-line:only-arrow-functions
         setTimeout(function() {
-          window.location.replace('/notification/detail/' + data.data.id);
+          window.location.replace('/quan-tri-thong-bao/chi-tiet/' + data.data.id);
         }, reloadTimeout);
       }
       if (data.data.id === null) {
@@ -112,7 +112,7 @@ export class NotificationService {
   updateRecord(id, name): void {
     const dialogData = new ConfirmUpdateDialogModel('Cập nhật thông báo', id);
     const dialogRef = this.dialog.open(EditNotificationComponent, {
-      maxWidth: '60%',
+      maxWidth: '80%',
       height: '600px',
       data: dialogData,
       disableClose: true

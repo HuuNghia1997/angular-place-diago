@@ -48,6 +48,14 @@ export class ListConfigPetitionComponent implements OnInit {
     this.dataSource.sort = this.sort;
   }
 
+  addProcess() {
+    this.service.addProcess();
+  }
+
+  updateProcess(id, name): void {
+    this.service.updateProcess(id, name);
+  }
+
   deleteProcess(id, name): void {
     this.service.deleteProcess(id, name);
   }
@@ -58,16 +66,6 @@ export class ListConfigPetitionComponent implements OnInit {
 
   applyProcess(id, name): void {
     this.service.applyProcess(id, name);
-  }
-
-  openDialogAddProcess() {
-    const dialogRef = this.dialog.open(AddProcessComponent, {
-      width: '80%'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
   }
 
   openDialogUpdateProcess() {

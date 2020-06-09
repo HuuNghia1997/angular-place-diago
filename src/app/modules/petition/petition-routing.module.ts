@@ -17,13 +17,13 @@ const routes: Routes = [
         component: ListPetitionComponent
       },
       {
-        path: 'detail/:id',
+        path: 'chi-tiet/:id',
         component: DetailPetitionComponent
       }
     ],
     canActivate: [AuthGuard],
     data: {
-      roles: ['ACTIVITI_ADMIN']
+      anyRoles: ['admin', 'citizens_petition_resolver', 'citizens_admin']
     }
   }
 ];

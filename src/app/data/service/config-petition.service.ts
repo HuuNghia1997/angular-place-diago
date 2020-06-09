@@ -13,6 +13,16 @@ import {
   ConfirmApplyDialogModel
 } from 'src/app/modules/config-petition/dialog/apply-process/apply-process.component';
 import { SnackbarService } from './snackbar.service';
+import { ConfirmAddDialogModel, AddProcessComponent } from 'src/app/modules/config-petition/dialog/add-process/add-process.component';
+import { reloadTimeout } from './config.service';
+import {
+  ConfirmUpdateDialogModel,
+  UpdateProcessComponent
+} from 'src/app/modules/config-petition/dialog/update-process/update-process.component';
+import {
+  ConfirmDrawDialogModel,
+  DrawProcessComponent
+} from 'src/app/modules/config-petition/dialog/draw-process/draw-process.component';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +33,72 @@ export class ConfigPetitionService {
 
   constructor(private dialog: MatDialog,
               private main: SnackbarService) { }
+
+  addProcess(): void {
+    const dialogData = new ConfirmAddDialogModel('Thêm mới quy trình');
+    const dialogRef = this.dialog.open(AddProcessComponent, {
+      width: '80%',
+      height: '450px',
+      data: dialogData,
+      disableClose: true
+    });
+
+    const message = 'Quy trình';
+    const content = '';
+    const result = 'được thêm thành công';
+    const reason = '';
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      const data = dialogResult;
+      if (data.data.id != null) {
+        const body = JSON.parse(data.body);
+        this.main.openSnackBar(message, body.title, result, reason, 'success_notification');
+        // tslint:disable-next-line:only-arrow-functions
+        setTimeout(function() {
+          window.location.replace('/cau-hinh-phan-anh/chi-tiet/' + data.data.id);
+        }, reloadTimeout);
+      }
+      if (data.data.id === null) {
+        this.main.openSnackBar('Thêm quy trình', content, 'thất bại', reason, 'error_notification');
+      }
+    });
+  }
+
+  drawProcess(): void {
+    const dialogData = new ConfirmDrawDialogModel('Vẽ quy trình');
+    const dialogRef = this.dialog.open(DrawProcessComponent, {
+      width: '80%',
+      data: dialogData,
+      disableClose: true
+    });
+  }
+
+  updateProcess(id, name): void {
+    const dialogData = new ConfirmUpdateDialogModel('Cập nhật thông báo', id);
+    const dialogRef = this.dialog.open(UpdateProcessComponent, {
+      width: '80%',
+      height: '500px',
+      data: dialogData,
+      disableClose: true
+    });
+
+    const message = 'Cập nhật quy trình';
+    const content = name;
+    const result = 'thành công';
+    const reason = '';
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      this.result = dialogResult;
+      if (this.result === true) {
+        this.main.openSnackBar(message, content, result, reason, 'success_notification');
+        // tslint:disable-next-line:only-arrow-functions
+        setTimeout(function() {
+          window.location.reload();
+        }, reloadTimeout);
+      }
+      if (this.result === false) {
+        this.main.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+      }
+    });
+  }
 
   deleteProcess(id, name): void {
     const dialogData = new ConfirmDeleteDialogModel('Xóa quy trình', name, id);
