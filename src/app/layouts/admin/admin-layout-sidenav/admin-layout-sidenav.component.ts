@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { MENU_DATA, Menu, Role } from 'src/app/data/schema/menu';
+import { MENU_DATA, Menu, Role, ListSubmenu } from 'src/app/data/schema/menu';
 import { Router, RouterLinkActive, ActivatedRoute } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 
@@ -17,7 +17,7 @@ export class AdminLayoutSidenavComponent implements OnInit {
   countSubmenu = 0;
   countAvailableMenu = [];
   countAvailableSubmenu = [];
-  check;
+  countRoute = 0;
 
   constructor(private keycloakService: KeycloakService) {
   }
@@ -26,7 +26,6 @@ export class AdminLayoutSidenavComponent implements OnInit {
     this.setOpenAccordion();
     this.roleUser = this.keycloakService.getUserRoles(true);
     // console.log(this.keycloakService.getKeycloakInstance().token);
-    console.log(this.roleUser);
 
     MENU_DATA.forEach(e => {
       e.listSubMenu.forEach(r => {
@@ -39,7 +38,6 @@ export class AdminLayoutSidenavComponent implements OnInit {
         });
       });
       this.countAvailableMenu.push(this.count);
-      console.log(this.countAvailableMenu);
       this.count = 0;
     });
   }
@@ -54,6 +52,20 @@ export class AdminLayoutSidenavComponent implements OnInit {
       });
     });
     if (this.countSubmenu > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  matchPosition(position: string, route: ListSubmenu[]) {
+    this.countRoute = 0;
+    route.forEach(r => {
+      if (r.route === position) {
+        this.countRoute = this.countRoute + 1;
+      }
+    });
+    if (this.countRoute > 0) {
       return true;
     } else {
       return false;
