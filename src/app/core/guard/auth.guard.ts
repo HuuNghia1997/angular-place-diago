@@ -34,7 +34,7 @@ export class AuthGuard extends KeycloakAuthGuard {
         return resolve(false);
       }
 
-      if (hasAnyRoles && hasAnyRoles.length === 0) {
+      if (hasAnyRoles && hasAnyRoles.length > 0) {
         if (!this.roles || this.roles.length === 0) {
           this.router.navigate([environment.insufficientPermissionRouterLink]);
           return resolve(false);
@@ -45,6 +45,38 @@ export class AuthGuard extends KeycloakAuthGuard {
         this.router.navigate([environment.insufficientPermissionRouterLink]);
         return resolve(false);
       }
+
+      // var b = hasAnyRoles.every(role => {
+      //   console.log(role);
+      //   console.log(this.roles.indexOf(role));
+      //   return this.roles.indexOf(role) > -1;
+      // });
+
+      // var a = hasAnyRoles.some(role => {
+      //   console.log(role);
+      //   console.log(this.roles.indexOf(role));
+      //   return this.roles.indexOf(role) > -1;
+      // });
+
+      // console.log(a);
+      // console.log(b);
+
+    //   hasAnyRoles.forEach(role => {
+    //       console.log(this.roles.indexOf(role));
+    //   });
+
+    //   function isBigEnough(element, index, array) {
+    //     console.log(this.roles.indexOf(element));
+
+    //     return (element >= 10);
+
+    //  }
+
+    //  var retval = [2, 5, 8, 1, 4].some(isBigEnough);
+    //  console.log("Returned value is : " + retval );
+
+    //  var retval = [12, 5, 8, 1, 4].some(isBigEnough);
+    //  console.log("Returned value is : " + retval );
 
       return resolve(true);
     });

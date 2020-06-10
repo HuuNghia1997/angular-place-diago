@@ -8,6 +8,27 @@
   right: 0;
 }
 
+a {
+  text-decoration: none;
+}
+
+a:link{
+  text-decoration: none;
+}
+
+a:visited{
+  text-decoration: none;
+}
+
+a:hover{
+  text-decoration: none;
+}
+
+a:active{
+  text-decoration: none;
+  overflow: visible;
+}
+
 .main-sidenav-container mat-sidenav {
   background-color: rgba($color: #3C8DBC, $alpha: 0.8);
   padding: .5em .5em;

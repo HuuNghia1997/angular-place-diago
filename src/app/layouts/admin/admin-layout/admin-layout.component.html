@@ -2,11 +2,12 @@
   <mat-sidenav-container class="main-sidenav-container">
     <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'"
                  [fixedInViewport]="mobileQuery.matches" [opened]="true">
-      <div class="site_logo">
-        <div class="logo_img"></div>
-        <span class="site_name" i18n> CHÍNH QUYỀN SỐ </span>
-      </div>
-
+      <a href="/">
+        <div class="site_logo">
+          <div class="logo_img"></div>
+          <span class="site_name" i18n> CHÍNH QUYỀN SỐ </span>
+        </div>
+      </a>
       <!-- menu -->
       <app-admin-layout-sidenav></app-admin-layout-sidenav>
     </mat-sidenav>
