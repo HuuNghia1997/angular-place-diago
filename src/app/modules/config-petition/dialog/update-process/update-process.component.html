@@ -1,0 +1,50 @@
+<h3 mat-dialog-title class="dialog_title" i18n> Cập nhật quy trình </h3>
+<form [formGroup]="updateForm">
+  <!-- Tiêu đề -->
+  <mat-form-field appearance="outline" class="input-full-width">
+    <mat-label i18n> Tên quy trình </mat-label>
+    <label>
+      <input matInput formControlName="title" required>
+    </label>
+    <mat-error *ngIf="title.invalid" i18n> Vui lòng nhập tên quy trình </mat-error>
+  </mat-form-field>
+
+  <!-- Chuyên mục phản ánh -->
+  <mat-form-field appearance="outline" class="input-1-2-width">
+    <mat-label i18n> Chuyên mục phản ánh </mat-label>
+    <mat-select multiple [formControl]="topics">
+      <mat-option *ngFor="let topic of topicList" [value]="topic"> {{ topic }} </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Đơn vị phản ánh -->
+  <mat-form-field appearance="outline" class="input-1-2-width ml-2">
+    <mat-label i18n> Đơn vị áp dụng </mat-label>
+    <mat-select multiple [formControl]="agency">
+      <mat-option *ngFor="let agen of agencyList" [value]="agen"> {{ agen }} </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="container">
+    <img src="../../../../../assets/img/sample_process.png" class="image-process">
+    <div class="align-right">
+      <span>
+        <span i18n> Chọn quy trình </span>
+        <mat-form-field appearance="outline" class="input-1-4-width mt-3">
+          <mat-label i18n> Chọn quy trình </mat-label>
+          <mat-select [formControl]="process">
+            <mat-option *ngFor="let pro of processList" [value]="pro"> {{ pro }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <span i18n> hoặc </span>
+        <a (click)="drawProcess()" i18n> Vẽ quy trình </a>
+      </span>
+    </div>
+  </div>
+</form>
+
+<mat-dialog-actions align="center">
+  <button mat-button class="btn-cancel" (click)="onDismiss()" i18n> Đóng </button>
+  <button mat-button class="btn-cancel" [mat-dialog-close]="true" i18n> Lưu và Áp dụng </button>
+  <button mat-button class="btn-save" [mat-dialog-close]="true" i18n> Lưu lại </button>
+</mat-dialog-actions>

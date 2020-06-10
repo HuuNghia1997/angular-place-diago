@@ -1,0 +1,176 @@
+<mat-toolbar class="title-bar">
+  <mat-toolbar-row>
+    <h6 class="name-page"> Danh sách thông báo </h6>
+    <button mat-button class="btn-add" (click)="addRecord()">
+      <mat-icon> add </mat-icon>
+      Thêm mới
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div id="search">
+  <mat-accordion>
+    <mat-expansion-panel class="mat-elevation-z4">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <span id="title"> Tìm kiếm </span>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <form [formGroup]="searchForm" (submit)="search(0, 10)">
+        <!--Tiêu đề-->
+        <mat-form-field class="input-half-width" appearance="outline">
+          <mat-label> Tiêu đề </mat-label>
+          <input matInput placeholder="Nhập tiêu đề tìm kiếm" formControlName="title">
+        </mat-form-field>
+
+        <!--Chuyên mục-->
+        <mat-form-field class="input-1-4-width ml-1" appearance="outline">
+          <mat-label> Chuyên mục </mat-label>
+          <mat-select formControlName="tag" multiple>
+            <mat-option *ngFor='let tag of listTags;' value="{{tag.id}}"> {{ tag.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Người nhận -->
+        <mat-form-field class="input-1-4-width ml-1" appearance="outline">
+          <mat-label> Người nhận </mat-label>
+          <mat-select formControlName="receiver" multiple>
+            <mat-option value="0"> Tất cả </mat-option>
+            <mat-option value="1"> Trần Văn A </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Đơn vị -->
+        <mat-form-field class="input-1-4-width" appearance="outline">
+          <mat-label> Đơn vị </mat-label>
+          <mat-select formControlName="agency">
+            <mat-option *ngFor='let agen of agencyList;' value="{{agen.id}}"> {{ agen.name }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Trạng thái -->
+        <mat-form-field class="input-1-4-width ml-1" appearance="outline">
+          <mat-label> Trạng thái </mat-label>
+          <mat-select formControlName="publish">
+            <mat-option value="0"> Chưa gửi </mat-option>
+            <mat-option value="1"> Đã gửi </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- ngày bd -->
+        <mat-form-field class="input-1-4-width ml-1" appearance="outline">
+          <mat-label> Từ ngày </mat-label>
+          <input matInput [matDatepicker]="startDate" placeholder="Chọn ngày bắt đầu" formControlName="startDate">
+          <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+          <mat-datepicker #startDate></mat-datepicker>
+        </mat-form-field>
+
+        <!-- ngày kt -->
+        <mat-form-field class="input-1-4-width ml-1" appearance="outline">
+          <mat-label> Đến ngày </mat-label>
+          <input matInput [matDatepicker]="endDate" placeholder="Chọn ngày kết thúc" formControlName="endDate">
+          <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+          <mat-datepicker #endDate></mat-datepicker>
+        </mat-form-field>
+
+        <button mat-raised-button class="primary-blue-btn" type="submit" align="start"> Tìm kiếm </button>
+        <button mat-raised-button class="ml-1 btn-cancel" align="start" (click)="searchForm.reset();"> Làm mới </button>
+      </form>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
+<div id="main">
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="status" matSortDirection="asc" class="mat-elevation-z4">
+      <!-- Position Column -->
+      <ng-container matColumnDef="stt">
+        <th mat-header-cell *matHeaderCellDef> STT </th>
+        <td mat-cell *matCellDef="let element"> {{ element.num }} </td>
+      </ng-container>
+
+      <!-- Tiêu đề -->
+      <ng-container matColumnDef="title">
+        <th mat-header-cell *matHeaderCellDef> Tiêu đề </th>
+        <td mat-cell *matCellDef="let element" class="tbl_wraptext_col title">
+          <a href="/quan-tri-thong-bao/chi-tiet/{{element.id}}"> {{ element.title }} </a>
+        </td>
+      </ng-container>
+
+      <!-- Đơn vị  -->
+      <ng-container matColumnDef="agency">
+        <th mat-header-cell *matHeaderCellDef> Đơn vị </th>
+        <td mat-cell *matCellDef="let element"> {{ element.agency.name }} </td>
+      </ng-container>
+
+      <!-- Chuyên mục -->
+      <ng-container matColumnDef="catalogy">
+        <th mat-header-cell *matHeaderCellDef> Chuyên mục </th>
+        <td mat-cell *matCellDef="let element" class="tbl_wraptext_col">
+          <span *ngFor="let tag of element.tag, let i = index;">
+            {{ tag.name }} {{ i === element.tag.length -1 ? '' : ',' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Người nhận -->
+      <ng-container matColumnDef="receiver">
+        <th mat-header-cell *matHeaderCellDef> Người nhận </th>
+        <td mat-cell *matCellDef="let element"></td>
+      </ng-container>
+
+      <!-- Ngày tạo -->
+      <ng-container matColumnDef="created_at">
+          <th mat-header-cell *matHeaderCellDef> Ngày tạo </th>
+          <td mat-cell *matCellDef="let element"> {{ element.createdDate | date : 'dd/MM/yyyy' }} </td>
+      </ng-container>
+
+      <!-- Trạng thái -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Trạng thái </th>
+        <td mat-cell *matCellDef="let element">
+          <span [ngClass]="{'status_badge_unsent': element.publish.status === 0, 'status_badge_sent':  element.publish.status === 1}">
+            {{ element.publish.description }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Ngày hết hạn -->
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef> Ngày hết hạn </th>
+        <td mat-cell *matCellDef="let element"> {{ element.expiredDate | date : 'dd/MM/yyyy' }} </td>
+      </ng-container>
+
+      <!-- Thao tác -->
+      <ng-container matColumnDef="options">
+        <th mat-header-cell *matHeaderCellDef> Thao tác </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+            <mat-icon> more_horiz </mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            <a mat-menu-item routerLink="detail/{{element.id}}">
+              <mat-icon fontSet="material-icons-outlined"> description </mat-icon>
+                <span> Chi tiết </span>
+            </a>
+            <button mat-menu-item (click)="updateRecord(element.id, element.title)" [ngClass]="{'d-none':  element.publish.status === 1}">
+              <mat-icon fontSet="material-icons-outlined"> edit </mat-icon>
+              <span> Cập nhật </span>
+            </button>
+            <button mat-menu-item (click)="sendNotification(element.id, element.title)" [ngClass]="{'d-none':  element.publish.status === 1}">
+              <mat-icon fontSet="material-icons-outlined"> send </mat-icon>
+              <span> Gửi đi </span>
+            </button>
+            <button mat-menu-item (click)="deleteRecord(element.id, element.title)" [ngClass]="{'d-none':  element.publish.status === 1}">
+              <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
+              <span> Xoá </span>
+            </button>
+            </mat-menu>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator #paginator [length]="totalElements" (page)="onPaginateChange($event)" [pageSizeOptions]="pageSizes" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

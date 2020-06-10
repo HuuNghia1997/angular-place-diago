@@ -1,46 +1,40 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
-import { SidebarModule } from './components/sidebar/sidebar.module';
-import { NotificationModule } from './components/notification/notification.module';
-import { DetailNotificationModule } from './components/notification/detail-notification/detail-notification.module';
-
-// services
-import { NotificationService } from './services/notification.service';
-import { TranslateService } from './services/translate.service';
-import { OauthService } from './services/oauth.service';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { TokenAuthComponent } from './components/token-auth/token-auth.component';
+import { CoreModule } from './core/core.module';
+import { SharedModule } from './shared/shared.module';
+import { KeycloakService, KeycloakAngularModule } from 'keycloak-angular';
+import { initializer } from './app-init';
 import { NgxImageCompressService } from 'ngx-image-compress';
-import { ImageCompressService, ResizeOptions, ImageUtilityService } from 'ng2-image-compress';
+
 
 @NgModule({
   declarations: [
-    AppComponent,
-    DashboardComponent,
-    TokenAuthComponent,
+    AppComponent
   ],
   imports: [
     BrowserModule,
+    KeycloakAngularModule,
+    CoreModule,
+    SharedModule,
+
+    //add more modules here
+
     AppRoutingModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    SidebarModule,
-    NotificationModule,
-    DetailNotificationModule,
+    BrowserAnimationsModule
   ],
   providers: [
-    NotificationService,
-    TranslateService,
-    OauthService,
-    NgxImageCompressService,
-    ImageCompressService,
-    ResizeOptions
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializer,
+      multi: true,
+      deps: [KeycloakService]
+    },
+    NgxImageCompressService
   ],
-  exports: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

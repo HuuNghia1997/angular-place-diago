@@ -1,0 +1,33 @@
+<div mat-dialog-title class="fw-500"> Xác nhận hoàn thành </div>
+
+<mat-horizontal-stepper [linear]="isLinear" #stepper labelPosition="bottom" class="mt-1">
+  <mat-step>
+    <div class="pt-3">
+      <mat-radio-group aria-label="Select an option" [(ngModel)]="checkedStep1">
+        <mat-radio-button value="0"> Thông báo trả lại </mat-radio-button>
+        <br/>
+        <mat-radio-button value="1" class="mt-10"> Chuyển sở nghành </mat-radio-button>
+      </mat-radio-group>
+      <div [ngClass]="(checkedStep1 === '1' ? 'display' : 'display-none')" class="mt-10">
+        <section>
+          <mat-checkbox> Chuyển sở nghành </mat-checkbox>
+          <br>
+          <div class="mt-10"></div>
+          <mat-checkbox [(ngModel)]="checkedStep2"  class="mt-15"> Xử lý và chuyển lãnh đạo phê duyệt </mat-checkbox>
+        </section>
+        <div *ngIf="checkedStep2" class="radio_checked">
+          <mat-radio-group>
+            <mat-radio-button value="0" class="mt-10"> Duyệt kết quả </mat-radio-button>
+            <br>
+            <mat-radio-button value="1" class="mt-10"> Trả lại </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+    </div>
+    <br/>
+    <mat-dialog-actions class="align-right">
+      <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Hủy bỏ </button>
+      <button mat-button class="btn-update"> Đồng ý </button>
+    </mat-dialog-actions>
+  </mat-step>
+</mat-horizontal-stepper>

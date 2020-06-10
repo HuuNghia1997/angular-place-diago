@@ -1,0 +1,139 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link{
+  text-decoration: none;
+}
+
+a:visited{
+  text-decoration: none;
+}
+
+a:hover{
+  text-decoration: none;
+}
+
+a:active{
+  text-decoration: none;
+  overflow: visible;
+}
+
+.main-sidenav-container mat-sidenav {
+  background-color: rgba($color: #3C8DBC, $alpha: 0.8);
+  padding: .5em .5em;
+  color: #fff;
+  border: unset;
+}
+
+mat-sidenav {
+  width: 260px;
+}
+
+.main-sidenav-container mat-sidenav-content {
+  background-color: #F5F8FF;
+}
+
+.site_logo {
+  display: flex;
+}
+
+.logo_img {
+  background-image: url(../../../../assets/logo/HCC.png);
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 3em;
+  height: 3em;
+}
+
+.site_name {
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0 0 0 .5em;
+  color: #fff;
+  align-self: center;
+}
+
+.main-is-mobile .main-toolbar {
+  position: fixed;
+  z-index: 2;
+}
+
+.mat-toolbar {
+  background-color: #F5F8FF;
+  border-bottom: 0.5px solid #E0E0E0;
+}
+
+h1.main-app-name {
+  margin-left: 8px;
+}
+
+.main-sidenav-container {
+  flex: 1;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.mat-icon-arrow-down {
+  margin-left: 10px;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  background-color: #F5F8FF;
+  color: black;
+  border: none;
+  border-radius: 2px;
+  border-right: 1px solid #BDBDBD;
+  text-transform: uppercase;
+}
+
+.btn-language {
+  border: none;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+}
+
+#account_btn {
+  padding: 0 1em;
+  display: flex;
+}
+
+#account_name {
+  font-size: 16px;
+  text-transform: uppercase;
+  display: flex;
+}
+
+#avatar_sidebar {
+  margin-right: 5px;
+}
+
+.avatar {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 200%;
+  width: 2em;
+  height: 2em;
+  border-radius: 50px;
+  margin-right: .5em;
+  background-color: #000;
+}
+
+.content {
+  padding: .5em 1.5em;
+}

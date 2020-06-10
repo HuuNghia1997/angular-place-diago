@@ -1,0 +1,647 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="d27bf4a7aeac1f42a2d7d6af7a107a52b7e7fb2a" datatype="html">
+        <source> CHÍNH QUYỀN SỐ </source>
+        <target> CHÍNH QUYỀN SỐ </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layouts/admin/admin-layout/admin-layout.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5529a01f97b27e9c8a0936861c383269ba8f0116" datatype="html">
+        <source> Đăng nhập </source>
+        <target> Đăng nhập </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layouts/admin/admin-layout/admin-layout.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a414a3554c1092e05f836490342f91348017eb36" datatype="html">
+        <source> Đăng xuất </source>
+        <target> Đăng xuất </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/layouts/admin/admin-layout/admin-layout.component.html</context>
+          <context context-type="linenumber">57</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="16173d1b85103ac2ebdf623ebaaabf2221b5ea63" datatype="html">
+        <source> Quản trị ứng dụng di động cho người dân </source>
+        <target> Quản trị ứng dụng di động cho người dân </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/home/pages/home/home.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="40c5b59b045f494bc9e7c4cf235fe61def17f49c" datatype="html">
+        <source> Sorry, Page not found! </source>
+        <target> Sorry, Page not found! </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/error/pages/page-not-found/page-not-found.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e42f844332930946f9a5da594fd922e05f06d753" datatype="html">
+        <source> Back to Home Page </source>
+        <target> Back to Home Page </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/error/pages/page-not-found/page-not-found.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="eafcbffc29351d13656108ff935bc062c68f47a5" datatype="html">
+        <source> Xóa quy trình </source>
+        <target> Xóa quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/delete-process/delete-process.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d8bebdb31840f335a3a0bd3facc59a0e723d72da" datatype="html">
+        <source> Quy trình đang được áp dụng </source>
+        <target> Quy trình đang được áp dụng </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/delete-process/delete-process.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="53567353a5e3420d0b2bcde6c89256d7b8291d63" datatype="html">
+        <source> Bạn có chắc chắn muốn xoá thông báo </source>
+        <target> Bạn có chắc chắn muốn xoá thông báo </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/delete-process/delete-process.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="940ff35a9273ac0dc4965c1eb9c8f738b92bad4e" datatype="html">
+        <source> không? </source>
+        <target> không? </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/delete-process/delete-process.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a4367607d7c11c010ff08682a2039fe51b9a22d7" datatype="html">
+        <source> Đóng </source>
+        <target> Đóng </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/delete-process/delete-process.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/unapply-process/unapply-process.component.html</context>
+          <context context-type="linenumber">14</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/draw-process/draw-process.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/apply-process.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/show-process/show-process.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3de920f197de4043aed5335e0fabd6518add8e64" datatype="html">
+        <source> Đồng ý </source>
+        <target> Đồng ý </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/delete-process/delete-process.component.html</context>
+          <context context-type="linenumber">18</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/unapply-process/unapply-process.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/draw-process/draw-process.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/apply-process.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6a1ffdba868e9d17c7daee32cfabdb1106a97904" datatype="html">
+        <source> Hủy áp dụng quy trình </source>
+        <target> Hủy áp dụng quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/unapply-process/unapply-process.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="78422fa18ca82b75c879c2979b9d270d799a9cec" datatype="html">
+        <source> Hủy áp dụng </source>
+        <target> Hủy áp dụng </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/unapply-process/unapply-process.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">146</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a2b41c6dc06af74102b26b7806f87c96b37c9b5c" datatype="html">
+        <source> làm quy trình xử lý? </source>
+        <target> làm quy trình xử lý? </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/unapply-process/unapply-process.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="88573768a0865ab01ca3b5d5126fc3594e15ed03" datatype="html">
+        <source> Vẽ quy trình </source>
+        <target> Vẽ quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/draw-process/draw-process.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fccd8f4fb7bfdf021afc7a3a9857f9773a5ce58b" datatype="html">
+        <source>
+          Chuyển tới trang vẽ quy trình. Quy trình được vẽ mới sẽ có thể áp dụng sau lần deploy hệ thống lần tiếp theo.
+        </source>
+        <target>
+          Chuyển tới trang vẽ quy trình. Quy trình được vẽ mới sẽ có thể áp dụng sau lần deploy hệ thống lần tiếp theo.
+        </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/draw-process/draw-process.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6d68f91ae754c9012c485279eea42348060429ac" datatype="html">
+        <source> Bạn có muốn tiếp tục vẽ quy trình? </source>
+        <target> Bạn có muốn tiếp tục vẽ quy trình? </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/draw-process/draw-process.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c414c334ee29203b54e7ed4ebbbde86d1b619dc9" datatype="html">
+        <source> Cập nhật quy trình </source>
+        <target> Cập nhật quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="b723ebc4964166d20157652ad2f9755df6544b00" datatype="html">
+        <source> Tên quy trình </source>
+        <target> Tên quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="026e39d753afb8456c3459b391aadb6aa4537f9e" datatype="html">
+        <source> Vui lòng nhập tên quy trình </source>
+        <target> Vui lòng nhập tên quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">10</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="376e43bad704097ec03294c40ea1a685c1579da4" datatype="html">
+        <source> Chuyên mục phản ánh </source>
+        <target> Chuyên mục phản ánh </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="9216eefc6ab0f9f53f575508e56eb5612f910222" datatype="html">
+        <source> Đơn vị áp dụng </source>
+        <target> Đơn vị áp dụng </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">23</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">27</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">119</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">132</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c9e250d100c18252c49687d3500ee6bfdc20e2bb" datatype="html">
+        <source> Nhập mã quy trình </source>
+        <target> Nhập mã quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a8e1ecaf61a74a07cce54e65b7c76e54eb998f80" datatype="html">
+        <source> Chọn quy trình </source>
+        <target> Chọn quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">31</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4752ea1a3775c9cbb1b1ad78b59b4397eed582e9" datatype="html">
+        <source> hoặc </source>
+        <target> hoặc </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="14d320220e97ebe6ce29c2f9bc79efb0c9e4f081" datatype="html">
+        <source> Vẽ quy trình </source>
+        <target> Vẽ quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="17e6bf2488f84a913b9ed395d94899504fd1fefc" datatype="html">
+        <source> Lưu và Áp dụng </source>
+        <target> Lưu và Áp dụng </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">44</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2a3aef7f2d94f41c6613f7811980e7e6ee07993c" datatype="html">
+        <source> Lưu lại </source>
+        <target> Lưu lại </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/update-process/update-process.component.html</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">45</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1bb8c1ef5f93d09e9d36559526c8199a59627f21" datatype="html">
+        <source> Áp dụng quy trình </source>
+        <target> Áp dụng quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/apply-process.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="46122d84fe3aa62913540f097bef0df54812c2b0" datatype="html">
+        <source> Cần chọn khách hàng trước khi áp dụng quy trình </source>
+        <target> Cần chọn khách hàng trước khi áp dụng quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/apply-process.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="10cdc5d7b885e975166f90576ed79f0dc6c4d45d" datatype="html">
+        <source> Hủy bỏ </source>
+        <target> Hủy bỏ </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/apply-process.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="904fc93ba585d52e4c6b9955806d76de76afb6a4" datatype="html">
+        <source> Cập nhật </source>
+        <target> Cập nhật </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/apply-process.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">139</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="eba38b7959e65b8d527fef82e2866d4e6534f6e2" datatype="html">
+        <source> Áp dụng </source>
+        <target> Áp dụng </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/apply-process.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/show-process/show-process.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d2adf62ebb58a6c8449952d13caa632578e53d5f" datatype="html">
+        <source> làm quy trình xử lý </source>
+        <target> làm quy trình xử lý </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/apply-process.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="17efbe0bb1f13bb90e2eea2407fbdc0d0e283633" datatype="html">
+        <source> Thêm mới quy trình </source>
+        <target> Thêm mới quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/add-process/add-process.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="133190fc8785c1a9e02c90ec6cc78ed77c09bd15" datatype="html">
+        <source> Xem quy trình </source>
+        <target> Xem quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/show-process/show-process.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2e3fae7211b6b6cd737ab8023343c8b0b6b08b47" datatype="html">
+        <source> Thêm mới </source>
+        <target> Thêm mới </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="29de3ddbe4a339542e697d10caebeffc04a84488" datatype="html">
+        <source> Tìm kiếm </source>
+        <target> Tìm kiếm </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">71</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="b5c4fac09652cbdfbe0ce2557cc4365a51d6a201" datatype="html">
+        <source> Chuyên mục </source>
+        <target> Chuyên mục </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">96</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3639528c7aff82b38fd078d0a6944839f78783b7" datatype="html">
+        <source> Trạng thái </source>
+        <target> Trạng thái </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">43</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fb72fee66f29d263e5566fde09049f468c63c1f4" datatype="html">
+        <source> Từ ngày </source>
+        <target> Từ ngày </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fd8ec41446e8d45f049cc59d7794281fd201f766" datatype="html">
+        <source> Đến ngày </source>
+        <target> Đến ngày </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">63</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8c6da2ab4b9f6d13295c3d4d857ea79e29c72bcc" datatype="html">
+        <source> Làm mới </source>
+        <target> Làm mới </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e9444fc1de1795e4e616b370d076be19112ef869" datatype="html">
+        <source> STT </source>
+        <target> STT </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e5da72747e465d615d2ce9d4aa00127ed92b5bef" datatype="html">
+        <source> Tiêu đề </source>
+        <target> Tiêu đề </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">88</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="a433761048b9f4e769ef4372abdb2db73a6889b9" datatype="html">
+        <source> Ngày tạo </source>
+        <target> Ngày tạo </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">102</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="49f4badcad85a4dd949a736dca84a48063f59e99" datatype="html">
+        <source> Thao tác </source>
+        <target> Thao tác </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">125</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7e88714e12fd8cf379111c91339c5745a1fded85" datatype="html">
+        <source> Xem quy trình </source>
+        <target> Xem quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">134</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ab064c529bba27ac59a82a0fe751c5ac48cc307a" datatype="html">
+        <source> Xóa </source>
+        <target> Xóa </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/list-config-petition/list-config-petition.component.html</context>
+          <context context-type="linenumber">158</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="01e93a28cc021e43577d7d638241f7513104bba1" datatype="html">
+        <source> Chi tiết quy trình </source>
+        <target> Chi tiết quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="69e843d43df26c0806cfd7cce5bc64b69b992a86" datatype="html">
+        <source> Thông tin quy trình </source>
+        <target> Thông tin quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="50388b7759433030bf7a8bc4da16b488c67518a5" datatype="html">
+        <source> Trạng thái: </source>
+        <target> Trạng thái: </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">53</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c9d187d5d00e4786b26e62045d8d4c6bca3bec7f" datatype="html">
+        <source> Chuyên mục: </source>
+        <target> Chuyên mục: </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3182f8422993075130bc9d6a89dd0325c8611a46" datatype="html">
+        <source> Mã quy trình: </source>
+        <target> Mã quy trình: </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">68</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1a794bb1c1b39e9819995caf22a30bdd59f27e0d" datatype="html">
+        <source> Quy trình </source>
+        <target> Quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d8918b219c3065a8142e18240e4ed9dc5f558161" datatype="html">
+        <source> Hoạt động </source>
+        <target> Hoạt động </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="77c94cb8c5c44daab55831f227a6ba38f45a2c90" datatype="html">
+        <source> Trường </source>
+        <target> Trường </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">89</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6db2cbe482e21f3130409b30dc7d055e1041f426" datatype="html">
+        <source> Giá trị cũ </source>
+        <target> Giá trị cũ </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">90</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">107</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1eb109fd9f8b40995db302096fc5274fac3eaf40" datatype="html">
+        <source> Giá trị mới </source>
+        <target> Giá trị mới </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">108</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="b2c1d6b884e1a46d8f7f86dcb03a31b6e0b89904" datatype="html">
+        <source> Ngày tạo: </source>
+        <target> Ngày tạo: </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/pages/detail-config-petition/detail-config-petition.component.html</context>
+          <context context-type="linenumber">128</context>
+        </context-group>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -1,59 +1,69 @@
+// This file can be replaced during build by using the `fileReplacements` array.
+// `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
+// The list of file replacements can be found in `angular.json`.
+
 export const environment = {
-    production: false
-};
-
-//export const tempRedirect = 'redirect_uri=http://localhost:4200/oauth';
-export const tempRedirect = 'redirect_uri=https://digo-citizens-admin.vnptigate.vn/oauth';
-
-//export const rootLayout = 'http://localhost:4200/';
-export const rootLayout = 'https://digo-citizens-admin.vnptigate.vn/';
-
-export const tokenURL = 'https://digo-sso.vnptigate.vn/oauth/token';
-
-export const logoutURL = 'https://digo-sso.vnptigate.vn';
-
-export const rootURL = 'https://digo-api.vnptigate.vn/';
-
-export const getCodeURL = 'https://digo-sso.vnptigate.vn/oauth/authorize';
-
-export const logoutPath = 'https://digo-sso.vnptigate.vn/account/perform-logout';
-
-export const AUTH = {
-    GRANT_TYPE_CLIENT: 'client_credentials',
-    CLIENT_ID: 'first-client',
-    CLIENT_SECRET: '123',
-    USER_NAME: '+84941707439',
-    PWD: 'Vnpt@123654',
-    GRANT_TYPE_CODE : 'authorization_code'
-};
-
-
-export const getCodeParams = '?grant_type=' + AUTH.GRANT_TYPE_CODE + '&response_type=code&client_id=' + AUTH.CLIENT_ID + '&state=1234';
-
-export const siteName = 'Chính Quyền Số';
-
-export const notificationHistoryGroupId = 3;
-
-export const notificationCategoryId = '6';
-
-export const token_refresh = 'token_refresh';
-
-export const auth_token = 'auth_token';
-
-// Dịch các lable của phân trang
-export const translatePaginator = ['Số dòng', 'Trang đầu', 'Trang trước', 'Trang tiếp theo', 'Trang cuối', 'của'];
-
-// Datetime picker format
-export const PICK_FORMATS = {
-    parse: { dateInput: { month: 'short', year: 'numeric', day: 'numeric' } },
-    display: {
-        dateInput: 'input',
-        monthYearLabel: { year: 'numeric', month: 'short' },
-        dateA11yLabel: { year: 'numeric', month: 'long', day: 'numeric' },
-        monthYearA11yLabel: { year: 'numeric', month: 'long' }
+  production: false,
+  debug: true,
+  keycloakDebug: true,
+  keycloakOptions: {
+    config: {
+      url: 'https://digo-oidc.vnptigate.vn/auth',
+      realm: 'digo',
+      clientId: 'citizens-admin',
+    },
+    initOptions: {
+      onLoad: 'check-sso'
+    },
+  },
+  routerConfig: {
+    enableTracing: false
+  },
+  defaultRouterLink: 'home',
+  insufficientPermissionRouterLink: 'error/insufficient-permission',
+  apiProviders: [
+    {
+      name: 'digo-microservice',
+      rootUrl: 'https://digo-api-01.vnptigate.vn/',
+      services: [
+        {
+          name: 'basedata',
+          path: 'ba'
+        },
+        {
+          name: 'basecat',
+          path: 'bt'
+        },
+        {
+          name: 'fileman',
+          path: 'fi'
+        },
+        {
+          name: 'custom',
+          path: 'cu'
+        },
+        {
+          name: 'human',
+          path: 'hu'
+        },
+        {
+          name: 'postman',
+          path: 'po'
+        },
+        {
+          name: 'logman',
+          path: 'lo'
+        }
+      ]
     }
+  ]
 };
 
-export const reloadTimeout = 2500; // milisecond
-export const pageSizeOptions = [5, 10, 20, 50];
-
+/*
+ * For easier debugging in development mode, you can import the following file
+ * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
+ *
+ * This import should be commented out in production mode because it will have a negative impact
+ * on performance if an error is thrown.
+ */
+// import 'zone.js/dist/zone-error';  // Included with Angular CLI.

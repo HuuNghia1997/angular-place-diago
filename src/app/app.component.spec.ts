@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'vn-petition'`, () => {
+  it(`should have as title 'vn-citizens-admin-web'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('vn-petition');
+    expect(app.title).toEqual('vn-citizens-admin-web');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('vn-petition app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain('vn-citizens-admin-web app is running!');
   });
 });

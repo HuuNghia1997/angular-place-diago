@@ -1,0 +1,138 @@
+.fs-14 {
+  font-size: 14px;
+}
+
+input, textarea, mat-select {
+  font-size: 14px;
+}
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.full-input {
+  width: 100%;
+}
+
+.mt-1 {
+  margin-top: 1.5em;
+}
+
+.btn-update {
+  color: #ffffff;
+  background-color: #1976D2;
+}
+
+.btn-cancel {
+  border: 1px solid #333333;
+}
+
+// upload file====================================================================
+.frame-upload-file {
+  border: 0.5px dashed #c4c4c4;
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
+
+.my-drop-zone {
+  border: 0.5px dashed lightgray;
+}
+
+.card-container {
+  padding: 0.5em;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.hidden-file {
+  display: none;
+}
+
+.span-cloud-upload {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.icon-cloud {
+  font-size: 20px;
+  color: rgba($color: #000000, $alpha: 0.54);
+}
+
+.btn-drop-drag {
+  border: none;
+  color: rgba($color: #000000, $alpha: 0.8);
+  background-color: #ffffff;
+  margin-left: -5px;
+}
+
+.btn-upload {
+  border: none;
+  margin-left: -6px;
+  color: #1371FF;
+  background-color: #ffffff;
+}
+
+.div-file-selected {
+  justify-content: left;
+}
+
+.mat-card-file {
+  margin: 4px;
+  width: 100px;
+  height: 100px;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.btn-delete {
+  border: none;
+}
+
+.nv-file-over {
+  border: 2px dashed red;
+}
+
+.table-file-selected {
+  border-bottom: 1px solid #c4c4c4;
+}
+
+.td-name-file {
+  width: 90%;
+  color: #2F80ED;
+}
+
+.td-action {
+  width: 10%;
+}
+
+.name-file {
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100px;
+  color: #2F80ED;
+  position: relative;
+  top: -10px;
+  margin-left: -15px;
+}
+
+.file-selected {
+  display: block;
+}
+
+.mat-icon-delete {
+  display: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: rgba($color: #000000, $alpha: 0.54);
+  position: relative;
+  top: -45px;
+  right: -85px;
+}
+
+.mat-card-file:hover .mat-icon-delete {
+  display: block;
+}
