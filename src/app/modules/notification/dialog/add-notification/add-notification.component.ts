@@ -90,9 +90,9 @@ export class AddNotificationComponent implements OnInit {
 
   onConfirm(): void {
     if (this.files.length > 0) {
-      this.keycloak.loadUserProfile().then(data => {
+      this.keycloak.loadUserProfile().then(user => {
         // tslint:disable-next-line: no-string-literal
-        this.accountId = data['attributes'].user_id;
+        this.accountId = user['attributes'].user_id;
 
         this.service.uploadMultiImages(this.files, this.accountId).subscribe((data: any) => {
           data.forEach(imgInfo => {

@@ -11,15 +11,15 @@
 <div class="main-wrapper mat-elevation-z4">
   <h2 id="title" class="mb-1"> {{ notificationTitle }}</h2>
   <div class="mb-2">
-    <button mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="updateRecord()">
+    <button mat-button class="btn-cancel" *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="updateRecord()">
       <mat-icon> edit </mat-icon>
       Cập nhật
     </button>
-    <button class="ml-1" mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="deleteRecord()">
+    <button class="ml-1 btn-cancel" mat-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="deleteRecord()">
       <mat-icon> delete </mat-icon>
       Xoá
     </button>
-    <button class="ml-1 primary-blue-btn" mat-raised-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="sendNotification()">
+    <button class="ml-1 primary-blue-btn" mat-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="sendNotification()">
       <mat-icon> send </mat-icon>
       Gửi đi
     </button>
@@ -139,7 +139,7 @@
         <div class="notification_tags">
           <div class="receiver"> Nguyễn Văn A </div>
         </div>
-    ` </div>
+      </div>
     </div>
   </div>
 </div>

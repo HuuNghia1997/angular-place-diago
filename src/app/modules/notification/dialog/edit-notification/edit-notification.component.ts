@@ -84,13 +84,12 @@ export class EditNotificationComponent implements OnInit {
   }
 
   onConfirm(): void {
-    this.keycloak.loadUserProfile().then(data => {
+    this.keycloak.loadUserProfile().then(user => {
       // tslint:disable-next-line: no-string-literal
-      this.accountId = data['attributes'].user_id;
+      this.accountId = user['attributes'].user_id;
       this.countDefaultImage = this.uploadedImage.length;
       if (this.countDefaultImage > 0) {
         if (this.files.length > 0) {
-
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
               data.forEach(imgInfo => {
                 this.uploadedImage.push(imgInfo.id);
@@ -152,7 +151,6 @@ export class EditNotificationComponent implements OnInit {
     formObj.imageId = this.uploadedImage;
     // Final result
     const resultJson = JSON.stringify(formObj, null, 2);
-    console.log(resultJson);
     this.updateNotification(resultJson);
   }
 
@@ -270,7 +268,7 @@ export class EditNotificationComponent implements OnInit {
         this.listTags.push(data.content[i]);
       }
     }, err => {
-      // this.service.checkErrorResponse(err, 2);
+      console.error(err);
     });
   }
 
@@ -280,7 +278,6 @@ export class EditNotificationComponent implements OnInit {
       this.setViewData();
     }, err => {
       console.error(err);
-      // this.service.checkErrorResponse(err, 3);
     });
   }
 

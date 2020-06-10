@@ -65,14 +65,14 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.paginator.pageSize = pageSizeOptions[1];
+    this.translator.translatePaginator(this.paginator);
     this.paginator.nextPage = () => this.paginatorChange(this.currentPage + 1, this.paginator.pageSize, 1);
     this.paginator.previousPage = () => this.paginatorChange(this.currentPage - 1, this.paginator.pageSize, 2);
     this.paginator.lastPage = () => this.paginatorChange(this.totalPages - 1, this.paginator.pageSize, 3);
     this.paginator.firstPage = () => this.paginatorChange(0, this.paginator.pageSize, 4);
     this.cdRef.detectChanges();
-    this.dataSource.paginator = this.paginator;
-    this.paginator.pageSize = pageSizeOptions[1];
-    this.translator.translatePaginator(this.paginator);
   }
 
   onPaginateChange($event) {
@@ -120,10 +120,9 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
     this.service.getListTags(this.categoryId).subscribe(data => {
       const size = data.numberOfElements;
       for (let i = 0; i < size; i++) {
-          this.listTags.push(data.content[i]);
+        this.listTags.push(data.content[i]);
       }
     }, err => {
-      // this.service.checkErrorResponse(err, 2);
       console.log(err);
     });
   }
@@ -159,48 +158,47 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
     formObj.endDate = this.datepipe.transform(formObj.endDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
 
     if (formObj.title != null ) {
-      searchString = searchString + '&title=' + formObj.title;
+        searchString = searchString + '&title=' + formObj.title;
     }
     if (formObj.tag != null ) {
-      for (const i of formObj.tag) {
-        searchString = searchString + '&tag-id=' + i;
-      }
+        for (const i of formObj.tag) {
+            searchString = searchString + '&tag-id=' + i;
+        }
     }
     if (formObj.agency != null) {
-      searchString = searchString + '&agency-id=' + formObj.agency;
+        searchString = searchString + '&agency-id=' + formObj.agency;
     }
     if (formObj.startDate != null) {
-      formObj.startDate = formObj.startDate.replace('+', '%2B');
+        formObj.startDate = formObj.startDate.replace('+', '%2B');
     }
     if (formObj.endDate != null) {
-      formObj.endDate = formObj.endDate.replace('+', '%2B');
+        formObj.endDate = formObj.endDate.replace('+', '%2B');
     }
     if (formObj.startDate != null) {
-      searchString = searchString + '&start-date=' + formObj.startDate;
+        searchString = searchString + '&start-date=' + formObj.startDate;
     }
     if (formObj.startDate != null) {
-      searchString = searchString + '&end-date=' + formObj.endDate;
+        searchString = searchString + '&end-date=' + formObj.endDate;
     }
     if (formObj.publish != null) {
-      searchString = searchString + '&publish=' + formObj.publish;
+        searchString = searchString + '&publish=' + formObj.publish;
     }
 
     this.service.search(searchString).subscribe(data => {
-      this.ELEMENTDATA = [];
-      const size = data.numberOfElements;
-      for (let i = 0; i < size; i++) {
-        this.ELEMENTDATA.push(data.content[i]);
-      }
-      this.dataSource.data = this.ELEMENTDATA;
-      this.dataSource.paginator.pageSize = pageSize;
-      this.totalElements = data.totalElements;
-      this.currentPage = data.number;
-      this.totalPages = data.totalPages;
-      this.selectedPageSize = pageSize;
+        this.ELEMENTDATA = [];
+        const size = data.numberOfElements;
+        for (let i = 0; i < size; i++) {
+            this.ELEMENTDATA.push(data.content[i]);
+        }
+        this.dataSource.data = this.ELEMENTDATA;
+        this.dataSource.paginator.pageSize = pageSize;
+        this.totalElements = data.totalElements;
+        this.currentPage = data.number;
+        this.totalPages = data.totalPages;
+        this.selectedPageSize = pageSize;
 
-      this.resetPageSize();
+        this.resetPageSize();
     }, err => {
-      // this.service.checkErrorResponse(err, 1);
       console.log(err);
     });
     searchString = '';

@@ -10,6 +10,10 @@
   height: 36px;
 }
 
+.btn-add:focus {
+  display: none;
+}
+
 .name-page {
   margin-left: -0.5em;
   font-weight: 500;
@@ -40,6 +44,18 @@
 .primary-blue-btn {
   background-color: #1976D2;
   color: #fff;
+}
+
+.btn-cancel {
+  border: 1px solid #333333;
+}
+
+.primary-blue-btn:focus {
+  display: none;
+}
+
+.btn-cancel:focus {
+  display: none;
 }
 
 .ml-1 {
