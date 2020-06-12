@@ -16,6 +16,10 @@ const routes: Routes = [
     loadChildren: () => import('modules/notification/notification.module').then(m => m.NotificationModule)
   },
   {
+    path: 'tiep-nhan-phan-anh',
+    loadChildren: () => import('modules/accept-petition/accept-petition.module').then(m => m.AcceptPetitionModule)
+  },
+  {
     path: 'xu-ly-phan-anh',
     loadChildren: () => import('modules/petition/petition.module').then(m => m.PetitionModule)
   },

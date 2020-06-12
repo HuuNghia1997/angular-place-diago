@@ -48,6 +48,24 @@ export const MENU_DATA: Menu[] = [
     code: 'cau-hinh-phan-anh',
     listSubMenu: [
       {
+        title: 'Tiếp nhận phản ánh',
+        route: 'tiep-nhan-phan-anh',
+        role: [
+          {
+            id: 1,
+            role: 'admin'
+          },
+          {
+            id: 2,
+            role: 'citizens_petition_accepter'
+          },
+          {
+            id: 3,
+            role: 'citizens_admin'
+          }
+        ]
+      },
+      {
         title: 'Xử lý phản ánh',
         route: 'xu-ly-phan-anh',
         role: [

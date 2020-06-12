@@ -1,0 +1,52 @@
+<h3 class="dialog_title" mat-dialog-title>Tiếp nhận phản ánh</h3>
+<form>
+  <p>Tiếp nhận xử lí phản ánh <strong>Phản ánh về trật tự đô thị</strong></p>
+  <div class="mb-1">
+    <span>Chọn quy trình tiếp nhận</span>
+    <mat-checkbox color="primary" class="ml-2"> Gửi tin nhắn SMS </mat-checkbox>
+    <mat-checkbox color="primary" class="ml-2">
+      Công khai phản ánh
+    </mat-checkbox>
+  </div>
+  <table>
+    <tr>
+      <button mat-button class="input-full-width btn-choose-process">
+        Quy trình phản ánh chung
+        <mat-icon class="mat-icon" fontSet="material-icons-outlined">
+          description
+        </mat-icon>
+      </button>
+    </tr>
+    <tr>
+      <button mat-button class="input-full-width btn-choose-process">
+        Quy trình phản ánh về môi trường
+        <mat-icon class="mat-icon" fontSet="material-icons-outlined">
+          description
+        </mat-icon>
+      </button>
+    </tr>
+    <tr>
+      <button mat-button class="input-full-width btn-choose-process">
+        Quy trình phản ánh về môi trường 2
+        <mat-icon class="mat-icon" fontSet="material-icons-outlined">
+          description
+        </mat-icon>
+      </button>
+    </tr>
+  </table>
+
+  <!-- Nội dung -->
+  <mat-form-field appearance="outline" class="input-full-width">
+    <mat-label> Nội dung </mat-label>
+    <label>
+      <textarea matInput cdkTextareaAutosize></textarea>
+    </label>
+  </mat-form-field>
+</form>
+
+<mat-dialog-actions align="center">
+  <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
+  <button mat-button class="btn-save" type="submit">
+    Đồng ý
+  </button>
+</mat-dialog-actions>

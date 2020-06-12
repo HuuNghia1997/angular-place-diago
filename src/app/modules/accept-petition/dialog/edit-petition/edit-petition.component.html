@@ -1,0 +1,263 @@
+<h3 class="dialog_title" mat-dialog-title>Cập nhật phản ánh</h3>
+<form>
+  <h4 id="title">Thông tin người gửi</h4>
+  <!-- Tiêu đề -->
+  <mat-form-field appearance="outline" class="input-1-3-width">
+    <mat-label> Người gửi </mat-label>
+    <input matInput value="La Văn Tam" />
+  </mat-form-field>
+
+  <!-- Tiêu đề -->
+  <mat-form-field appearance="outline" class="input-1-3-width ml-1">
+    <mat-label> Số điện thoại </mat-label>
+    <input matInput value="0941234567" />
+  </mat-form-field>
+
+  <!-- Tiêu đề -->
+  <mat-form-field appearance="outline" class="input-1-3-width float-right">
+    <mat-label> CMND </mat-label>
+    <input matInput value="331223344" />
+  </mat-form-field>
+
+  <!-- Tiêu đề -->
+  <mat-form-field appearance="outline" class="input-2-3-width">
+    <mat-label> Địa chỉ </mat-label>
+    <input matInput value="Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang" />
+  </mat-form-field>
+
+  <!-- Đơn vị phản ánh -->
+  <mat-form-field appearance="outline" class="input-1-3-width float-right">
+    <mat-label> Đối tượng </mat-label>
+    <mat-select [formControl]="reporterType">
+      <mat-option value="Cá nhân">
+        Cá nhân
+      </mat-option>
+      <mat-option value="Tổ chức">
+        Tổ chức
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Đơn vị phản ánh -->
+  <mat-form-field appearance="outline" class="input-1-3-width">
+    <mat-label> Phường xã </mat-label>
+    <mat-select [formControl]="xa">
+      <mat-option value="Phường 10"> Phường 10 </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Đơn vị phản ánh -->
+  <mat-form-field appearance="outline" class="input-1-3-width ml-1">
+    <mat-label> Quận huyện </mat-label>
+    <mat-select [formControl]="huyen">
+      <mat-option value="Thành phố Mỹ Tho"> Thành phố Mỹ Tho </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Đơn vị phản ánh -->
+  <mat-form-field appearance="outline" class="input-1-3-width float-right">
+    <mat-label> Tỉnh thành </mat-label>
+    <mat-select [formControl]="tinh">
+      <mat-option value="Tiền Giang"> Tiền Giang </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <h4 id="title">Thông tin người gửi</h4>
+  <!-- Tiêu đề -->
+  <mat-form-field appearance="outline" class="input-full-width">
+    <mat-label> Tiêu đề </mat-label>
+    <input matInput value="Phản ánh về trật tự đô thị" />
+  </mat-form-field>
+
+  <!-- Chuyên mục phản ánh -->
+  <mat-form-field appearance="outline" class="input-1-3-width">
+    <mat-label> Chuyên mục phản ánh </mat-label>
+    <mat-select multiple [formControl]="topic">
+      <mat-option *ngFor="let topic of topicList" [value]="topic">
+        {{ topic }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Thời gian xảy ra -->
+  <mat-form-field appearance="outline" class="input-1-3-width ml-1">
+    <mat-label> Thời gian xảy ra </mat-label>
+    <label>
+      <input
+        value="11/12/2019 14:00:00"
+        matInput
+        [ngxMatDatetimePicker]="pickerOccurred"
+        [formControl]="dateApprove"
+      />
+    </label>
+    <mat-datepicker-toggle
+      matSuffix
+      [for]="pickerOccurred"
+    ></mat-datepicker-toggle>
+    <ngx-mat-datetime-picker
+      #pickerOccurred
+      [showSpinners]="showSpinners"
+      [showSeconds]="showSeconds"
+      [stepHour]="stepHour"
+      [stepMinute]="stepMinute"
+      [stepSecond]="stepSecond"
+      [touchUi]="touchUi"
+      [enableMeridian]="enableMeridian"
+    >
+    </ngx-mat-datetime-picker>
+  </mat-form-field>
+
+  <!-- Đơn vị phản ánh -->
+  <mat-form-field appearance="outline" class="input-1-3-width float-right">
+    <mat-label> Đơn vị phản ánh </mat-label>
+    <mat-select multiple [formControl]="agency">
+      <mat-option *ngFor="let agency of agencyList" [value]="agency">
+        {{ agency }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Tiêu đề -->
+  <mat-form-field appearance="outline" class="input-full-width">
+    <mat-label> Nội dung </mat-label>
+    <label>
+      <textarea matInput cdkTextareaAutosize>
+Vào 6h20 phút ngày 12/12 trước cổng trường tiểu học Lê Lợi tình trạng đổ xe gây mất an toàn giao thông tắc đường mong quý cơ quan vào cuộc xử lý.</textarea
+      >
+    </label>
+  </mat-form-field>
+
+  <!-- Địa điểm phản ánh -->
+  <mat-form-field appearance="outline" class="place-input">
+    <mat-label> Địa điểm phản ánh </mat-label>
+    <label>
+      <input matInput />
+    </label>
+  </mat-form-field>
+
+  <button mat-button class="btn-choose">
+    <mat-icon fontSet="material-icons-outlined" class="icon-map">
+      place
+    </mat-icon>
+    Chọn
+  </button>
+
+  <mat-checkbox checked="true" color="primary">
+    Công khai phản ánh
+  </mat-checkbox>
+
+  <h4 id="title">Tập tin đính kèm</h4>
+  <div
+    class="frame-upload-file well my-drop-zone card-container"
+    ng2FileDrop
+    [ngClass]="{ 'nv-file-over': hasBaseDropZoneOver }"
+    (fileOver)="fileOverBase($event)"
+    [uploader]="uploader"
+    (onFileDrop)="onFileSelected($event)"
+  >
+    <table>
+      <tr>
+        <span class="hidden-file" aria-hidden="true">
+          <input
+            type="file"
+            #fileInput
+            ng2FileSelect
+            [uploader]="uploader"
+            (onFileSelected)="onFileSelected($event)"
+            multiple
+          />
+        </span>
+        <p (click)="fileInput.click()">
+          <span class="span-cloud-upload">
+            <mat-icon fontSet="material-icons-outlined" class="icon-cloud">
+              cloud_upload
+            </mat-icon>
+            <button disabled class="btn-drop-drag">
+              Kéo thả tập tin hoặc
+            </button>
+            <button class="btn-upload">Chọn từ thư viện</button>
+            <button disabled class="btn-drop-drag">
+              hoặc
+            </button>
+            <button class="btn-upload">Tải lên</button>
+          </span>
+        </p>
+      </tr>
+      <tr>
+        <!-- Upload file -->
+        <div class="card-container">
+          <mat-card class="mat-card-file short">
+            <img mat-card-image src="../../../assets/img/imgFile.png" alt="" />
+            <mat-card-subtitle class="name-file">
+              image.png
+            </mat-card-subtitle>
+            <div class="mat-icon-delete">
+              <mat-icon fontSet="material-icons-outlined">
+                delete
+              </mat-icon>
+            </div>
+          </mat-card>
+
+          <mat-card class="mat-card-file short">
+            <img mat-card-image src="../../../assets/img/imgFile.png" alt="" />
+            <mat-card-subtitle class="name-file">
+              file_file_file.docx
+            </mat-card-subtitle>
+            <div class="mat-icon-delete">
+              <mat-icon fontSet="material-icons-outlined">
+                delete
+              </mat-icon>
+            </div>
+          </mat-card>
+
+          <mat-card class="mat-card-file short">
+            <img mat-card-image src="../../../assets/img/imgFile.png" alt="" />
+            <mat-card-subtitle class="name-file">
+              ketqua_ketqua.pdf
+            </mat-card-subtitle>
+            <div class="mat-icon-delete">
+              <mat-icon fontSet="material-icons-outlined">
+                delete
+              </mat-icon>
+            </div>
+          </mat-card>
+
+          <div
+            class="col-sm9 div-file-selected"
+            *ngFor="let item of uploader.queue"
+          >
+            <mat-card class="mat-card-file short">
+              <img
+                mat-card-image
+                src="../../../assets/img/imgFile.png"
+                alt=""
+              />
+              <mat-card-subtitle class="name-file">
+                {{ item?.file?.name }}
+              </mat-card-subtitle>
+              <div class="mat-icon-delete" (click)="item.remove()">
+                <mat-icon fontSet="material-icons-outlined">
+                  delete
+                </mat-icon>
+              </div>
+            </mat-card>
+          </div>
+          <!-- show file upload -->
+        </div>
+      </tr>
+    </table>
+
+    <!-- Upload file -->
+  </div>
+  <!-- File đính kèm -->
+</form>
+
+<mat-dialog-actions align="center">
+  <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
+  <button mat-button class="btn-cancel" [mat-dialog-close]="true">
+    Lưu và Áp dụng
+  </button>
+  <button mat-button class="btn-save" [mat-dialog-close]="true">
+    Lưu lại
+  </button>
+</mat-dialog-actions>
