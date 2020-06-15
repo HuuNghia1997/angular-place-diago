@@ -1,33 +1,27 @@
-<h3 class="dialog_title" mat-dialog-title>Tiếp nhận phản ánh</h3>
+<h3 class="dialog_title" mat-dialog-title>{{ title }}</h3>
 <form>
-  <p>Tiếp nhận xử lí phản ánh <strong>Phản ánh về trật tự đô thị</strong></p>
+  <p>
+    Tiếp nhận xử lí phản ánh <strong>{{ petitionTitle }}</strong>
+  </p>
   <div class="mb-1">
     <span>Chọn quy trình tiếp nhận</span>
-    <mat-checkbox color="primary" class="ml-2"> Gửi tin nhắn SMS </mat-checkbox>
-    <mat-checkbox color="primary" class="ml-2">
-      Công khai phản ánh
+    <mat-checkbox
+      color="primary"
+      class="ml-2"
+      *ngFor="let option of optionList"
+      [value]="option"
+    >
+      {{ option }}
     </mat-checkbox>
   </div>
   <table>
-    <tr>
-      <button mat-button class="input-full-width btn-choose-process">
-        Quy trình phản ánh chung
-        <mat-icon class="mat-icon" fontSet="material-icons-outlined">
-          description
-        </mat-icon>
-      </button>
-    </tr>
-    <tr>
-      <button mat-button class="input-full-width btn-choose-process">
-        Quy trình phản ánh về môi trường
-        <mat-icon class="mat-icon" fontSet="material-icons-outlined">
-          description
-        </mat-icon>
-      </button>
-    </tr>
-    <tr>
-      <button mat-button class="input-full-width btn-choose-process">
-        Quy trình phản ánh về môi trường 2
+    <tr *ngFor="let process of processList">
+      <button
+        mat-button
+        class="input-full-width btn-choose-process"
+        [value]="process"
+      >
+        {{ process }}
         <mat-icon class="mat-icon" fontSet="material-icons-outlined">
           description
         </mat-icon>

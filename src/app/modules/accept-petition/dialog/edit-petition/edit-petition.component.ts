@@ -54,6 +54,29 @@ function readBase64(file): Promise<any> {
   ],
 })
 export class EditPetitionComponent implements OnInit {
+  title: string = 'phản ánh';
+  acceptPetition = {
+    person: {
+      name: 'La Văn Tam',
+      phone: '0941234567',
+      identifyId: '331223344',
+      address: 'Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang',
+      objectType: 'Cá nhân',
+      village: 'Phường 10',
+      town: 'Thành phố Mỹ Tho',
+      province: 'Tiền Giang',
+    },
+    petition: {
+      title: 'Phản ánh về trật tự đô thị',
+      topic: ['Giáo dục', 'Y tế'],
+      time: '12/12/2019, 14:00:00',
+      agency: ['UBND tỉnh Tiền Giang', 'UBND tỉnh Đồng Tháp'],
+      content:
+        'Vào 6h20 phút ngày 12/12 trước cổng trường tiểu học Lê Lợi tình trạng đổ xe gây mất an toàn giao thông tắc đường mong quý cơ quan vào cuộc xử lý.',
+      placePetition: 'số 123, Ấp Bắc, Thành phố Mỹ Tho, tỉnh Tiền Giang',
+      option: ['Công khai phản ánh'],
+    },
+  };
   topicList: string[] = [
     'Giao thông',
     'Y tế',
@@ -66,7 +89,11 @@ export class EditPetitionComponent implements OnInit {
     'UBND tỉnh Đồng Tháp',
     'UBND tỉnh Bến Tre',
   ];
-  reporterList: string[] = ['Cá nhân', 'Tổ chức'];
+  objectTypeList: string[] = ['Cá nhân', 'Tổ chức'];
+  villageList: string[] = ['Phường 10', 'xã Tân Mỹ Chánh'];
+  townList: string[] = ['Thành phố Mỹ Tho', 'Châu Thành'];
+  provinceList: string[] = ['Tiền Giang', ' Vĩnh Long'];
+  optionList: string[] = ['Gửi tin nhắn SMS', 'Công khai phản ánh'];
 
   @ViewChild('pickerOccurred') pickerOccurred: any;
 
@@ -78,25 +105,14 @@ export class EditPetitionComponent implements OnInit {
   public stepMinute = 1;
   public stepSecond = 1;
 
-  reporterType = new FormControl('Cá nhân', [
-    Validators.required,
-    Validators.pattern('Cá nhân'),
-  ]);
-  xa = new FormControl('Phường 10', [
-    Validators.required,
-    Validators.pattern('Phường 10'),
-  ]);
-  huyen = new FormControl('Thành phố Mỹ Tho', [
-    Validators.required,
-    Validators.pattern('Thành phố Mỹ Tho'),
-  ]);
-  tinh = new FormControl('Tiền Giang', [
-    Validators.required,
-    Validators.pattern('Tiền Giang'),
-  ]);
+  objectType = new FormControl(this.acceptPetition.person.objectType);
+  village = new FormControl('Phường 10');
+  town = new FormControl('Thành phố Mỹ Tho');
+  province = new FormControl('Tiền Giang');
   dateApprove = new FormControl(new Date(2019, 11, 19, 15, 30, 0));
-  topic = new FormControl(['Giao thông', 'Y tế']);
-  agency = new FormControl(['UBND tỉnh Tiền Giang']);
+  topic = new FormControl(this.acceptPetition.petition.topic);
+  agency = new FormControl(this.acceptPetition.petition.agency);
+  options = new FormControl(this.acceptPetition.petition.option);
 
   public uploader: FileUploader = new FileUploader({
     disableMultipart: true,
@@ -131,7 +147,6 @@ export class EditPetitionComponent implements OnInit {
       // console.log(data);
     });
   }
-
 }
 export class ConfirmUpdateDialogModel {
   constructor(public title: string, public id: string) {}

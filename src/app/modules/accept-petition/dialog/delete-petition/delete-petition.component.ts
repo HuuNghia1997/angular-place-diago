@@ -11,6 +11,9 @@ import {
   styleUrls: ['./delete-petition.component.scss'],
 })
 export class DeletePetitionComponent implements OnInit {
+  petitionTitle: string = 'Phản ánh về trật tự đô thị';
+  optionList: string[] = ['Gửi tin nhắn SMS', 'Công khai phản ánh'];
+
   constructor(public dialogRef: MatDialogRef<DeletePetitionComponent>) {}
 
   ngOnInit(): void {}

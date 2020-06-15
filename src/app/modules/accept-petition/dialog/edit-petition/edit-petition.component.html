@@ -1,39 +1,39 @@
-<h3 class="dialog_title" mat-dialog-title>Cập nhật phản ánh</h3>
+<h3 class="dialog_title" mat-dialog-title>Cập nhật {{ title }}</h3>
 <form>
-  <h4 id="title">Thông tin người gửi</h4>
+  <h4 id="title">Thông tin người {{ title }}</h4>
   <!-- Tiêu đề -->
   <mat-form-field appearance="outline" class="input-1-3-width">
     <mat-label> Người gửi </mat-label>
-    <input matInput value="La Văn Tam" />
+    <input matInput value=" {{ acceptPetition.person.name }} " />
   </mat-form-field>
 
   <!-- Tiêu đề -->
   <mat-form-field appearance="outline" class="input-1-3-width ml-1">
     <mat-label> Số điện thoại </mat-label>
-    <input matInput value="0941234567" />
+    <input matInput value=" {{ acceptPetition.person.phone }} " />
   </mat-form-field>
 
   <!-- Tiêu đề -->
   <mat-form-field appearance="outline" class="input-1-3-width float-right">
     <mat-label> CMND </mat-label>
-    <input matInput value="331223344" />
+    <input matInput value=" {{ acceptPetition.person.identifyId }} " />
   </mat-form-field>
 
   <!-- Tiêu đề -->
   <mat-form-field appearance="outline" class="input-2-3-width">
     <mat-label> Địa chỉ </mat-label>
-    <input matInput value="Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang" />
+    <input matInput value=" {{ acceptPetition.person.address }} " />
   </mat-form-field>
 
   <!-- Đơn vị phản ánh -->
   <mat-form-field appearance="outline" class="input-1-3-width float-right">
     <mat-label> Đối tượng </mat-label>
-    <mat-select [formControl]="reporterType">
-      <mat-option value="Cá nhân">
-        Cá nhân
-      </mat-option>
-      <mat-option value="Tổ chức">
-        Tổ chức
+    <mat-select [formControl]="objectType">
+      <mat-option
+        *ngFor="let objectType of objectTypeList"
+        [value]="objectType"
+      >
+        {{ objectType }}
       </mat-option>
     </mat-select>
   </mat-form-field>
@@ -41,32 +41,38 @@
   <!-- Đơn vị phản ánh -->
   <mat-form-field appearance="outline" class="input-1-3-width">
     <mat-label> Phường xã </mat-label>
-    <mat-select [formControl]="xa">
-      <mat-option value="Phường 10"> Phường 10 </mat-option>
+    <mat-select [formControl]="village">
+      <mat-option *ngFor="let village of villageList" [value]="village">
+        {{ village }}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 
   <!-- Đơn vị phản ánh -->
   <mat-form-field appearance="outline" class="input-1-3-width ml-1">
     <mat-label> Quận huyện </mat-label>
-    <mat-select [formControl]="huyen">
-      <mat-option value="Thành phố Mỹ Tho"> Thành phố Mỹ Tho </mat-option>
+    <mat-select [formControl]="town">
+      <mat-option *ngFor="let town of townList" [value]="town">
+        {{ town }}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 
   <!-- Đơn vị phản ánh -->
   <mat-form-field appearance="outline" class="input-1-3-width float-right">
     <mat-label> Tỉnh thành </mat-label>
-    <mat-select [formControl]="tinh">
-      <mat-option value="Tiền Giang"> Tiền Giang </mat-option>
+    <mat-select [formControl]="province">
+      <mat-option *ngFor="let province of provinceList" [value]="province">
+        {{ province }}
+      </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <h4 id="title">Thông tin người gửi</h4>
+  <h4 id="title">Thông tin phản ánh</h4>
   <!-- Tiêu đề -->
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Tiêu đề </mat-label>
-    <input matInput value="Phản ánh về trật tự đô thị" />
+    <input matInput value=" {{ acceptPetition.petition.title }} " />
   </mat-form-field>
 
   <!-- Chuyên mục phản ánh -->
@@ -84,7 +90,6 @@
     <mat-label> Thời gian xảy ra </mat-label>
     <label>
       <input
-        value="11/12/2019 14:00:00"
         matInput
         [ngxMatDatetimePicker]="pickerOccurred"
         [formControl]="dateApprove"
@@ -122,7 +127,7 @@
     <mat-label> Nội dung </mat-label>
     <label>
       <textarea matInput cdkTextareaAutosize>
-Vào 6h20 phút ngày 12/12 trước cổng trường tiểu học Lê Lợi tình trạng đổ xe gây mất an toàn giao thông tắc đường mong quý cơ quan vào cuộc xử lý.</textarea
+ {{ acceptPetition.petition.content }} </textarea
       >
     </label>
   </mat-form-field>
@@ -131,7 +136,7 @@ Vào 6h20 phút ngày 12/12 trước cổng trường tiểu học Lê Lợi tì
   <mat-form-field appearance="outline" class="place-input">
     <mat-label> Địa điểm phản ánh </mat-label>
     <label>
-      <input matInput />
+      <input matInput value=" {{ acceptPetition.petition.placePetition }} " />
     </label>
   </mat-form-field>
 
@@ -142,8 +147,13 @@ Vào 6h20 phút ngày 12/12 trước cổng trường tiểu học Lê Lợi tì
     Chọn
   </button>
 
-  <mat-checkbox checked="true" color="primary">
-    Công khai phản ánh
+  <mat-checkbox
+    color="primary"
+    [formControl]="options"
+    *ngFor="let option of optionList; let i = index"
+    [ngClass]="i !== 0 ? 'ml-2' : ''"
+  >
+    {{ option }}
   </mat-checkbox>
 
   <h4 id="title">Tập tin đính kèm</h4>
