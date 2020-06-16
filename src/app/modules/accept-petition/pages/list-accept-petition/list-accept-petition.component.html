@@ -34,9 +34,8 @@
     <mat-form-field appearance="outline" class="quarter-form-field">
       <mat-label> Trạng thái </mat-label>
       <mat-select>
-        <mat-option value="1"> Chưa xử lý </mat-option>
+        <mat-option value="1"> Chưa tiếp nhận </mat-option>
         <mat-option value="2"> Đã tiếp nhận </mat-option>
-        <mat-option value="3"> Đã xử lý </mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -127,9 +126,7 @@
         <td mat-cell *matCellDef="let element">
           <span
             [ngClass]="
-              element.status === 'Chờ nhận xử lý'
-                ? 'btn-wait-get-process'
-                : element.status === 'Chờ xử lý'
+              element.status === 'Chờ tiếp nhận'
                 ? 'btn-wait-process'
                 : 'btn-processed'
             "
@@ -181,23 +178,23 @@
             <button
               mat-menu-item
               class="btn-action"
-              (click)="deleteRecord(element.id, element.title)"
-            >
-              <mat-icon fontSet="material-icons-outlined">
-                highlight_off
-              </mat-icon>
-              <span i18n> Hủy áp dụng </span>
-            </button>
-
-            <button
-              mat-menu-item
-              class="btn-action"
               (click)="acceptPetition(element.id, element.title)"
             >
               <mat-icon fontSet="material-icons-outlined">
                 done_outline
               </mat-icon>
               <span> Tiếp nhận </span>
+            </button>
+
+            <button
+              mat-menu-item
+              class="btn-action"
+              (click)="deleteRecord(element.id, element.title)"
+            >
+              <mat-icon fontSet="material-icons-outlined">
+                highlight_off
+              </mat-icon>
+              <span> Hủy </span>
             </button>
           </mat-menu>
         </td>

@@ -4,9 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import {
-  PetitionElement,
+  AcceptPetitionElement,
   PETITION_DATA,
-} from 'src/app/data/schema/petition-element';
+} from 'src/app/data/schema/accept-petition-element';
 import {
   PICK_FORMATS,
   pageSizeOptions,
@@ -40,7 +40,7 @@ export class ListAcceptPetitionComponent implements OnInit {
     'status',
     'action',
   ];
-  dataSource = new MatTableDataSource<PetitionElement>(PETITION_DATA);
+  dataSource = new MatTableDataSource<AcceptPetitionElement>(PETITION_DATA);
   topics = new FormControl();
   topicList: string[] = [
     'Giáo dục',

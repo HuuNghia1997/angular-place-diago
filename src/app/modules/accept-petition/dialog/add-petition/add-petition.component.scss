@@ -55,36 +55,36 @@
 }
 
 .container {
-  border: 0.5px dashed #BDBDBD;
-  height: 150px;
+  display: flex;
   justify-content: center;
-  justify-items: center;
-  text-align: center;
+  align-items: center;
+  height: 150px;
+  border: 0.5px dashed #bdbdbd;
 }
 
 a {
-  color: #1976D2;
+  color: #1976d2;
   text-decoration: none;
 }
 
 a:link {
-  color: #1976D2;
+  color: #1976d2;
   text-decoration: none;
 }
 
 a:visited {
-  color: #1976D2;
+  color: #1976d2;
   text-decoration: none;
 }
 
 a:hover {
-  color: #1976D2;
+  color: #1976d2;
   text-decoration: underline;
   cursor: pointer;
 }
 
 a:active {
-  color: #1976D2;
+  color: #1976d2;
   text-decoration: none;
 }
 
@@ -99,7 +99,7 @@ a:active {
 
 .btn-save {
   color: #ffffff;
-  background-color: #1976D2;
+  background-color: #1976d2;
 }
 
 .place-input {
@@ -113,10 +113,108 @@ a:active {
   border: 1px solid #333333;
   display: flex;
   justify-content: center;
-  color: #1371FF;
+  color: #1371ff;
   font-size: 13px;
   font-weight: bold;
   position: relative;
   top: 3px;
   vertical-align: center;
+}
+
+.drag_upload_btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  align-self: center;
+  border: 1px solid #9e9e9e96;
+  border-style: dashed;
+  cursor: pointer;
+  z-index: 4;
+}
+
+.drag_upload_btn button {
+  width: 100%;
+  padding: 5em;
+}
+
+.drag_upload_btn button a {
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.drag_upload_btn button a:hover {
+  color: #2196f3;
+}
+
+.drag_upload_btn button a:visited {
+  color: #2196f3;
+}
+
+.drag_upload_btn input[type="file"] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  height: 100%;
+  cursor: pointer;
+}
+
+.no_boder {
+  border: none;
+}
+
+.btn_uploaded {
+  padding: 1em !important;
+}
+
+.clear_img_queue {
+  padding: 5em !important;
+}
+
+.img_uploaded {
+  border: 1px solid #9e9e9e96;
+  border-style: dashed;
+}
+
+.image_drag_upload_preview {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.list_uploaded {
+  height: 200px;
+  width: 24%;
+  margin: 0 0.5% 5em 0.5%;
+  background-color: #44444450;
+}
+
+.img_items {
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 120%;
+}
+
+.img_control {
+  width: 100%;
+}
+
+.file_name {
+  font-style: medium;
+  font-weight: normal;
+  margin-left: 0.5em;
+  margin-top: 0.9em;
+  color: #2196f3;
+  float: left;
+}
+
+.delete_img {
+  float: right;
+  color: rgba(0, 0, 0, 0.54);
 }

@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AcceptPetitionComponent } from 'src/app/modules/accept-petition/dialog/accept-petition/accept-petition.component';
 import { EditPetitionComponent } from 'src/app/modules/accept-petition/dialog/edit-petition/edit-petition.component';
 import { DeletePetitionComponent } from 'src/app/modules/accept-petition/dialog/delete-petition/delete-petition.component';
+import { CommentPetitionComponent } from 'src/app/modules/accept-petition/dialog/comment-petition/comment-petition.component';
 import { FileUploader } from 'ng2-file-upload';
 import {
   PetitionElement,
@@ -87,7 +88,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   openDialogUpdatePetition() {
     const dialogRef = this.dialog.open(EditPetitionComponent, {
       width: '80%',
-      height: '600px'
+      height: '600px',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -108,6 +109,18 @@ export class DetailAcceptPetitionComponent implements OnInit {
   openDialogDelelePetition() {
     const dialogRef = this.dialog.open(DeletePetitionComponent, {
       width: '800px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('This dialog was closed');
+    });
+  }
+
+  openDialogCommentPetition() {
+    const dialogRef = this.dialog.open(CommentPetitionComponent, {
+      maxWidth: '80%',
+      minWidth: '60%',
+      disableClose: true,
     });
 
     dialogRef.afterClosed().subscribe((result) => {

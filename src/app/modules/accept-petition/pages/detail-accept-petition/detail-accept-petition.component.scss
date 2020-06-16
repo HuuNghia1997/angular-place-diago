@@ -57,7 +57,7 @@ table {
 }
 
 tr, td {
-  height: 30px;
+  height: 20px;
   vertical-align: top;
 }
 
@@ -87,7 +87,8 @@ h4 {
 .table-content-petition,
 .table-info-process,
 .table-result {
-  margin-top: -0.5em;
+  margin-top: -1em;
+  margin-bottom: -1em;
   font-size: 14px;
 }
 

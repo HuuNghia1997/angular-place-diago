@@ -14,7 +14,6 @@ import {
   NgxMatTimepickerModule,
   NgxMatNativeDateModule,
 } from '@angular-material-components/datetime-picker';
-import { AcceptPetitionComponent } from './dialog/accept-petition/accept-petition.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +22,6 @@ import { AcceptPetitionComponent } from './dialog/accept-petition/accept-petitio
     AddPetitionComponent,
     EditPetitionComponent,
     DeletePetitionComponent,
-    AcceptPetitionComponent,
   ],
   imports: [
     CommonModule,
