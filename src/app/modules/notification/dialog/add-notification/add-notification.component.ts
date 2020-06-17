@@ -10,6 +10,7 @@ import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { KeycloakService } from 'keycloak-angular';
+import { User } from 'src/app/data/schema/user';
 
 @Component({
   selector: 'app-add-notification',
@@ -40,6 +41,10 @@ export class AddNotificationComponent implements OnInit {
   fileImport: File;
   urlPreview: any;
   agencyList: AgencyInfo[] = [];
+  userList: User[] = [];
+  itemsListUser = [];
+  keyword: '';
+  userSearch: User[] = [];
 
   // Form
   public reg = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -50,7 +55,7 @@ export class AddNotificationComponent implements OnInit {
     tag: new FormControl(''),
     expiredDate: new FormControl(''),
     publish: new FormControl(''),
-    receiver: new FormControl('')
+    to: new FormControl('')
   });
   title = new FormControl('', [Validators.required, Validators.pattern(this.reg)]);
   content = new FormControl('', [Validators.required, Validators.pattern(this.reg)]);
@@ -69,7 +74,7 @@ export class AddNotificationComponent implements OnInit {
   ngOnInit(): void {
     this.getListTags();
     this.getAgency();
-    // console.log(this.keycloak.getKeycloakInstance().token);
+    this.getUser();
   }
 
   public getListTags() {
@@ -79,8 +84,7 @@ export class AddNotificationComponent implements OnInit {
         this.listTags.push(data.content[i]);
       }
     }, err => {
-      // this.service.checkErrorResponse(err, 2);
-      console.log(err);
+      console.error(err);
     });
   }
 
@@ -113,6 +117,31 @@ export class AddNotificationComponent implements OnInit {
     this.service.getAgency().subscribe(data => {
       this.agencyList = data.content;
     });
+  }
+
+  getUser() {
+    this.service.getUser('').subscribe(data => {
+      this.userList = data.content;
+      for (let i = 0; i < data.content.length; i++) {
+        this.userList[i].userId = data.content[i].id;
+      }
+    });
+  }
+
+  onInput(event: any) {
+    this.keyword = event.target.value;
+    if (this.keyword !== '') {
+      this.service.getUser(this.keyword).subscribe(data => {
+        this.userSearch = data.content;
+        for (let i = 0; i < data.content.length; i++) {
+          this.userSearch[i].userId = data.content[i].id;
+        }
+      });
+    }
+  }
+
+  resetform() {
+    this.getUser();
   }
 
   formToJSON() {
@@ -151,6 +180,23 @@ export class AddNotificationComponent implements OnInit {
       return item;
     });
     formObj.tag = this.itemsListTags;
+
+    // Add user
+    for (const i of formObj.to) {
+      // tslint:disable-next-line: triple-equals
+      const item = this.userList.find(p => p.id == i);
+      this.itemsListUser.push(item);
+    }
+    this.itemsListUser = this.itemsListUser.map(item => {
+      delete item.parentId;
+      delete item.orderNumber;
+      delete item.status;
+      delete item.createdDate;
+      delete item.description;
+      return item;
+    });
+    formObj.to = this.itemsListUser;
+
     // Add Image
     formObj.imageId = this.uploadedImage;
 

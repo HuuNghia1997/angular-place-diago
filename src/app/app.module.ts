@@ -21,7 +21,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     CoreModule,
     SharedModule,
 
-    //add more modules here
+    // add more modules here
 
     AppRoutingModule,
     BrowserAnimationsModule

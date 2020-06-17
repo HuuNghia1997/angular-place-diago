@@ -44,6 +44,7 @@ export class NotificationService {
   public searchURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification/--search?';
   public uploadFilesURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/--multiple';
   public getAgencyURL = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/agency/name+logo-id?parent-id=&tag-id=';
+  public getUserURL = this.apiProviderService.getUrl('digo-microservice', 'human') + '/user/--search?keyword=';
 
   result: boolean;
 
@@ -230,5 +231,9 @@ export class NotificationService {
 
   getAgency(): Observable<any> {
     return this.http.get(this.getAgencyURL);
+  }
+
+  getUser(keywordString: string): Observable<any> {
+    return this.http.get(this.getUserURL + keywordString);
   }
 }

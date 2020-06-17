@@ -6,6 +6,7 @@ import { notificationHistoryGroupId } from 'src/app/data/service/config.service'
 import { NotificationService } from 'src/app/data/service/notification.service';
 import { ImageInfo } from 'src/app/data/schema/image-info';
 import { ApiProviderService } from 'src/app/core/service/api-provider.service';
+import { User } from 'src/app/data/schema/user';
 
 @Component({
   selector: 'app-detail-notification',
@@ -14,7 +15,6 @@ import { ApiProviderService } from 'src/app/core/service/api-provider.service';
 })
 export class DetailNotificationComponent implements OnInit {
 
-  publishURL = this.apiProviderService.getUrl('digo-microservuice', 'postman') + '/notification/';
   notificationId: string;
   groupId = notificationHistoryGroupId;
   pageToGetHistory = 0;
@@ -28,6 +28,7 @@ export class DetailNotificationComponent implements OnInit {
   notificationPublishedDate: string;
   notificationExpiredDate: string;
   notificationContent: string;
+  notificationTo: any;
 
   response = [];
 
@@ -41,7 +42,6 @@ export class DetailNotificationComponent implements OnInit {
 
   result: boolean;
   blankVal: any;
-
 
   constructor(public dialog: MatDialog,
               private service: NotificationService,
@@ -64,6 +64,7 @@ export class DetailNotificationComponent implements OnInit {
     this.notificationPublishedDate = this.response[0].publishedDate;
     this.notificationExpiredDate = this.response[0].expiredDate;
     this.notificationTags = this.response[0].tag;
+    this.notificationTo = this.response[0].to;
 
     if (this.response[0].imageId.length > 0) {
       this.response[0].imageId.forEach(imageId => {
@@ -111,8 +112,6 @@ export class DetailNotificationComponent implements OnInit {
       this.setViewData();
     }, err => {
       console.error(err);
-      // this.service.checkErrorResponse(err, 3);
-      console.log(err);
     });
   }
 
@@ -125,8 +124,6 @@ export class DetailNotificationComponent implements OnInit {
       }
     }, err => {
       console.error(err);
-      // this.service.checkErrorResponse(err, 4);
-      console.log(err);
     });
   }
 
