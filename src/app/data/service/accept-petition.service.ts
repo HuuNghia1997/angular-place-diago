@@ -184,4 +184,25 @@ export class AcceptPetitionService {
       }
     });
   }
+
+  formErrorMessage(id: number) {
+    switch (id) {
+      case 1:
+        return 'Vui lòng nhập tên người phản ánh';
+      case 2:
+        return 'Vui lòng nhập số điện thoại';
+      case 3:
+        return 'Vui lòng nhập tiêu đề';
+      case 4:
+        return 'Vui lòng chọn chuyên mục';
+      case 5:
+        return 'Vui lòng chọn thời gian xảy ra';
+      case 6:
+        return 'Vui lòng nhập nội dung phản ánh';
+      case 7:
+        return 'Vui lòng nhập địa điểm phản ánh';
+      default:
+        return 'You must enter a valid value';
+    }
+  }
 }

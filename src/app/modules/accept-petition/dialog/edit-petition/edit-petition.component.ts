@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   FormControl,
-  FormGroupDirective,
+  FormGroup,
   NgForm,
   Validators,
 } from '@angular/forms';
@@ -56,7 +56,6 @@ function readBase64(file): Promise<any> {
   ],
 })
 export class EditPetitionComponent implements OnInit {
-  title: string = 'phản ánh';
   acceptPetition = {
     person: {
       name: 'La Văn Tam',
@@ -79,6 +78,25 @@ export class EditPetitionComponent implements OnInit {
       option: ['Công khai phản ánh'],
     },
   };
+
+  updateForm = new FormGroup({
+    personName: new FormControl(this.acceptPetition.person.name),
+    phone: new FormControl(this.acceptPetition.person.phone),
+    title: new FormControl(this.acceptPetition.petition.title),
+    tag: new FormControl(''),
+    occurredDate: new FormControl(''),
+    content: new FormControl(this.acceptPetition.petition.content),
+    placePetition: new FormControl(this.acceptPetition.petition.placePetition),
+  });
+  personName = new FormControl('', [Validators.required]);
+  phone = new FormControl('', [Validators.required]);
+  title = new FormControl('', [Validators.required]);
+  tag = new FormControl('', [Validators.required]);
+  occurredDate = new FormControl('', [Validators.required]);
+  content = new FormControl('', [Validators.required]);
+  placePetition = new FormControl('', [Validators.required]);
+  titleDialog: string = 'phản ánh';
+
   topicList: string[] = [
     'Giao thông',
     'Y tế',
@@ -126,6 +144,7 @@ export class EditPetitionComponent implements OnInit {
   public hasBaseDropZoneOver = false;
 
   constructor(
+    private service: AcceptPetitionService,
     public dialogRef: MatDialogRef<EditPetitionComponent>,
     private dialog: MatDialog,
     private map: MapboxService
@@ -136,6 +155,10 @@ export class EditPetitionComponent implements OnInit {
   onDismiss(): void {
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
+  }
+
+  getErrorMessage(id) {
+    return this.service.formErrorMessage(id);
   }
 
   public fileOverBase(e: any): void {

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PickDatetimeAdapter } from 'src/app/data/schema/pick-datetime-adapter';
 import { PICK_FORMATS } from 'src/app/data/service/config.service';
@@ -25,6 +26,23 @@ import { MapboxService } from 'src/app/data/service/mapbox.service';
   ],
 })
 export class AddPetitionComponent implements OnInit {
+  addForm = new FormGroup({
+    personName: new FormControl(''),
+    phone: new FormControl(''),
+    title: new FormControl(''),
+    tag: new FormControl(''),
+    occurredDate: new FormControl(''),
+    content: new FormControl(''),
+    placePetition: new FormControl(''),
+  });
+  personName = new FormControl('', [Validators.required]);
+  phone = new FormControl('', [Validators.required]);
+  title = new FormControl('', [Validators.required]);
+  tag = new FormControl('', [Validators.required]);
+  occurredDate = new FormControl('', [Validators.required]);
+  content = new FormControl('', [Validators.required]);
+  placePetition = new FormControl('', [Validators.required]);
+
   topicList: string[] = [
     'Giao thông',
     'Y tế',
@@ -83,6 +101,10 @@ export class AddPetitionComponent implements OnInit {
   onDismiss(): void {
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
+  }
+
+  getErrorMessage(id) {
+    return this.service.formErrorMessage(id);
   }
 
   resetForm(): void {
@@ -177,7 +199,7 @@ export class AddPetitionComponent implements OnInit {
     const dialogRef = this.dialog.open(MapComponent, {
       width: '80%',
       height: '600px',
-      disableClose: true
+      disableClose: true,
     });
 
     dialogRef.afterClosed().subscribe((result) => {

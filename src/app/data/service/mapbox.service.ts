@@ -42,6 +42,8 @@ export class MapboxService {
     });
 
     this.map.addControl(geocoder);
+
+    this.map.addControl(new mapboxgl.FullscreenControl());
   }
 
   // Change searched place name

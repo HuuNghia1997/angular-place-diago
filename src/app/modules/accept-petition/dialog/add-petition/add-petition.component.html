@@ -1,16 +1,18 @@
 <h3 class="dialog_title" mat-dialog-title>Thêm mới quy trình</h3>
-<form>
+<form [formGroup]="addForm">
   <h4 id="title">Thông tin người gửi</h4>
   <!-- Người gửi -->
   <mat-form-field appearance="outline" class="input-1-3-width">
     <mat-label> Người gửi </mat-label>
-    <input matInput required />
+    <input matInput required formControlName="personName"/>
+    <mat-error *ngIf="personName.invalid"> {{ getErrorMessage(1) }} </mat-error>
   </mat-form-field>
 
   <!-- Số điện thoại -->
   <mat-form-field appearance="outline" class="input-1-3-width ml-1">
     <mat-label> Số điện thoại </mat-label>
-    <input matInput required />
+    <input matInput required formControlName="phone"/>
+    <mat-error *ngIf="phone.invalid"> {{ getErrorMessage(2) }} </mat-error>
   </mat-form-field>
 
   <!-- CMND -->
@@ -63,24 +65,26 @@
   <!-- Tiêu đề -->
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Tiêu đề </mat-label>
-    <input matInput required />
+    <input matInput required formControlName="title"/>
+    <mat-error *ngIf="title.invalid"> {{ getErrorMessage(3) }} </mat-error>
   </mat-form-field>
 
   <!-- Chuyên mục phản ánh -->
   <mat-form-field appearance="outline" class="input-1-3-width">
     <mat-label> Chuyên mục phản ánh </mat-label>
-    <mat-select multiple>
+    <mat-select multiple required formControlName="tag">
       <mat-option *ngFor="let topic of topicList" [value]="topic">
         {{ topic }}
       </mat-option>
     </mat-select>
+    <mat-error *ngIf="tag.invalid"> {{ getErrorMessage(4) }} </mat-error>
   </mat-form-field>
 
   <!-- Thời gian xảy ra -->
   <mat-form-field appearance="outline" class="input-1-3-width ml-1">
     <mat-label> Thời gian xảy ra </mat-label>
     <label>
-      <input matInput [ngxMatDatetimePicker]="pickerOccurred" />
+      <input matInput [ngxMatDatetimePicker]="pickerOccurred" required formControlName="occurredDate"/>
     </label>
     <mat-datepicker-toggle
       matSuffix
@@ -97,6 +101,7 @@
       [enableMeridian]="enableMeridian"
     >
     </ngx-mat-datetime-picker>
+    <mat-error *ngIf="occurredDate.invalid"> {{ getErrorMessage(5) }} </mat-error>
   </mat-form-field>
 
   <!-- Đơn vị phản ánh -->
@@ -113,20 +118,22 @@
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Nội dung </mat-label>
     <label>
-      <textarea matInput cdkTextareaAutosize></textarea>
+      <textarea matInput cdkTextareaAutosize required formControlName="content"></textarea>
     </label>
+    <mat-error *ngIf="content.invalid"> {{ getErrorMessage(6) }} </mat-error>
   </mat-form-field>
 
   <!-- Địa điểm phản ánh -->
   <mat-form-field appearance="outline" class="place-input">
     <mat-label> Địa điểm phản ánh </mat-label>
     <label>
-      <input matInput [value]="searchedPlace" />
+      <input matInput [value]="searchedPlace" required formControlName="placePetition"/>
     </label>
+    <mat-error *ngIf="placePetition.invalid"> {{ getErrorMessage(7) }} </mat-error>
   </mat-form-field>
 
   <button mat-button class="btn-choose" (click)="openDialogMap()">
-    <mat-icon fontSet="material-icons-outlined" class="icon-map">
+    <mat-icon fontSet="material-icons-outlined" class="icon-map" required>
       place
     </mat-icon>
     Chọn
