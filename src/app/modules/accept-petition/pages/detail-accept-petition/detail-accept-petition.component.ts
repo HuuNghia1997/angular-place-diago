@@ -9,11 +9,11 @@ import { DeletePetitionComponent } from 'src/app/modules/accept-petition/dialog/
 import { CommentPetitionComponent } from 'src/app/modules/accept-petition/dialog/comment-petition/comment-petition.component';
 import { FileUploader } from 'ng2-file-upload';
 import {
-  PetitionElement,
+  AcceptPetitionElement,
   PETITION_DATA,
   Comments,
   TREE_DATA,
-} from 'src/app/data/schema/petition-element';
+} from 'src/app/data/schema/accept-petition-element';
 
 function readBase64(file): Promise<any> {
   const reader = new FileReader();
@@ -60,7 +60,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   public hasBaseDropZoneOver = false;
 
   petitionId: string;
-  petition: PetitionElement;
+  petition: AcceptPetitionElement;
   isExpand = true;
   status: number;
 
@@ -89,6 +89,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
     const dialogRef = this.dialog.open(EditPetitionComponent, {
       width: '80%',
       height: '600px',
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -99,6 +100,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   openDialogAcceptPetition() {
     const dialogRef = this.dialog.open(AcceptPetitionComponent, {
       width: '800px',
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -109,6 +111,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   openDialogDelelePetition() {
     const dialogRef = this.dialog.open(DeletePetitionComponent, {
       width: '800px',
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -152,12 +155,10 @@ export class DetailAcceptPetitionComponent implements OnInit {
   }
 
   getState(status: string): number {
-    if (status === 'Chờ nhận xử lý') {
+    if (status === 'Chờ tiếp nhận') {
       return 0;
-    } else if (status === 'Chờ xử lý') {
-      return 1;
     } else {
-      return 2;
+      return 1;
     }
   }
 }

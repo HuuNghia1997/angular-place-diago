@@ -13,11 +13,11 @@ export const environment = {
       clientId: 'citizens-admin',
     },
     initOptions: {
-      onLoad: 'check-sso'
+      onLoad: 'check-sso',
     },
   },
   routerConfig: {
-    enableTracing: false
+    enableTracing: false,
   },
   defaultRouterLink: 'home',
   insufficientPermissionRouterLink: 'error/insufficient-permission',
@@ -28,35 +28,39 @@ export const environment = {
       services: [
         {
           name: 'basedata',
-          path: 'ba'
+          path: 'ba',
         },
         {
           name: 'basecat',
-          path: 'bt'
+          path: 'bt',
         },
         {
           name: 'fileman',
-          path: 'fi'
+          path: 'fi',
         },
         {
           name: 'custom',
-          path: 'cu'
+          path: 'cu',
         },
         {
           name: 'human',
-          path: 'hu'
+          path: 'hu',
         },
         {
           name: 'postman',
-          path: 'po'
+          path: 'po',
         },
         {
           name: 'logman',
-          path: 'lo'
-        }
-      ]
-    }
-  ]
+          path: 'lo',
+        },
+      ],
+    },
+  ],
+  mapbox: {
+    accessToken:
+      'pk.eyJ1IjoibW5oYWktbWFwYm94IiwiYSI6ImNrYmlvZ3d5bjBmdzcyem5xcWhnaDFrYjIifQ.tdsFG-l6QwZeKXDtO_r99g',
+  },
 };
 
 /*

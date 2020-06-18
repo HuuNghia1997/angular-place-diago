@@ -121,11 +121,11 @@
   <mat-form-field appearance="outline" class="place-input">
     <mat-label> Địa điểm phản ánh </mat-label>
     <label>
-      <input matInput />
+      <input matInput [value]="searchedPlace" />
     </label>
   </mat-form-field>
 
-  <button mat-button class="btn-choose">
+  <button mat-button class="btn-choose" (click)="openDialogMap()">
     <mat-icon fontSet="material-icons-outlined" class="icon-map">
       place
     </mat-icon>
@@ -136,27 +136,42 @@
   <mat-checkbox color="primary" class="ml-1"> Công khai phản ánh </mat-checkbox>
 
   <h4 id="title">Tập tin đính kèm</h4>
-  <!-- <div class="container">
-    <button mat-button>
-      <mat-icon> cloud_upload </mat-icon>
-      Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc
-      <a href=""> Tải lên </a>
-    </button>
-  </div> -->
-  <div [ngClass]="{'img_uploaded': uploaded == true}">
-    <div class="drag_upload_btn" [ngClass]="{'no_boder': uploaded == true}">
-      <button mat-button [ngClass]="{'btn_uploaded': uploaded == true, 'clear_img_queue': uploaded == false}">
+  <div [ngClass]="{ img_uploaded: uploaded == true }">
+    <div class="drag_upload_btn" [ngClass]="{ no_boder: uploaded == true }">
+      <button
+        mat-button
+        [ngClass]="{
+          btn_uploaded: uploaded == true,
+          clear_img_queue: uploaded == false
+        }"
+      >
         <mat-icon> cloud_upload </mat-icon>
-        Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc <a href=""> Tải lên </a>
+        Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc
+        <a href=""> Tải lên </a>
       </button>
-      <input id="img_upload" name="img_upload[]" type='file' (change)="onSelectFile($event)" multiple accept=".JPG, .PNG, .JPEG" value="{{blankVal}}">
+      <input
+        id="img_upload"
+        name="img_upload[]"
+        type="file"
+        (change)="onSelectFile($event)"
+        multiple
+        accept=".JPG, .PNG, .JPEG"
+        value="{{ blankVal }}"
+      />
     </div>
     <div class="image_drag_upload_preview">
-      <div class="list_uploaded" *ngFor='let url of urls; let i = index;'>
-        <div class="img_items  mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ urls[i] +')'}">
-        </div>
+      <div class="list_uploaded" *ngFor="let url of urls; let i = index">
+        <div
+          class="img_items mat-elevation-z4"
+          [ngStyle]="{ 'background-image': 'url(' + urls[i] + ')' }"
+        ></div>
         <div class="img_control">
-          <span class="file_name" matTooltip="{{fileNamesFull[i]}}" [matTooltipPosition]="'right'">{{fileNames[i]}}</span>
+          <span
+            class="file_name"
+            matTooltip="{{ fileNamesFull[i] }}"
+            [matTooltipPosition]="'right'"
+            >{{ fileNames[i] }}</span
+          >
           <a mat-icon-button class="delete_img" align="end">
             <mat-icon (click)="removeItem(i)">delete_outline</mat-icon>
           </a>

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PickDatetimeAdapter } from 'src/app/data/schema/pick-datetime-adapter';
 import { PICK_FORMATS } from 'src/app/data/service/config.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
@@ -9,6 +9,8 @@ import {
   NgxMatDateAdapter,
   NGX_MAT_DATE_FORMATS,
 } from '@angular-material-components/datetime-picker';
+import { MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
+import { MapboxService } from 'src/app/data/service/mapbox.service';
 
 @Component({
   selector: 'app-add-petition',
@@ -61,14 +63,22 @@ export class AddPetitionComponent implements OnInit {
   public stepMinute = 1;
   public stepSecond = 1;
 
+  searchedPlace: string = '';
+
   constructor(
     private service: AcceptPetitionService,
     public dialogRef: MatDialogRef<AddPetitionComponent>,
     private imageCompress: NgxImageCompressService,
-    private main: SnackbarService
+    private main: SnackbarService,
+    private dialog: MatDialog,
+    private map: MapboxService
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.map.currentPlace.subscribe(
+      (searchedPlace) => (this.searchedPlace = searchedPlace)
+    );
+  }
 
   onDismiss(): void {
     // Đóng dialog, trả kết quả là false
@@ -161,6 +171,18 @@ export class AddPetitionComponent implements OnInit {
     this.fileNamesFull.splice(index, 1);
     this.files.splice(index, 1);
     this.blankVal = '';
+  }
+
+  openDialogMap() {
+    const dialogRef = this.dialog.open(MapComponent, {
+      width: '80%',
+      height: '600px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('This dialog was closed');
+    });
   }
 }
 

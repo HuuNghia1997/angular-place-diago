@@ -23,7 +23,6 @@ import { SnackbarService } from './snackbar.service';
   providedIn: 'root',
 })
 export class AcceptPetitionService {
-
   result: boolean;
 
   constructor(private main: SnackbarService, private dialog: MatDialog) {}
@@ -34,7 +33,7 @@ export class AcceptPetitionService {
       width: '80%',
       height: '600px',
       data: dialogData,
-      disableClose: false,
+      disableClose: true,
     });
 
     const message = 'Phản ánh';
@@ -75,7 +74,7 @@ export class AcceptPetitionService {
       maxWidth: '80%',
       height: '600px',
       data: dialogData,
-      disableClose: false,
+      disableClose: true,
     });
 
     const message = 'Cập nhật phản ánh';
@@ -115,7 +114,7 @@ export class AcceptPetitionService {
       width: '800px',
       height: 'auto',
       data: dialogData,
-      disableClose: false,
+      disableClose: true,
     });
 
     const message = 'Phản ánh';
@@ -146,12 +145,16 @@ export class AcceptPetitionService {
   }
 
   acceptPetition(id, name) {
-    const dialogData = new ConfirmAcceptDialogModel('Tiếp nhận phản ánh', name, id);
+    const dialogData = new ConfirmAcceptDialogModel(
+      'Tiếp nhận phản ánh',
+      name,
+      id
+    );
     const dialogRef = this.dialog.open(AcceptPetitionComponent, {
       width: '800px',
       height: 'auto',
       data: dialogData,
-      disableClose: false,
+      disableClose: true,
     });
     const message = 'Tiếp nhận phản ánh';
     const content = name;

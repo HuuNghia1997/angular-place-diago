@@ -6,7 +6,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PickDatetimeAdapter } from 'src/app/data/schema/pick-datetime-adapter';
 import { PICK_FORMATS } from 'src/app/data/service/config.service';
 import {
@@ -14,6 +14,8 @@ import {
   NGX_MAT_DATE_FORMATS,
 } from '@angular-material-components/datetime-picker';
 import { FileUploader } from 'ng2-file-upload';
+import { MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
+import { MapboxService } from 'src/app/data/service/mapbox.service';
 
 function readBase64(file): Promise<any> {
   const reader = new FileReader();
@@ -124,8 +126,9 @@ export class EditPetitionComponent implements OnInit {
   public hasBaseDropZoneOver = false;
 
   constructor(
-    private service: AcceptPetitionService,
-    public dialogRef: MatDialogRef<EditPetitionComponent>
+    public dialogRef: MatDialogRef<EditPetitionComponent>,
+    private dialog: MatDialog,
+    private map: MapboxService
   ) {}
 
   ngOnInit(): void {}
@@ -145,6 +148,18 @@ export class EditPetitionComponent implements OnInit {
     // tslint:disable-next-line:only-arrow-functions
     readBase64(file).then(function (data) {
       // console.log(data);
+    });
+  }
+
+  openDialogMap() {
+    const dialogRef = this.dialog.open(MapComponent, {
+      width: '80%',
+      height: '600px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('This dialog was closed');
     });
   }
 }
