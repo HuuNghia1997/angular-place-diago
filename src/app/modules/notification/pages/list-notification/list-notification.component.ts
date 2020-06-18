@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef, Injectable } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -10,6 +10,7 @@ import { PICK_FORMATS, pageSizeOptions, notificationCategoryId } from 'src/app/d
 import { PeriodicElement } from 'src/app/data/schema/periodic-element';
 import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
+import { User } from 'src/app/data/schema/user';
 
 @Component({
   selector: 'app-list-notification',
@@ -23,7 +24,7 @@ import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 })
 export class ListNotificationComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['stt', 'title', 'agency', 'catalogy', 'receiver', 'created_at', 'status', 'endDate', 'options'];
+  displayedColumns: string[] = ['stt', 'title', 'agency', 'catalogy', 'to', 'created_at', 'status', 'endDate', 'options'];
   ELEMENTDATA: PeriodicElement[] = [];
   dataSource: MatTableDataSource<PeriodicElement>;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -42,13 +43,16 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
     publish: new FormControl(''),
     startDate: new FormControl(''),
     endDate: new FormControl(''),
-    receiver: new FormControl('')
+    user: new FormControl('')
   });
 
   listTags = [];
 
   result: boolean;
   agencyList: AgencyInfo[] = [];
+  userList: User[] = [];
+  userSearch: User[] = [];
+  keyword: '';
 
   constructor(private service: NotificationService,
               private translator: PaginatorService,
@@ -62,6 +66,7 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
     this.search(0, pageSizeOptions[1]);
     this.getListTags();
     this.getAgency();
+    this.getUser();
   }
 
   ngAfterViewInit() {
@@ -123,7 +128,7 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
         this.listTags.push(data.content[i]);
       }
     }, err => {
-      console.log(err);
+      console.error(err);
     });
   }
 
@@ -158,50 +163,73 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
     formObj.endDate = this.datepipe.transform(formObj.endDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
 
     if (formObj.title != null ) {
-        searchString = searchString + '&title=' + formObj.title;
+      searchString = searchString + '&title=' + formObj.title;
     }
     if (formObj.tag != null ) {
-        for (const i of formObj.tag) {
-            searchString = searchString + '&tag-id=' + i;
-        }
+      for (const i of formObj.tag) {
+        searchString = searchString + '&tag-id=' + i;
+      }
+    }
+    if (formObj.user != null) {
+      for (const i of formObj.user) {
+        searchString = searchString + '&user-id=' + i;
+      }
     }
     if (formObj.agency != null) {
-        searchString = searchString + '&agency-id=' + formObj.agency;
+      searchString = searchString + '&agency-id=' + formObj.agency;
     }
     if (formObj.startDate != null) {
-        formObj.startDate = formObj.startDate.replace('+', '%2B');
+      formObj.startDate = formObj.startDate.replace('+', '%2B');
     }
     if (formObj.endDate != null) {
-        formObj.endDate = formObj.endDate.replace('+', '%2B');
+      formObj.endDate = formObj.endDate.replace('+', '%2B');
     }
     if (formObj.startDate != null) {
-        searchString = searchString + '&start-date=' + formObj.startDate;
+      searchString = searchString + '&start-date=' + formObj.startDate;
     }
     if (formObj.startDate != null) {
-        searchString = searchString + '&end-date=' + formObj.endDate;
+      searchString = searchString + '&end-date=' + formObj.endDate;
     }
     if (formObj.publish != null) {
-        searchString = searchString + '&publish=' + formObj.publish;
+      searchString = searchString + '&publish=' + formObj.publish;
     }
 
     this.service.search(searchString).subscribe(data => {
-        this.ELEMENTDATA = [];
-        const size = data.numberOfElements;
-        for (let i = 0; i < size; i++) {
-            this.ELEMENTDATA.push(data.content[i]);
-        }
-        this.dataSource.data = this.ELEMENTDATA;
-        this.dataSource.paginator.pageSize = pageSize;
-        this.totalElements = data.totalElements;
-        this.currentPage = data.number;
-        this.totalPages = data.totalPages;
-        this.selectedPageSize = pageSize;
+      this.ELEMENTDATA = [];
+      const size = data.numberOfElements;
+      for (let i = 0; i < size; i++) {
+        this.ELEMENTDATA.push(data.content[i]);
+      }
+      this.dataSource.data = this.ELEMENTDATA;
+      this.dataSource.paginator.pageSize = pageSize;
+      this.totalElements = data.totalElements;
+      this.currentPage = data.number;
+      this.totalPages = data.totalPages;
+      this.selectedPageSize = pageSize;
 
-        this.resetPageSize();
+      this.resetPageSize();
     }, err => {
-      console.log(err);
+      console.error(err);
     });
     searchString = '';
   }
 
+  onInput(event: any) {
+    this.keyword = event.target.value;
+    if (this.keyword !== '') {
+      this.service.getUser(this.keyword).subscribe(data => {
+        this.userSearch = data.content;
+      });
+    }
+  }
+
+  resetform() {
+    this.getUser();
+  }
+
+  getUser() {
+    this.service.getUser('').subscribe(data => {
+      this.userList = data.content;
+    });
+  }
 }

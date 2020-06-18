@@ -11,6 +11,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { KeycloakService } from 'keycloak-angular';
+import { User } from 'src/app/data/schema/user';
 
 @Component({
   selector: 'app-edit-notification',
@@ -41,8 +42,11 @@ export class EditNotificationComponent implements OnInit {
   fileImport: File;
   urlPreview: any;
   agencyList: AgencyInfo[] = [];
-
+  userList: User[] = [];
+  userSearch: User[] = [];
+  itemsListUsers = [];
   response = [];
+  keyword: '';
 
   constructor(public dialogRef: MatDialogRef<EditNotificationComponent>,
               private service: NotificationService,
@@ -64,7 +68,7 @@ export class EditNotificationComponent implements OnInit {
     tag: new FormControl(''),
     expiredDate: new FormControl(''),
     publish: new FormControl(''),
-    receiver: new FormControl('')
+    to: new FormControl('')
   });
   title = new FormControl('', [Validators.required, Validators.pattern(this.reg)]);
   content = new FormControl('', [Validators.required, Validators.pattern(this.reg)]);
@@ -81,6 +85,31 @@ export class EditNotificationComponent implements OnInit {
         this.agencyList[i].imageId = data.content[i].logoId;
       }
     });
+  }
+
+  getUser() {
+    this.service.getUser('').subscribe(data => {
+      this.userList = data.content;
+      for (let i = 0; i < data.content.length; i++) {
+        this.userList[i].userId = data.content[i].id;
+      }
+    });
+  }
+
+  onInput(event: any) {
+    this.keyword = event.target.value;
+    if (this.keyword !== '') {
+      this.service.getUser(this.keyword).subscribe(data => {
+        this.userSearch = data.content;
+        for (let i = 0; i < data.content.length; i++) {
+          this.userSearch[i].userId = data.content[i].id;
+        }
+      });
+    }
+  }
+
+  resetform() {
+    this.getUser();
   }
 
   onConfirm(): void {
@@ -147,6 +176,22 @@ export class EditNotificationComponent implements OnInit {
       return item;
     });
     formObj.tag = this.itemsListTags;
+
+    // Add user
+    for (const i of formObj.to) {
+      // tslint:disable-next-line: triple-equals
+      const item = this.userList.find(p => p.id == i);
+      this.itemsListUsers.push(item);
+    }
+    this.itemsListUsers = this.itemsListUsers.map(item => {
+      delete item.parentId;
+      delete item.orderNumber;
+      delete item.status;
+      delete item.createdDate;
+      delete item.description;
+      return item;
+    });
+    formObj.to = this.itemsListUsers;
     // Add Image
     formObj.imageId = this.uploadedImage;
     // Final result
@@ -259,6 +304,7 @@ export class EditNotificationComponent implements OnInit {
     this.getNotificationDetail();
     this.getListTags();
     this.getAgency();
+    this.getUser();
   }
 
   getListTags() {
@@ -289,6 +335,12 @@ export class EditNotificationComponent implements OnInit {
     }
     tagSelected = tagSelected.map(String);
 
+    let userSelected = [];
+    for (const item of this.response[0].to) {
+      userSelected.push(item.userId);
+    }
+    userSelected = userSelected.map(String);
+
     if (this.response[0].publish.status === 0) {
       sent = false;
     } else {
@@ -307,6 +359,7 @@ export class EditNotificationComponent implements OnInit {
       tag: new FormControl(tagSelected),
       expiredDate: expiredDateControl,
       publish: new FormControl(sent),
+      to: new FormControl(userSelected)
     });
 
     this.uploadedImage = this.response[0].imageId;

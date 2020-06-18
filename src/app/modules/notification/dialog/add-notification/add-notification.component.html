@@ -1,4 +1,4 @@
-<h3 class="dialog_title" mat-dialog-title> {{ popupTitle }} </h3>
+<h3 class="dialog_title" mat-dialog-title> Thêm mới thông báo </h3>
 <form [formGroup]="addForm" (submit)="onConfirm()">
   <!--Tiêu đề-->
   <mat-form-field class="input-full-width" appearance="outline">
@@ -40,11 +40,19 @@
   </mat-form-field>
 
   <!-- Người nhận -->
-  <mat-form-field class="input-full-width" appearance="outline">
+  <mat-form-field class="input-full-width" appearance="outline" floatLabel="always">
     <mat-label> Người nhận </mat-label>
-    <mat-select formControlName="receiver" multiple>
-        <mat-option value="0"> Tất cả </mat-option>
-        <mat-option value="1"> Trần Văn A </mat-option>
+    <mat-select formControlName="to" placeholder="Tất cả" multiple>
+      <div>
+        <div>
+          <input matInput #searchUser (input)="onInput($event)" (keydown)="$event.stopPropagation()" placeholder="Nhập từ khóa" class="search-user">
+          <button mat-icon-button class="btn-clear" *ngIf="searchUser.value !== ''" (click)="searchUser.value = ''; resetform()">
+            <mat-icon> close </mat-icon>
+          </button>
+        </div>
+      </div>
+      <mat-option *ngFor='let usr of userSearch' value="{{ usr.id }}"> {{ usr.fullname }} </mat-option>
+      <mat-option *ngFor='let usrs of userList' value="{{ usrs.id }}"> {{ usrs.fullname }} </mat-option>
     </mat-select>
   </mat-form-field>
 

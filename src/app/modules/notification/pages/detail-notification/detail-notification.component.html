@@ -3,7 +3,7 @@
     <h6 class="name-page"> Chi tiết thông báo </h6>
     <button mat-button class="btn-add" (click)="addRecord()">
       <mat-icon> add </mat-icon>
-      Thêm mới
+      <span> Thêm mới </span>
     </button>
   </mat-toolbar-row>
 </mat-toolbar>
@@ -13,15 +13,15 @@
   <div class="mb-2">
     <button mat-button class="btn-cancel" *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="updateRecord()">
       <mat-icon> edit </mat-icon>
-      Cập nhật
+      <span> Cập nhật </span>
     </button>
     <button class="ml-1 btn-cancel" mat-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="deleteRecord()">
       <mat-icon> delete </mat-icon>
-      Xoá
+      <span> Xoá </span>
     </button>
     <button class="ml-1 primary-blue-btn" mat-button *ngFor='let status of notificationStatus;' [disabled]="status.status == 1" (click)="sendNotification()">
       <mat-icon> send </mat-icon>
-      Gửi đi
+      <span> Gửi đi </span>
     </button>
   </div>
   <div class="notification_content">
@@ -41,7 +41,7 @@
           </span>
         </div>
         <div class="notification_tags">
-          <span>Chuyên mục:</span>
+          <span> Chuyên mục: </span>
           <div class="listtags">
             <div class="catalogy" *ngFor='let tags of notificationTags;'> {{ tags.name }} </div>
           </div>
@@ -50,11 +50,11 @@
       <!-- Nội dung -->
       <div class="mb-4">
         <h4 id="title"> Nội dung </h4>
-        <span> {{ notificationContent }}</span>
+        <span> {{ notificationContent }} </span>
       </div>
       <!-- Hình ảnh -->
       <div class="mb-4">
-        <h4 id="title">Hình ảnh</h4>
+        <h4 id="title"> Hình ảnh </h4>
         <div [ngClass]="{'img_uploaded': uploaded == true}">
           <div class="drag_upload_btn" [ngClass]="{'no_boder': uploaded == true}">
             <!-- <input id="img_upload" name="img_upload[]" type='file' (change)="onSelectFile($event)" multiple accept=".JPG, .PNG, .JPEG" value="{{blankVal}}"> -->
@@ -89,24 +89,24 @@
                 </span>
                 <div class="history_content mt-1" [ngClass]="{'d-none': his.type === 4}">
                   <div style="width: 20%">
-                    <b>Trường</b>
+                    <b> Trường </b>
                   </div>
                   <div style="width: 30%">
-                    <b>Giá trị cũ</b>
+                    <b> Giá trị cũ </b>
                   </div>
                   <div style="width: 30%">
-                    <b>Giá trị mới</b>
+                    <b> Giá trị mới </b>
                   </div>
                 </div>
                 <div class="history_content mt-1" *ngFor="let his_item of his.action" [ngClass]="{'d-none':  his.type === 4}">
                   <div style="width: 20%">
-                    <p>{{his_item.fieldName}}</p>
+                    <p> {{ his_item.fieldName }} </p>
                   </div>
                   <div style="width: 30%">
-                    <p>{{his_item.originalValue}}</p>
+                    <p> {{ his_item.originalValue }} </p>
                   </div>
                   <div style="width: 30%">
-                    <p>{{his_item.newValue}}</p>
+                    <p> {{ his_item.newValue }} </p>
                   </div>
                 </div>
               </div>
@@ -137,7 +137,9 @@
       <div class="content_item" style="margin-top: 10%;">
         <h4 id="title"> Người nhận </h4>
         <div class="notification_tags">
-          <div class="receiver"> Nguyễn Văn A </div>
+          <div class="listtags">
+            <div class="receiver" *ngFor='let usr of notificationTo'> {{ usr.fullname }} </div>
+          </div>
         </div>
       </div>
     </div>

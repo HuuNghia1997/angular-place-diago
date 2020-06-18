@@ -1,4 +1,6 @@
-export class User {
-    id: string;
-    fullname: string;
+export interface User {
+  id: string;
+  userId: string;
+  avatarId: string;
+  fullname: string;
 }

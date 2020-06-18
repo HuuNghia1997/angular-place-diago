@@ -103,3 +103,19 @@ mat-icon {
 .d-none {
   display: none !important;
 }
+
+.search-user {
+  width: 80%;
+  height: 50px;
+  margin-left: 15px;
+}
+
+.btn-clear {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+::ng-deep .mat-select-placeholder {
+  color: rgba($color: #000000, $alpha: 1.0);
+}
