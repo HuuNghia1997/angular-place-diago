@@ -44,6 +44,16 @@ export class MapboxService {
     this.map.addControl(geocoder);
 
     this.map.addControl(new mapboxgl.FullscreenControl());
+
+    // Add geolocate control to the map.
+    this.map.addControl(
+      new mapboxgl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true,
+        },
+        trackUserLocation: true,
+      })
+    );
   }
 
   // Change searched place name

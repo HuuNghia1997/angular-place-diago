@@ -8,6 +8,7 @@
     <mat-checkbox
       color="primary"
       class="ml-2"
+      [formControl]="options"
       *ngFor="let option of optionList"
       [value]="option"
     >

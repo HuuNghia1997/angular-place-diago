@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
@@ -13,6 +14,8 @@ import {
 export class DeletePetitionComponent implements OnInit {
   petitionTitle: string = 'Phản ánh về trật tự đô thị';
   optionList: string[] = ['Gửi tin nhắn SMS', 'Công khai phản ánh'];
+
+  options = new FormControl('Công khai phản ánh');
 
   constructor(public dialogRef: MatDialogRef<DeletePetitionComponent>) {}
 

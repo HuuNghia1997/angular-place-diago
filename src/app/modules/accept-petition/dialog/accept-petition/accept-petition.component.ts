@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
@@ -19,6 +20,8 @@ export class AcceptPetitionComponent implements OnInit {
     'Quy trình phản ánh về môi trường',
     'Quy trình phản ánh về môi trường 2',
   ];
+
+  options = new FormControl('Công khai phản ánh');
 
   constructor(public dialogRef: MatDialogRef<AcceptPetitionComponent>) {}
 
