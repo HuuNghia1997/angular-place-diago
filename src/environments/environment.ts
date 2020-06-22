@@ -14,7 +14,7 @@ export const environment = {
     },
     initOptions: {
       onLoad: 'check-sso'
-    },
+    }
   },
   routerConfig: {
     enableTracing: false
@@ -53,11 +53,27 @@ export const environment = {
         {
           name: 'logman',
           path: 'lo'
+        },
+        {
+          name: 'surfeed',
+          path: 'su'
+        },
+        {
+          name: 'models',
+          path: 'v1',
+          rootUrl: 'https://digo-api-01.vnptigate.vn/modeling-service/'
+        },
+        {
+          name: 'rb-petition',
+          path: 'rb-petition'
         }
       ]
     }
   ]
 };
+
+export const projectIdProcess = '3f9d9e1b-02cd-4e76-ad98-a67ab9830bf3';
+export const typeProcess = 'PROCESS';
 
 /*
  * For easier debugging in development mode, you can import the following file

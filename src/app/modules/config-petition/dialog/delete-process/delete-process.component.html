@@ -3,7 +3,7 @@
 </div>
 
 <div mat-dialog-content class="mt-1">
-  <p [ngClass]="configPetition.status === 'Đã áp dụng' ? 'display' : 'display-none'">
+  <p [ngClass]="workflowStatus === 1 ? 'display' : 'display-none'">
     <b i18n> Quy trình đang được áp dụng </b>
   </p>
   <p>
@@ -15,5 +15,5 @@
 
 <mat-dialog-actions align="center">
   <button mat-button class="btn-cancel" (click)="onDismiss()" i18n> Đóng </button>
-  <button mat-button class="btn-save" [mat-dialog-close]="true" i18n> Đồng ý </button>
+  <button mat-button class="btn-save" (click)="onConfirm(id)" i18n> Đồng ý </button>
 </mat-dialog-actions>

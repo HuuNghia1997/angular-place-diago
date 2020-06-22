@@ -36,28 +36,28 @@
   text-align: center;
 }
 
-a {
+span a {
   color: #1976D2;
   text-decoration: none;
 }
 
-a:link {
+span a:link {
   color: #1976D2;
   text-decoration: none;
 }
 
-a:visited {
+span a:visited {
   color: #1976D2;
   text-decoration: none;
 }
 
-a:hover {
+span a:hover {
   color: #1976D2;
-  text-decoration: underline;
+  text-decoration: none;
   cursor: pointer;
 }
 
-a:active {
+span a:active {
   color: #1976D2;
   text-decoration: none;
 }
@@ -85,4 +85,21 @@ a:active {
   justify-content: right;
   justify-items: right;
   text-align: right;
+}
+
+.diagram-parent {
+  margin-top: 1%;
+  margin-left: 1%;
+  margin-right: 1%;
+  height: 400px;
+  border: solid 3px #EEE;
+  position: relative;
+}
+
+.image-diagram {
+  margin-top: 1%;
+  margin-left: 1%;
+  margin-right: 1%;
+  border: solid 3px #EEE;
+  position: relative;
 }

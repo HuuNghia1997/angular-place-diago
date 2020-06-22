@@ -12,6 +12,7 @@ import { ApplyProcessComponent } from './dialog/apply-process/apply-process.comp
 import { ShowProcessComponent } from './dialog/show-process/show-process.component';
 import { DrawProcessComponent } from './dialog/draw-process/draw-process.component';
 import { UnapplyProcessComponent } from './dialog/unapply-process/unapply-process.component';
+import { DiagramComponent } from './pages/diagram/diagram.component';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { UnapplyProcessComponent } from './dialog/unapply-process/unapply-proces
     ApplyProcessComponent,
     ShowProcessComponent,
     DrawProcessComponent,
-    UnapplyProcessComponent
+    UnapplyProcessComponent,
+    DiagramComponent
   ],
   imports: [
     CommonModule,
@@ -38,6 +40,9 @@ import { UnapplyProcessComponent } from './dialog/unapply-process/unapply-proces
     ApplyProcessComponent,
     ShowProcessComponent,
     DrawProcessComponent
+  ],
+  exports: [
+    DiagramComponent
   ]
 })
 export class ConfigPetitionModule { }

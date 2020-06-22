@@ -15,109 +15,96 @@
       <mat-panel-title i18n> Tìm kiếm </mat-panel-title>
     </mat-expansion-panel-header>
     <!-- Tên quy trình -->
-    <mat-form-field appearance="outline" class="half-form-field">
-      <mat-label i18n> Tên quy trình </mat-label>
-      <label>
-        <input matInput>
-      </label>
-    </mat-form-field>
+    <form [formGroup]="searchForm" (submit)="search(0, 10)">
+      <mat-form-field appearance="outline" class="full-form-field">
+        <mat-label i18n> Tên quy trình </mat-label>
+        <input matInput placeholder="Nhập tên quy trình tìm kiếm" formControlName="name">
+      </mat-form-field>
 
-    <!-- Đơn vị áp dụng -->
-    <mat-form-field appearance="outline" class="half-form-field ml-1">
-      <mat-label i18n> Đơn vị áp dụng </mat-label>
-      <mat-select multiple [formControl]="agency">
-        <mat-option *ngFor="let agen of agencyList" [value]="agen"> {{ agen }} </mat-option>
-      </mat-select>
-    </mat-form-field>
+      <!-- Chuyên mục -->
+      <mat-form-field appearance="outline" class="quarter-form-field">
+        <mat-label i18n> Chuyên mục </mat-label>
+        <mat-select formControlName="tag" multiple>
+          <mat-option *ngFor='let tag of listTags;' value="{{tag.id}}"> {{ tag.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <!-- Chuyên mục -->
-    <mat-form-field appearance="outline" class="quarter-form-field">
-      <mat-label i18n> Chuyên mục </mat-label>
-      <mat-select multiple [formControl]="topics">
-        <mat-option *ngFor="let topic of topicList" [value]="topic"> {{ topic }} </mat-option>
-      </mat-select>
-    </mat-form-field>
+      <!-- Trạng thái -->
+      <mat-form-field appearance="outline" class="quarter-form-field ml-1">
+        <mat-label i18n> Trạng thái </mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="0"> Chưa áp dụng </mat-option>
+          <mat-option value="1"> Đã áp dụng </mat-option>
+          <mat-option value="2"> Đã hủy áp dụng </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-    <!-- Trạng thái -->
-    <mat-form-field appearance="outline" class="quarter-form-field ml-1">
-      <mat-label i18n> Trạng thái </mat-label>
-      <mat-select>
-        <mat-option value="1"> Chưa xử lý </mat-option>
-        <mat-option value="2"> Đã tiếp nhận </mat-option>
-        <mat-option value="3"> Đã xử lý </mat-option>
-      </mat-select>
-    </mat-form-field>
+      <!-- Từ ngày -->
+      <mat-form-field appearance="outline" class="quarter-form-field ml-1">
+        <mat-label i18n> Từ ngày </mat-label>
+        <input matInput [matDatepicker]="startDate" placeholder="Chọn ngày bắt đầu" formControlName="startDate">
+        <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+        <mat-datepicker #startDate></mat-datepicker>
+      </mat-form-field>
 
-    <!-- Từ ngày -->
-    <mat-form-field appearance="outline" class="quarter-form-field ml-1">
-      <mat-label i18n> Từ ngày </mat-label>
-      <label>
-        <input matInput [matDatepicker]="toDate">
-      </label>
-      <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
-      <mat-datepicker #toDate></mat-datepicker>
-    </mat-form-field>
+      <!-- Đến ngày -->
+      <mat-form-field appearance="outline" class="quarter-form-field ml-1">
+        <mat-label i18n> Đến ngày </mat-label>
+        <input matInput [matDatepicker]="endDate" placeholder="Chọn ngày kết thúc" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+        <mat-datepicker #endDate></mat-datepicker>
+      </mat-form-field>
 
-    <!-- Đến ngày -->
-    <mat-form-field appearance="outline" class="quarter-form-field ml-1">
-      <mat-label i18n> Đến ngày </mat-label>
-      <label>
-        <input matInput [matDatepicker]="fromDate">
-      </label>
-      <mat-datepicker-toggle matSuffix [for]="fromDate"></mat-datepicker-toggle>
-      <mat-datepicker #fromDate></mat-datepicker>
-    </mat-form-field>
-
-    <button mat-button class="btn-search" i18n> Tìm kiếm </button>
-    <button mat-button class="btn-clr" i18n> Làm mới </button>
+      <button mat-button class="btn-search" type="submit" i18n> Tìm kiếm </button>
+      <button mat-button class="btn-clr" (click)="searchForm.reset()" i18n> Làm mới </button>
+    </form>
   </mat-expansion-panel>
 </mat-accordion> <!-- filter -->
 
 <!-- Table-data -->
 <div class="padding-table">
   <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource" matSort matSortActive="status" matSortDirection="asc" matSortDisableClear>
+    <!-- matSortDirection="asc"  -->
+    <table mat-table [dataSource]="dataSource" matSort matSortActive="status" matSortDisableClear>
       <!-- STT -->
       <ng-container matColumnDef="STT">
         <th mat-header-cell *matHeaderCellDef i18n> STT </th>
-        <td mat-cell *matCellDef="let element"> {{ element.STT }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.num }} </td>
       </ng-container>
 
       <!-- Tiêu đề -->
-      <ng-container matColumnDef="title">
+      <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef i18n> Tiêu đề </th>
         <td mat-cell *matCellDef="let element">
-          <a href="/cau-hinh-phan-anh/chi-tiet/{{element.id}}"> {{ element.title }} </a>
+          <a href="/cau-hinh-phan-anh/chi-tiet/{{element.id}}"> {{ element.name }} </a>
         </td>
       </ng-container>
 
       <!-- Chuyên mục -->
       <ng-container matColumnDef="topic">
         <th mat-header-cell *matHeaderCellDef i18n> Chuyên mục </th>
-        <td mat-cell *matCellDef="let element"> {{ element.topic }} </td>
+        <td mat-cell *matCellDef="let element">
+          <span *ngFor="let tag of element.tag, let i = index;">
+            {{ tag.name }} {{ i === element.tag.length - 1 ? '' : ',' }}
+          </span>
+        </td>
       </ng-container>
 
       <!-- Ngày tạo -->
       <ng-container matColumnDef="date">
         <th mat-header-cell *matHeaderCellDef i18n> Ngày tạo </th>
-        <td mat-cell *matCellDef="let element"> {{ element.date }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.createdDate | date : 'dd/MM/yyyy' }} </td>
       </ng-container>
 
       <!-- Trạng thái -->
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header i18n> Trạng thái </th>
         <td mat-cell *matCellDef="let element">
-          <span [ngClass]="(element.status === 'Đã áp dụng' ? 'btn-applied' :
-                  (element.status === 'Chưa áp dụng' ? 'btn-none-apply' : 'btn-cancel-apply'))">
-            {{ element.status }}
+          <span [ngClass]="(element.status === 1 ? 'btn-applied' :
+                  (element.status === 0 ? 'btn-none-apply' : 'btn-cancel-apply'))">
+            {{ getStatus(element.status) }}
           </span>
         </td>
-      </ng-container>
-
-      <!-- Đơn vị áp dụng -->
-      <ng-container matColumnDef="agency">
-        <th mat-header-cell *matHeaderCellDef i18n> Đơn vị áp dụng </th>
-        <td mat-cell *matCellDef="let element"> {{ element.agency }} </td>
       </ng-container>
 
       <!-- Thao tác -->
@@ -134,26 +121,26 @@
               <span i18n> Xem quy trình </span>
             </button>
 
-            <button mat-menu-item class="btn-action" (click)="updateProcess(element.id, element.title)">
+            <button mat-menu-item class="btn-action" (click)="updateProcess(element.id, element.name)">
               <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> edit </mat-icon>
               <span i18n> Cập nhật </span>
             </button>
 
-            <div *ngIf="element.status === 'Đã áp dụng'; then receivedBlock else elseBlock"></div>
+            <div *ngIf="element.status === 1; then receivedBlock else elseBlock"></div>
             <ng-template #receivedBlock>
-              <button mat-menu-item class="btn-action" (click)="unApplyProcess(element.id, element.title)">
+              <button mat-menu-item class="btn-action" (click)="unApplyProcess(element.id, element.name)">
                 <mat-icon fontSet="material-icons-outlined"> highlight_off </mat-icon>
                 <span i18n> Hủy áp dụng </span>
               </button>
             </ng-template>
             <ng-template #elseBlock>
-              <button mat-menu-item class="btn-action" (click)="applyProcess(element.id, element.title)">
+              <button mat-menu-item class="btn-action" (click)="applyProcess(element.id, element.name)">
                 <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
                 <span i18n> Áp dụng </span>
               </button>
             </ng-template>
 
-            <button mat-menu-item class="btn-action" (click)="deleteProcess(element.id, element.title)">
+            <button mat-menu-item class="btn-action" (click)="deleteProcess(element.id, element.name)">
               <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> delete </mat-icon>
               <span i18n> Xóa </span>
             </button>
