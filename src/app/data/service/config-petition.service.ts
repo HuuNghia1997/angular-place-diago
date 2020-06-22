@@ -23,6 +23,9 @@ import {
   ConfirmDrawDialogModel,
   DrawProcessComponent
 } from 'src/app/modules/config-petition/dialog/draw-process/draw-process.component';
+import { ApiProviderService } from 'src/app/core/service/api-provider.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -32,13 +35,95 @@ export class ConfigPetitionService {
   result: boolean;
 
   constructor(private dialog: MatDialog,
-              private main: SnackbarService) { }
+              private snackbar: SnackbarService,
+              private apiProviderService: ApiProviderService,
+              private http: HttpClient) { }
+  public searchURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/workflow/--search?';
+  public getTagsURL = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';
+  public getDetailURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/workflow/';
+  public getHistoryURL = this.apiProviderService.getUrl('digo-microservice', 'logman') + '/history?group-id=';
+  public postURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/workflow';
+  public deleteURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/workflow/';
+  public putURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/workflow/';
+  public updateStatusURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/workflow/';
+  public getListModelURL = this.apiProviderService.getUrl('digo-microservice', 'models') + '/projects/';
+  public getModelURL = this.apiProviderService.getUrl('digo-microservice', 'models') + '/models/';
+  public putModelUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/model/';
+  public getModelDeployUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/process-definitions/';
+  public getIdModelUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/process-definitions/';
+
+  search(searchString: string): Observable<any> {
+    return this.http.get(this.searchURL + searchString);
+  }
+
+  getListTags(id: string): Observable<any> {
+    return this.http.get(this.getTagsURL + id);
+  }
+
+  getWorkflowDetail(id: string): Observable<any> {
+    return this.http.get(this.getDetailURL + id);
+  }
+
+  getWorkflowHistory(groupId: number, itemId: string, page: number, size: number): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.get(this.getHistoryURL + groupId + '&item-id=' + itemId + '&page=' + page + '&size=' + size, { headers });
+  }
+
+  postWorkflow(requestBody) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.post<any>(this.postURL, requestBody, { headers });
+  }
+
+  deleteWorkflow(id: string) {
+    return this.http.delete<any>(this.deleteURL + id);
+  }
+
+  updateStatus(status, id) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Accept', 'application/json');
+    const formData: FormData = new FormData();
+    formData.append('status', status);
+    return this.http.put<any>(this.updateStatusURL + id + '/--apply', formData, { headers });
+  }
+
+  updateWorkflow(requestBody, id) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.put<any>(this.putURL + id, requestBody, { headers });
+  }
+
+  getListModel(projectId, type) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.get<any>(this.getListModelURL + projectId + '/models?type=' + type, { headers });
+  }
+
+  getUrlModel(modelId) {
+    return this.getModelURL + modelId + '/content';
+  }
+
+  deployModel(modelId) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.put<any>(this.putModelUrl + modelId + '/--deploy', { headers });
+  }
+
+  getModelDeploy(modelIdDeploy) {
+    const headers = new HttpHeaders().set('Accept', 'image/svg+xml');
+    return this.http.get(this.getModelDeployUrl + modelIdDeploy + '/model', { headers, responseType: 'blob' });
+  }
+
+  getIdModel(processDefinitionId) {
+    return this.http.get<any>(this.getIdModelUrl + processDefinitionId);
+  }
 
   addProcess(): void {
     const dialogData = new ConfirmAddDialogModel('Thêm mới quy trình');
     const dialogRef = this.dialog.open(AddProcessComponent, {
       width: '80%',
-      height: '450px',
+      maxHeight: '600px',
       data: dialogData,
       disableClose: true
     });
@@ -51,14 +136,14 @@ export class ConfigPetitionService {
       const data = dialogResult;
       if (data.data.id != null) {
         const body = JSON.parse(data.body);
-        this.main.openSnackBar(message, body.title, result, reason, 'success_notification');
+        this.snackbar.openSnackBar(message, body.name, result, reason, 'success_notification');
         // tslint:disable-next-line:only-arrow-functions
         setTimeout(function() {
           window.location.replace('/cau-hinh-phan-anh/chi-tiet/' + data.data.id);
         }, reloadTimeout);
       }
       if (data.data.id === null) {
-        this.main.openSnackBar('Thêm quy trình', content, 'thất bại', reason, 'error_notification');
+        this.snackbar.openSnackBar('Thêm quy trình', content, 'thất bại', reason, 'error_notification');
       }
     });
   }
@@ -76,7 +161,7 @@ export class ConfigPetitionService {
     const dialogData = new ConfirmUpdateDialogModel('Cập nhật thông báo', id);
     const dialogRef = this.dialog.open(UpdateProcessComponent, {
       width: '80%',
-      height: '500px',
+      maxHeight: '600px',
       data: dialogData,
       disableClose: true
     });
@@ -88,14 +173,14 @@ export class ConfigPetitionService {
     dialogRef.afterClosed().subscribe(dialogResult => {
       this.result = dialogResult;
       if (this.result === true) {
-        this.main.openSnackBar(message, content, result, reason, 'success_notification');
+        this.snackbar.openSnackBar(message, content, result, reason, 'success_notification');
         // tslint:disable-next-line:only-arrow-functions
         setTimeout(function() {
           window.location.reload();
         }, reloadTimeout);
       }
       if (this.result === false) {
-        this.main.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
       }
     });
   }
@@ -115,10 +200,14 @@ export class ConfigPetitionService {
     dialogRef.afterClosed().subscribe(dialogResult => {
       this.result = dialogResult;
       if (this.result === true) {
-        this.main.openSnackBar(message, content, result, reason, 'success_notification');
+        this.snackbar.openSnackBar(message, content, result, reason, 'success_notification');
+        // tslint:disable-next-line: only-arrow-functions
+        setTimeout(function() {
+          window.location.replace('/cau-hinh-phan-anh');
+        }, reloadTimeout);
       }
       if (this.result === false) {
-        this.main.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
       }
     });
   }
@@ -138,10 +227,14 @@ export class ConfigPetitionService {
     dialogRef.afterClosed().subscribe(dialogResult => {
       this.result = dialogResult;
       if (this.result === true) {
-        this.main.openSnackBar(message, content, result, reason, 'success_notification');
+        this.snackbar.openSnackBar(message, content, result, reason, 'success_notification');
+        // tslint:disable-next-line: only-arrow-functions
+        setTimeout(function() {
+          window.location.replace('/cau-hinh-phan-anh');
+        }, reloadTimeout);
       }
       if (this.result === false) {
-        this.main.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
       }
     });
   }
@@ -161,24 +254,16 @@ export class ConfigPetitionService {
     dialogRef.afterClosed().subscribe(dialogResult => {
       this.result = dialogResult;
       if (this.result === true) {
-        this.main.openSnackBar(message, content, result, reason, 'success_notification');
+        this.snackbar.openSnackBar(message, content, result, reason, 'success_notification');
+        // tslint:disable-next-line: only-arrow-functions
+        setTimeout(function() {
+          window.location.replace('/cau-hinh-phan-anh');
+        }, reloadTimeout);
       }
       if (this.result === false) {
-        this.main.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
       }
     });
   }
 
-  formErrorMessage(id: number) {
-    switch (id) {
-      case 1:
-        return 'Vui lòng nhập tên quy trình';
-      case 2:
-        return 'Vui lòng chọn chuyên mục';
-      case 3:
-        return 'Vui lòng chọn đơn vị';
-      default:
-        return 'You must enter a valid value';
-    }
-  }
 }

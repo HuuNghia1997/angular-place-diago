@@ -14,7 +14,7 @@ export const environment = {
     },
     initOptions: {
       onLoad: 'check-sso',
-    },
+    }
   },
   routerConfig: {
     enableTracing: false,
@@ -52,16 +52,32 @@ export const environment = {
         },
         {
           name: 'logman',
-          path: 'lo',
+          path: 'lo'
         },
-      ],
-    },
+        {
+          name: 'surfeed',
+          path: 'su'
+        },
+        {
+          name: 'models',
+          path: 'v1',
+          rootUrl: 'https://digo-api-01.vnptigate.vn/modeling-service/'
+        },
+        {
+          name: 'rb-petition',
+          path: 'rb-petition'
+        }
+      ]
+    }
   ],
   mapbox: {
     accessToken:
       'pk.eyJ1IjoibW5oYWktbWFwYm94IiwiYSI6ImNrYmlvZ3d5bjBmdzcyem5xcWhnaDFrYjIifQ.tdsFG-l6QwZeKXDtO_r99g',
   },
 };
+
+export const projectIdProcess = '3f9d9e1b-02cd-4e76-ad98-a67ab9830bf3';
+export const typeProcess = 'PROCESS';
 
 /*
  * For easier debugging in development mode, you can import the following file

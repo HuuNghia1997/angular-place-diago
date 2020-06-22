@@ -25,7 +25,6 @@ export class AdminLayoutSidenavComponent implements OnInit {
   ngOnInit(): void {
     this.setOpenAccordion();
     this.roleUser = this.keycloakService.getUserRoles(true);
-    // console.log(this.keycloakService.getKeycloakInstance().token);
 
     MENU_DATA.forEach(e => {
       e.listSubMenu.forEach(r => {

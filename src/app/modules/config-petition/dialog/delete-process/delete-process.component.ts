@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CONFIG_PETITION_DATA, ConfigPetitionElement } from 'src/app/data/schema/config-petition-element';
+import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
 
 @Component({
   selector: 'app-delete-process',
@@ -9,20 +9,21 @@ import { CONFIG_PETITION_DATA, ConfigPetitionElement } from 'src/app/data/schema
 })
 export class DeleteProcessComponent implements OnInit {
 
-  title: string;
   message: string;
   id: string;
-  configPetition: ConfigPetitionElement;
+  workflowStatus: number;
+
+  response = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmDeleteDialogModel,
-              public dialogRef: MatDialogRef<DeleteProcessComponent>) {
-    this.title = data.title;
+              public dialogRef: MatDialogRef<DeleteProcessComponent>,
+              private service: ConfigPetitionService) {
     this.message = data.message;
     this.id = data.id;
-    this.getConfigPetition(this.id);
   }
 
   ngOnInit(): void {
+    this.getWorkflowDetail();
   }
 
   onDismiss(): void {
@@ -30,15 +31,23 @@ export class DeleteProcessComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  getConfigPetition(id): void {
-    CONFIG_PETITION_DATA.forEach(element => {
-      if (element.id === id) {
-        // console.log(element);
-        this.configPetition =  element;
-      }
+  getWorkflowDetail() {
+    this.service.getWorkflowDetail(this.id).subscribe(data => {
+      this.response.push(data);
+      this.workflowStatus = this.response[0].status;
+    }, err => {
+      console.error(err);
     });
   }
 
+  onConfirm(id): void {
+    this.service.deleteWorkflow(id).subscribe(data => {
+      this.dialogRef.close(true);
+    }, err => {
+      console.error(err);
+      this.dialogRef.close(false);
+    });
+  }
 }
 
 export class ConfirmDeleteDialogModel {

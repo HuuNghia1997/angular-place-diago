@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { ConfigPetitionElement, CONFIG_PETITION_DATA } from 'src/app/data/schema/config-petition-element';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-apply-process',
@@ -11,22 +11,42 @@ import { ConfigPetitionService } from 'src/app/data/service/config-petition.serv
 export class ApplyProcessComponent implements OnInit {
 
   isLinear = true;
-  title: string;
   message: string;
   id: string;
-  configPetition: ConfigPetitionElement;
+  workflowName: string;
+  workflowCustomer: string;
+  status: number;
+
+  response = [];
+
+  updateForm = new FormGroup({
+    status: new FormControl('')
+  });
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: ConfirmApplyDialogModel,
               public dialogRef: MatDialogRef<ApplyProcessComponent>,
               private dialog: MatDialog,
               private service: ConfigPetitionService) {
-    this.title = data.title;
     this.message = data.message;
     this.id = data.id;
-    this.getConfigPetition(this.id);
   }
 
   ngOnInit(): void {
+    this.getWorkflowDetail();
+  }
+
+  updateStatus(status) {
+    this.service.updateStatus(status, this.id).subscribe(data => {
+      this.dialogRef.close(true);
+    }, err => {
+      console.error(err);
+      this.dialogRef.close(false);
+    });
+  }
+
+  public onConfirm(): void {
+    this.status = 1;
+    this.updateStatus(this.status);
   }
 
   onDismiss(): void {
@@ -39,12 +59,13 @@ export class ApplyProcessComponent implements OnInit {
     this.service.updateProcess(id, name);
   }
 
-  getConfigPetition(id): void {
-    CONFIG_PETITION_DATA.forEach(element => {
-      if (element.id === id) {
-        // console.log(element);
-        this.configPetition =  element;
-      }
+  getWorkflowDetail() {
+    this.service.getWorkflowDetail(this.id).subscribe(data => {
+      this.response.push(data);
+      this.workflowName = this.response[0].name;
+      this.workflowCustomer = this.response[0].customer.name;
+    }, err => {
+      console.error(err);
     });
   }
 

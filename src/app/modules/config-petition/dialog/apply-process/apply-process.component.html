@@ -2,7 +2,7 @@
   Áp dụng quy trình
 </div>
 
-<div [ngClass]="(configPetition.agency !== '' ? 'display-none': '')">
+<div [ngClass]="(workflowCustomer !== '' ? 'display-none': '')">
   <div mat-dialog-content class="mt-1">
     <p i18n>
       Cần chọn khách hàng trước khi áp dụng quy trình
@@ -10,11 +10,11 @@
   </div>
   <mat-dialog-actions align="center">
     <button mat-button class="btn-cancel" (click)="onDismiss()" i18n> Hủy bỏ </button>
-    <button mat-button class="btn-save" (click)="updateProcess(configPetition.id, configPetition.title)" i18n> Cập nhật </button>
+    <button mat-button class="btn-save" (click)="updateProcess(id, workflowName)" i18n> Cập nhật </button>
   </mat-dialog-actions>
 </div>
 
-<div [ngClass]="(configPetition.agency === '' ? 'display-none': '')">
+<div [ngClass]="(workflowCustomer === '' ? 'display-none': '')">
   <div mat-dialog-content class="mt-1">
     <p>
       <span i18n> Áp dụng </span>
@@ -24,6 +24,6 @@
   </div>
   <mat-dialog-actions align="center">
     <button mat-button class="btn-cancel" (click)="onDismiss()" i18n> Đóng </button>
-    <button mat-button class="btn-save" [mat-dialog-close]="true" i18n> Đồng ý </button>
+    <button mat-button class="btn-save" (click)="onConfirm()" i18n> Đồng ý </button>
   </mat-dialog-actions>
 </div>
