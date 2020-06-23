@@ -78,7 +78,7 @@ export class NotificationService {
         this.main.openSnackBar(message, body.title, result, reason, 'success_notification');
         // tslint:disable-next-line:only-arrow-functions
         setTimeout(function() {
-          window.location.replace('/quan-tri-thong-bao/chi-tiet/' + data.data.id);
+          window.location.reload();
         }, reloadTimeout);
       }
       if (data.data.id === null) {
