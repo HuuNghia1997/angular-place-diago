@@ -18,7 +18,7 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "showCircularDependencies": false,
-            "outputPath": "dist/vn-citizens-admin-web",
+            "outputPath": "dist/citizens-admin",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -68,7 +68,7 @@
               ]
             },
             "production-vi": {
-              "outputPath": "dist/vn-citizens-admin-web-vi",
+              "outputPath": "dist/citizens-admin/vi",
               "baseHref": "/vi/",
               "i18nFile": "src/locale/messages.vi.xlf",
               "i18nFormat": "xlf",
@@ -101,7 +101,7 @@
               ]
             },
             "production-en": {
-              "outputPath": "dist/vn-citizens-admin-web-en",
+              "outputPath": "dist/citizens-admin/en",
               "baseHref": "/en/",
               "i18nFile": "src/locale/messages.en.xlf",
               "i18nFormat": "xlf",

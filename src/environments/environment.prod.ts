@@ -8,7 +8,7 @@ export const environment = {
   keycloakDebug: true,
   keycloakOptions: {
     config: {
-      url: 'https://digo-oidc.vnptigate.vn/auth',
+      url: 'https://digo-tgg-oidc.vnptigate.vn/auth',
       realm: 'digo',
       clientId: 'citizens-admin',
     },
@@ -24,7 +24,7 @@ export const environment = {
   apiProviders: [
     {
       name: 'digo-microservice',
-      rootUrl: 'https://digo-api.vnptigate.vn/',
+      rootUrl: 'https://digo-tgg-api.vnptigate.vn/',
       services: [
         {
           name: 'basedata',
@@ -61,7 +61,7 @@ export const environment = {
         {
           name: 'models',
           path: 'v1',
-          rootUrl: 'https://digo-api.vnptigate.vn/modeling-service/'
+          rootUrl: 'https://digo-tgg-api.vnptigate.vn/modeling-service/'
         },
         {
           name: 'rb-petition',
