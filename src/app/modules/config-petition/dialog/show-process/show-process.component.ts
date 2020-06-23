@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ApplyProcessComponent } from '../apply-process/apply-process.component';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ConfigPetitionService } from 'src/app/data/service/config-petition.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-show-process',
@@ -9,10 +11,31 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 })
 export class ShowProcessComponent implements OnInit {
 
-  constructor(private dialog: MatDialog,
-              public dialogRef: MatDialogRef<ShowProcessComponent>) { }
+  workflowId: string;
+  status: number;
+  workflowName: any;
+  svgIcon: any;
+
+  constructor(public dialogRef: MatDialogRef<ShowProcessComponent>,
+              private service: ConfigPetitionService,
+              @Inject(MAT_DIALOG_DATA) public data: ShowProcessDialogModel,
+              private sanitizer: DomSanitizer) {
+    this.workflowId = data.id;
+  }
 
   ngOnInit(): void {
+    this.getModel();
+  }
+
+  getModel() {
+    this.service.getWorkflowDetail(this.workflowId).subscribe(data => {
+      this.workflowName = data.name;
+      this.service.getModelDeploy(data.processDefinitionId).subscribe(model => {
+        const blob = new Blob([model], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        this.svgIcon = this.sanitizer.bypassSecurityTrustUrl(url);
+      });
+    });
   }
 
   onDismiss(): void {
@@ -20,13 +43,13 @@ export class ShowProcessComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  openDialogApplyProcess() {
-    this.dialog.closeAll();
-    const dialogRef = this.dialog.open(ApplyProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
+  applyProcess(id, name): void {
+    this.service.applyProcess(id, name);
+  }
+}
+
+export class ShowProcessDialogModel {
+  constructor(public title: string,
+              public id: string) {
   }
 }

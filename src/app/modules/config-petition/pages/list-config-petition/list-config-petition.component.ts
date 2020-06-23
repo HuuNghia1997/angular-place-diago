@@ -115,13 +115,8 @@ export class ListConfigPetitionComponent implements OnInit, AfterViewInit {
     this.service.applyProcess(id, name);
   }
 
-  openDialogShowProcess() {
-    const dialogRef = this.dialog.open(ShowProcessComponent, {
-      width: '80%'
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
+  showProcess(id, name): void {
+    this.service.showProcess(id, name);
   }
 
   onPaginateChange($event) {

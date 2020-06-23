@@ -116,7 +116,7 @@
           </button>
 
           <mat-menu #menu="matMenu" xPosition="before">
-            <button mat-menu-item class="btn-action" (click)="openDialogShowProcess()">
+            <button mat-menu-item class="btn-action" (click)="showProcess(element.id, element.name)">
               <mat-icon class="mat-icon-action" fontSet="material-icons-outlined"> description </mat-icon>
               <span i18n> Xem quy trình </span>
             </button>
