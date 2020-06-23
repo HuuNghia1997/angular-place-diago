@@ -13,7 +13,10 @@ import {
   ConfirmApplyDialogModel
 } from 'src/app/modules/config-petition/dialog/apply-process/apply-process.component';
 import { SnackbarService } from './snackbar.service';
-import { ConfirmAddDialogModel, AddProcessComponent } from 'src/app/modules/config-petition/dialog/add-process/add-process.component';
+import {
+  ConfirmAddDialogModel,
+  AddProcessComponent
+} from 'src/app/modules/config-petition/dialog/add-process/add-process.component';
 import { reloadTimeout } from './config.service';
 import {
   ConfirmUpdateDialogModel,
@@ -26,6 +29,10 @@ import {
 import { ApiProviderService } from 'src/app/core/service/api-provider.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {
+  ShowProcessComponent,
+  ShowProcessDialogModel
+} from 'src/app/modules/config-petition/dialog/show-process/show-process.component';
 
 @Injectable({
   providedIn: 'root'
@@ -151,6 +158,15 @@ export class ConfigPetitionService {
   drawProcess(): void {
     const dialogData = new ConfirmDrawDialogModel('Vẽ quy trình');
     const dialogRef = this.dialog.open(DrawProcessComponent, {
+      width: '80%',
+      data: dialogData,
+      disableClose: true
+    });
+  }
+
+  showProcess(id, name): void {
+    const dialogData = new ShowProcessDialogModel(name, id);
+    const dialogRef = this.dialog.open(ShowProcessComponent, {
       width: '80%',
       data: dialogData,
       disableClose: true

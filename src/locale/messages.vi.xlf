@@ -654,6 +654,14 @@
           <context context-type="linenumber">29</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="d87e84f3fa866bb4cabc7a7a0e1ef58f51bdcaf6" datatype="html">
+        <source> Cần chọn chuyên mục trước khi áp dụng quy trình </source>
+        <target> Cần chọn chuyên mục trước khi áp dụng quy trình </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/modules/config-petition/dialog/apply-process/add-process.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

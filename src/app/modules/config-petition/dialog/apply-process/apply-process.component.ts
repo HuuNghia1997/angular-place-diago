@@ -14,7 +14,7 @@ export class ApplyProcessComponent implements OnInit {
   message: string;
   id: string;
   workflowName: string;
-  workflowCustomer: string;
+  workflowTag: any;
   status: number;
 
   response = [];
@@ -63,7 +63,7 @@ export class ApplyProcessComponent implements OnInit {
     this.service.getWorkflowDetail(this.id).subscribe(data => {
       this.response.push(data);
       this.workflowName = this.response[0].name;
-      this.workflowCustomer = this.response[0].customer.name;
+      this.workflowTag = data.tag.length;
     }, err => {
       console.error(err);
     });

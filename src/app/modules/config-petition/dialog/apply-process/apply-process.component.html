@@ -2,10 +2,10 @@
   Áp dụng quy trình
 </div>
 
-<div [ngClass]="(workflowCustomer !== '' ? 'display-none': '')">
+<div *ngIf="workflowTag === 0">
   <div mat-dialog-content class="mt-1">
     <p i18n>
-      Cần chọn khách hàng trước khi áp dụng quy trình
+      Cần chọn chuyên mục trước khi áp dụng quy trình
     </p>
   </div>
   <mat-dialog-actions align="center">
@@ -14,7 +14,7 @@
   </mat-dialog-actions>
 </div>
 
-<div [ngClass]="(workflowCustomer === '' ? 'display-none': '')">
+<div *ngIf="workflowTag > 0">
   <div mat-dialog-content class="mt-1">
     <p>
       <span i18n> Áp dụng </span>
