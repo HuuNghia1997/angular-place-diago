@@ -1,0 +1,22 @@
+{
+    "keycloakDebug": false,
+    "keycloakOptions": {
+        "config": {
+            "url": "${KEYCLOAK_URL}",
+            "realm": "${KEYCLOAK_REALM}",
+            "clientId": "${OAUTH2_CLIENT_ID}"
+        },
+        "initOptions": {
+            "onLoad": "check-sso"
+        }
+    },
+    "apiProviders": {
+        "digo": {
+            "rootUrl": "${DIGO_API_GATEWAY}",
+            "services": {
+                "fileman": { "path": "fi" },
+                "basedata": { "path": "ba" }
+            }
+        }
+    }
+}
