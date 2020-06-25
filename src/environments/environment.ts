@@ -54,6 +54,10 @@ export const environment = {
           name: 'logman',
           path: 'lo',
         },
+        {
+          name: 'rb-petition',
+          path: 'rb-petition'
+        }
       ],
     },
   ],

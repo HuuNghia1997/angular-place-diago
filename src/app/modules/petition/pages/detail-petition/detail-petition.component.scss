@@ -207,6 +207,7 @@ mat-tree-node {
   background-color: #2D9CDB;
   border: none;
   border-radius: 3px;
+  padding: .2em;
 }
 
 .btn-none-public {
@@ -215,6 +216,7 @@ mat-tree-node {
   background-color: #828282;
   border: none;
   border-radius: 3px;
+  padding: .2em;
 }
 
 .btn-public {
@@ -223,6 +225,7 @@ mat-tree-node {
   background-color: #219653;
   border: none;
   border-radius: 3px;
+  padding: .2em;
 }
 
 .overflow {
@@ -523,22 +526,25 @@ a:active {
 }
 
 .btn-wait-get-process {
+  font-size: 13px;
   border: none;
   border-radius: 3px;
   color: #ffffff;
   background-color: #FF9900;
+  padding: .2em;
+  margin-right: 2%;
 }
 
 .btn-wait-process {
+  font-size: 13px;
   border: none;
   border-radius: 3px;
   color: #ffffff;
   background-color: #377DCD;
+  padding: .2em;
+  margin-right: 2%;
 }
 
-.btn-processed {
-  border: none;
-  border-radius: 3px;
-  color: #ffffff;
-  background-color: #219653;
+.d-none {
+  display: none;
 }

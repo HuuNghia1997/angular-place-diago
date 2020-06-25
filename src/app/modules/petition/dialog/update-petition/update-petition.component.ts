@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { PickDatetimeAdapter } from 'src/app/data/schema/pick-datetime-adapter';
 import { PICK_FORMATS } from 'src/app/data/service/config.service';
 import { NgxMatDateAdapter, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-update-petition',
@@ -61,15 +62,26 @@ export class UpdatePetitionComponent implements OnInit {
   public dateOccurred = new FormControl(new Date(2019, 12, 12, 14, 0, 0));
   public dateCreate = new FormControl(new Date(2019, 12, 12, 15, 0, 0));
 
+  petitionId: string;
 
-  constructor() {
+
+  constructor(public dialogRef: MatDialogRef<UpdatePetitionComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdatePetitionDialogModel) {
+    this.petitionId = data.id;
+
     this.topics.setValue(this.Petitions.topicSelectedList);
     this.followers.setValue(this.Petitions.followerSelectedList);
     this.approver.setValue(this.Petitions.approverSelected);
   }
 
   ngOnInit(): void {
+    console.log(this.petitionId);
     this.dates = new Date(2019, 11, 19, 13, 30, 0);
   }
 
+}
+
+export class ConfirmUpdatePetitionDialogModel {
+  constructor(public title: string,
+              public id: string) { }
 }

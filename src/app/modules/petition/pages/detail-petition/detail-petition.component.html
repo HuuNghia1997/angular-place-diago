@@ -8,56 +8,56 @@
 <div class="container">
   <mat-card>
     <mat-card-title>
-      <button [ngClass]="(status === 0 ? 'btn-wait-get-process' : (status === 1 ? 'btn-wait-process' : 'btn-processed'))">
-        {{ petition.status }}
-      </button>
-      Phản ánh về trật tự đô thị
+      <span [ngClass]="(petitionStatus === 'CREATED' ? 'btn-wait-get-process' : 'btn-wait-process')">
+        {{ getStatus(petitionStatus) }}
+      </span>
+      <span> {{ petitionTitle }} </span>
     </mat-card-title>
 
     <div class="button-action">
       <!-- Btn chỉnh sửa -->
-      <button mat-button class="fs-13" (click)="openDialogUpdatePetition()">
+      <button mat-button class="fs-13" (click)="updatePetition(petitionId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
-        Chỉnh sửa
+        <span> Chỉnh sửa </span>
       </button>
 
       <!-- Btn nhận xử lý -->
-      <div *ngIf="status == 0; then receivedBlock else elseBlock"></div>
+      <div *ngIf="petitionStatus === 'CREATED'; then receivedBlock else elseBlock"></div>
       <ng-template #receivedBlock>
-        <button mat-button class="ml-1 fs-13">
+        <button mat-button class="ml-1 fs-13" (click)="claimTask()">
           <mat-icon fontSet="material-icons-outlined"> dns </mat-icon>
-          Nhận xử lý
+          <span> Nhận xử lý </span>
         </button>
       </ng-template>
       <ng-template #elseBlock>
-        <span *ngIf="status == 1">
-          <button mat-button class="ml-1 fs-13" (click)="openDialogConfirmationCompleted()" >
+        <span *ngIf="petitionStatus === 'ASSIGNED'">
+          <button mat-button class="ml-1 fs-13" (click)="completePetition(petitionId, petitionTitle)" >
             <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
-            Xác nhận hoàn thành
+            <span> Xác nhận hoàn thành </span>
           </button>
-          <button mat-button class="ml-1 fs-13">
+          <button mat-button class="ml-1 fs-13" (click)="releaseTask()">
             <mat-icon fontSet="material-icons-outlined"> reply </mat-icon>
-            Bỏ nhận xử lý
+            <span> Bỏ nhận xử lý </span>
           </button>
         </span>
       </ng-template>
 
       <!-- Btn xem quy trình -->
-      <button mat-button class="ml-1 fs-13" (click)="openDialogShowProcess()">
+      <button mat-button class="ml-1 fs-13" (click)="showProcess(petitionId, petitionTitle)">
         <mat-icon> timeline </mat-icon>
-        Xem quy trình
+        <span> Xem quy trình </span>
       </button>
 
       <!-- Btn cập nhật kết quả -->
       <button mat-button class="ml-1 fs-13" (click)="openDialogUpdateResult()">
         <mat-icon fontSet="material-icons-outlined"> assignment </mat-icon>
-        Cập nhật kết quả
+        <span> Cập nhật kết quả </span>
       </button>
 
       <!-- Btn xóa -->
       <button mat-button class="ml-1 fs-13">
         <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-        Xóa
+        <span> Xóa </span>
       </button>
     </div> <!-- div button-action -->
 
@@ -69,24 +69,28 @@
           <table class="table-info-petition">
             <tr>
               <td class="td-1"> Chuyên mục: </td>
-              <td class="td-2"> Giao thông, Y tế </td>
+              <td class="td-2" *ngFor='let tag of petitionTag; let i = index'>
+                {{ tag.name }} {{ i === petitionTag.length - 1 ? '' : ',' }}
+              </td>
             </tr>
             <tr>
               <td class="td-1"> Thời gian xảy ra: </td>
-              <td class="td-2"> 11/12/2019 14:00:00 </td>
+              <td class="td-2"> {{ petitionTakePlaceOn | date : 'dd/MM/yyyy HH:mm:ss' }} </td>
             </tr>
             <tr>
               <td class="td-1"> Ngày phản ánh: </td>
-              <td class="td-2"> 11/12/2019 15:00:00 </td>
+              <td class="td-2"> {{ petitionCreatedDate | date : 'dd/MM/yyyy HH:mm:ss' }} </td>
             </tr>
             <tr>
-              <td class="td-1"> Người gửi: </td>
-              <td class="td-2"> La Văn Tam </td>
+              <td class="td-1"> Đơn vị bị phản ánh: </td>
+              <td class="td-2"*ngFor='let agen of petitionAgency; let i = index'>
+                {{ agen.name }} {{ i === petitionAgency.length - 1 ? '' : ',' }}
+              </td>
             </tr>
             <tr>
               <td class="td-1"> Nơi tạo phản ánh: </td>
               <td class="td-2">
-                Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang (
+                {{ petitionCreatePlace }} (
                 <button class="btn-map">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
@@ -96,7 +100,7 @@
             <tr>
               <td class="td-1"> Địa điểm phản ánh: </td>
               <td>
-                Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang (
+                {{ petitionTakePlaceAt }} (
                 <button class="btn-map">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
@@ -108,7 +112,7 @@
           <!-- Nội dung phản ánh -->
           <h4 class="mt-2"> Nội dung </h4>
           <table class="table-content-petition">
-            <tr> Vào 6h20 phút ngày 12/12 trước cổng trường tiểu học Lê Lợi tình trạng đổ xe gây mất an toàn giao thông tắc đường mong quý cơ quan vào cuộc xử lý. </tr>
+            <tr> {{ petitionContent }} </tr>
           </table> <!-- Nội dung phản ánh -->
 
           <!-- File đính kèm -->
@@ -202,34 +206,32 @@
             <!-- Lịch sử -->
             <mat-tab label="Lịch sử">
               <mat-card class="card-history">
-                <mat-card-subtitle>
-                  <span class="name-user"> Nguyễn Văn A </span>
-                  <span class="action"> &nbsp;đã bình luận - 13/12/2019 12:30:00 </span>
-                </mat-card-subtitle>
-              </mat-card>
-              <mat-card class="card-history">
-                <mat-card-subtitle>
-                  <span class="name-user"> Nguyễn Văn A </span>
-                  <span class="action"> &nbsp;đã bình luận - 13/12/2019 13:30:00 </span>
-                </mat-card-subtitle>
-              </mat-card>
-              <mat-card class="card-history">
-                <mat-card-subtitle>
-                  <span class="name-user"> Nguyễn Văn A </span>
-                  <span class="action"> &nbsp;đã thay đổi - 14/12/2019 16:00:00 </span>
-                  <table class="mt-05">
-                    <tr class="fw-500">
-                      <td class="width-19 action"> Trường </td>
-                      <td class="width-39 action"> Giá trị cũ </td>
-                      <td class="width-39 action"> Giá trị mới </td>
-                    </tr>
-                    <tr>
-                      <td class="width-19 action"> Trạng thái </td>
-                      <td class="width-39 action"> Chờ tiếp nhận </td>
-                      <td class="width-39 action"> Đã tiếp nhận </td>
-                    </tr>
-                  </table>
-                </mat-card-subtitle>
+                <div *ngFor='let his of history; let i = index;' class="history_item mt-1">
+                  <mat-card-subtitle>
+                    <span>
+                      <span class="name-user"> {{ his.user.name }} </span>
+                      <span *ngIf="his.type === 1"> đã bình luận </span>
+                      <span *ngIf="his.type === 2"> đã chuyển bước </span>
+                      <span *ngIf="his.type === 3"> đã thay đổi </span>
+                      <span *ngIf="his.type === 4"> đã thêm mới </span>
+                      <span *ngIf="his.type === 5"> đã xoá </span>
+                      - {{ his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+                    </span>
+                    <table class="mt-05" *ngIf='his.type === 1 || his.type === 4'>
+                      <tr class="fw-500">
+                        <td class="width-19 action" i18n> Trường </td>
+                        <td class="width-39 action" i18n> Giá trị cũ </td>
+                        <td class="width-39 action" i18n> Giá trị mới </td>
+                      </tr>
+                      <tr *ngFor="let his_item of his.action">
+                        <td class="width-19 action"> {{ his_item.fieldName }} </td>
+                        <td class="width-39 action"> {{ his_item.originalValue }}</td>
+                        <td class="width-39 action"> {{ his_item.newValue }} </td>
+                      </tr>
+                    </table>
+                    <mat-divider></mat-divider>
+                  </mat-card-subtitle>
+                </div>
               </mat-card>
             </mat-tab> <!-- Lịch sử -->
           </mat-tab-group> <!-- Lịch sử - hoạt động -->
@@ -238,55 +240,88 @@
         <td class="col-2-content"> </td> <!-- col-2-content -->
 
         <td class="col-3-content">
+          <h4> Thông tin người phản ánh </h4>
+          <table class="table-info-process">
+            <tr>
+              <td class="td-1 width-40"> Người gửi: </td>
+              <td class="td-2 width-60"> {{ reporterName }} </td>
+            </tr>
+            <tr>
+              <td class="td-1 width-40"> Số điện thoại: </td>
+              <td class="td-2 width-60"> {{ reporterPhone }} </td>
+            </tr>
+            <tr>
+              <td class="td-1 width-40"> CMND: </td>
+              <td class="td-2 width-60"> {{ reporteridentityId }} </td>
+            </tr>
+            <tr>
+              <td class="td-1 width-40"> Đối tượng: </td>
+              <td class="td-2 width-60"> {{ getReportType(reporterType) }} </td>
+            </tr>
+            <tr>
+              <td class="td-1 width-40"> Địa chỉ: </td>
+              <td class="td-2 width-60">
+                {{ reporterAddress }}
+                <span *ngFor='let pl of reporterPlace; let i = index'>
+                  {{ pl.name }} {{ i === reporterPlace.length - 1 ? '' : ',' }}
+                </span>
+                (<button class="btn-map">
+                  <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
+                  Xem bản đồ
+                </button>)
+              </td>
+            </tr>
+          </table> <!-- Table thông tin người phản ánh -->
+
           <!-- Thông tin xử lý -->
           <h4> Thông tin xử lý </h4>
           <table class="table-info-process">
             <tr>
               <td class="td-1 width-40"> Người xử lý: </td>
-              <td class="td-2 width-60"> Nguyễn Văn A </td>
+              <td class="td-2 width-60">  </td>
             </tr>
             <tr>
               <td class="td-1 width-40"> Người theo dõi: </td>
-              <td class="td-2 width-60"> Lê Thị C, Nguyễn Văn D </td>
+              <td class="td-2 width-60">  </td>
             </tr>
             <tr>
               <td class="td-1 width-40"> Người duyệt: </td>
-              <td class="td-2 width-60"> Nguyễn Văn B </td>
+              <td class="td-2 width-60">  </td>
             </tr>
             <tr>
               <td class="td-1 width-40"> Ngày duyệt: </td>
-              <td class="td-2 width-60"> 18/12/2019 </td>
+              <td class="td-2 width-60">  </td>
             </tr>
             <tr>
               <td class="td-1 width-40"> Công việc: </td>
               <td class="td-2 width-60">
-                <button class="btn-receive"> Tiếp nhận </button>
+                <span class="btn-receive"> {{ taskName }} </span>
               </td>
             </tr>
             <tr>
               <td class="td-1 width-40"> Công khai: </td>
               <td class="td-2 width-60">
-                <button class="btn-none-public"> Chưa công khai </button>
+                <span [ngClass]="processPublic === false ? 'btn-none-public' : 'btn-public'"> {{ getPublic(processPublic) }} </span>
               </td>
             </tr>
           </table> <!-- Table thông tin xử lý -->
 
           <!-- Kết quả xử lý -->
-          <h4 class="mt-2"> Kết quả xử lý </h4>
-          <table class="table-result">
+          <h4 [ngClass]="resultPetition === undefined ? 'd-none' : 'mt-2'"> Kết quả xử lý </h4>
+          <table [ngClass]="resultPetition === undefined ? 'd-none' : 'table-result'">
             <tr>
               <td class="td-1 width-40"> Ngày có kết quả: </td>
-              <td class="td-2 width-60"> 19/12/2019 </td>
+              <td class="td-2 width-60">  </td>
             </tr>
             <tr>
               <td class="td-1 width-40"> Công khai: </td>
               <td class="td-2 width-60">
-                <button class="btn-public"> Đã công khai </button>
+                <button class="btn-public">  </button>
               </td>
             </tr>
           </table>
 
-          <table class="table-content-result">
+          <table [ngClass]="resultPetition === undefined ? 'd-none' : 'table-content-result'">
             <tr class="td-1"> Nội dung: </tr>
             <tr class="td-2">
               <span [class.overflow]="isExpand" [ngClass]="(isExpand === true ? 'overflow' : 'show-content')">
@@ -298,7 +333,7 @@
           </table> <!-- Kết quả xử lý -->
 
           <!-- File đính kèm kết quả xử lý -->
-          <div class="frame-upload-file">
+          <div [ngClass]="resultPetition === undefined ? 'd-none' : 'frame-upload-file'">
             <div class="card-container">
               <mat-card class="mat-card-file short">
                 <img mat-card-image src="../../../assets/img/imgFile.png" alt="">

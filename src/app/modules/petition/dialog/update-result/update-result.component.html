@@ -1,79 +1,79 @@
-<div mat-dialog-content>
-  <h3 mat-dialog-title> Cập nhật kết quả </h3>
-  <form>
-    <!-- Nội dung kết quả -->
-    <mat-form-field appearance="outline" class="full-input mt-1">
-      <mat-label> Nội dung </mat-label>
-      <label>
-        <textarea matInput cdkTextareaAutosize value=" {{ Result.content }} "></textarea>
-      </label>
-    </mat-form-field>
+<h3 mat-dialog-title class="dialog_title"> Cập nhật kết quả </h3>
+<form>
+  <!-- Nội dung kết quả -->
+  <mat-form-field appearance="outline" class="full-input mt-1">
+    <mat-label> Nội dung </mat-label>
+    <label>
+      <textarea matInput cdkTextareaAutosize value=" {{ Result.content }} "></textarea>
+    </label>
+  </mat-form-field>
 
-    <mat-slide-toggle checked="checked" color="primary"> Công khai </mat-slide-toggle>
+  <mat-slide-toggle checked="checked" color="primary"> Công khai </mat-slide-toggle>
 
-    <h4 class="fw-500"> File kết quả </h4>
+  <h4 class="fw-500"> File kết quả </h4>
 
-    <div class="frame-upload-file well my-drop-zone" ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-                                    (fileOver)="fileOverBase($event)" [uploader]="uploader" (onFileDrop)="onFileSelected($event)">
-      <table style="width: 100%; display: flex; justify-content: center">
-        <tr>
-          <div class="col-sm-9">
-            <span class="hidden-file" aria-hidden="true">
-              <input type="file" #fileInput ng2FileSelect [uploader]="uploader" (onFileSelected)="onFileSelected($event)" multiple/>
+  <div class="frame-upload-file well my-drop-zone" ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+                                  (fileOver)="fileOverBase($event)" [uploader]="uploader" (onFileDrop)="onFileSelected($event)">
+    <table style="width: 100%; display: flex; justify-content: center">
+      <tr>
+        <div class="col-sm-9">
+          <span class="hidden-file" aria-hidden="true">
+            <input type="file" #fileInput ng2FileSelect [uploader]="uploader" (onFileSelected)="onFileSelected($event)" multiple/>
+          </span>
+          <div (click)="fileInput.click()">
+            <span class="span-cloud-upload">
+              <mat-icon fontSet="material-icons-outlined" class="icon-cloud"> cloud_upload </mat-icon>
+              <button disabled class="btn-drop-drag"> Kéo thả tệp tin hoặc </button>
+              <button class="btn-upload"> Chọn từ thư viện </button>
+              <button disabled class="btn-drop-drag"> hoặc </button>
+              <button class="btn-upload"> Tải lên </button>
             </span>
-            <div (click)="fileInput.click()">
-              <span class="span-cloud-upload">
-                <mat-icon fontSet="material-icons-outlined" class="icon-cloud"> cloud_upload </mat-icon>
-                <button disabled class="btn-drop-drag"> Kéo thả tệp tin hoặc </button>
-                <button class="btn-upload"> Chọn từ thư viện </button>
-                <button disabled class="btn-drop-drag"> hoặc </button>
-                <button class="btn-upload"> Tải lên </button>
-              </span>
-            </div>
           </div>
-        </tr>
-      </table>
-
-      <div class="card-container">
-        <mat-card class="mat-card-file short">
-          <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-          <mat-card-subtitle class="name-file"> image.png </mat-card-subtitle>
-          <div class="mat-icon-delete">
-            <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-          </div>
-        </mat-card>
-
-        <mat-card class="mat-card-file short">
-          <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-          <mat-card-subtitle class="name-file"> file_file_file.docx </mat-card-subtitle>
-          <div class="mat-icon-delete">
-            <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-          </div>
-        </mat-card>
-
-        <mat-card class="mat-card-file short">
-          <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-          <mat-card-subtitle class="name-file"> ketqua_ketqua.pdf </mat-card-subtitle>
-          <div class="mat-icon-delete">
-            <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-          </div>
-        </mat-card>
-
-        <div class="div-file-selected" *ngFor="let item of uploader.queue">
-          <mat-card class="mat-card-file short">
-            <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-            <mat-card-subtitle class="name-file"> {{ item?.file?.name }} </mat-card-subtitle>
-            <div class="mat-icon-delete" (click)="item.remove()">
-              <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-            </div>
-          </mat-card>
         </div>
+      </tr>
+    </table>
+
+    <div class="card-container">
+      <mat-card class="mat-card-file short">
+        <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
+        <mat-card-subtitle class="name-file"> image.png </mat-card-subtitle>
+        <div class="mat-icon-delete">
+          <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="mat-card-file short">
+        <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
+        <mat-card-subtitle class="name-file"> file_file_file.docx </mat-card-subtitle>
+        <div class="mat-icon-delete">
+          <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
+        </div>
+      </mat-card>
+
+      <mat-card class="mat-card-file short">
+        <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
+        <mat-card-subtitle class="name-file"> ketqua_ketqua.pdf </mat-card-subtitle>
+        <div class="mat-icon-delete">
+          <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
+        </div>
+      </mat-card>
+
+      <div class="div-file-selected" *ngFor="let item of uploader.queue">
+        <mat-card class="mat-card-file short">
+          <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
+          <mat-card-subtitle class="name-file"> {{ item?.file?.name }} </mat-card-subtitle>
+          <div class="mat-icon-delete" (click)="item.remove()">
+            <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
+          </div>
+        </mat-card>
       </div>
     </div>
-  </form>
+  </div>
 
   <mat-dialog-actions align="center">
     <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Hủy bỏ </button>
     <button mat-button class="btn-update"> Cập nhật </button>
   </mat-dialog-actions>
-</div> <!-- Content dialog -->
+</form>
+
+
