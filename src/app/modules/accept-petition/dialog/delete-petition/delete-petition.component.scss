@@ -83,7 +83,7 @@ a:visited {
 
 a:hover {
   color: #1976D2;
-  text-decoration: underline;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -137,8 +137,4 @@ a:active {
   position: relative;
   top: 3px;
   vertical-align: center;
-}
-
-table {
-  width: 100%;
 }

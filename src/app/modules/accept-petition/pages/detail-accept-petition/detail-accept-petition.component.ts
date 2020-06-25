@@ -8,6 +8,14 @@ import { EditPetitionComponent } from 'src/app/modules/accept-petition/dialog/ed
 import { DeletePetitionComponent } from 'src/app/modules/accept-petition/dialog/delete-petition/delete-petition.component';
 import { CommentPetitionComponent } from 'src/app/modules/accept-petition/dialog/comment-petition/comment-petition.component';
 import { FileUploader } from 'ng2-file-upload';
+import { ImageInfo } from 'src/app/data/schema/image-info';
+import { ApiProviderService } from 'src/app/core/service/api-provider.service';
+import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  petitionHistoryGroupId,
+  petitionCommentGroupId,
+} from 'src/app/data/service/config.service';
 import {
   AcceptPetitionElement,
   PETITION_DATA,
@@ -47,6 +55,69 @@ function readBase64(file): Promise<any> {
   styleUrls: ['./detail-accept-petition.component.scss'],
 })
 export class DetailAcceptPetitionComponent implements OnInit {
+  // Khởi tạo ban đầu
+  historyTypeList = [
+    {
+      id: 1,
+      name: 'bình luận',
+    },
+    {
+      id: 2,
+      name: 'chuyển bước',
+    },
+    {
+      id: 3,
+      name: 'cập nhật thông tin',
+    },
+    {
+      id: 4,
+      name: 'thêm mới',
+    },
+    {
+      id: 5,
+      name: 'xóa',
+    },
+    {
+      id: 6,
+      name: 'tìm kiếm',
+    },
+  ];
+
+  // Kết quả trả về khi lấy chi tiết phản ánh theo id
+  response = [];
+
+  // Thuộc tính phản ánh
+  agencyName: string;
+  createdDate: string;
+  description: string;
+  file: [];
+  isAnonymous: boolean;
+  isPublic: boolean;
+  receptionMethod: number;
+  receptionMethodDescription: string;
+  reporterAddress: string;
+  reporterFullname: string;
+  reporterIdentityId: string;
+  reporterPhone: string;
+  reporterLocationFullAddress: string;
+  result: string;
+  status: number;
+  statusDescription: string;
+  tagName: string;
+  takePlaceAtFullAddress: string;
+  takePlaceOn: string;
+  title: string;
+
+  // File
+  filesInfo: ImageInfo[] = [];
+  uploaded = true;
+
+  // Lịch sử
+  history = [];
+
+  // Bình luận
+  comment = [];
+
   treeControl = new NestedTreeControl<Comments>((node) => node.children);
   commentDataSource = new MatTreeNestedDataSource<Comments>();
 
@@ -62,20 +133,113 @@ export class DetailAcceptPetitionComponent implements OnInit {
   petitionId: string;
   petition: AcceptPetitionElement;
   isExpand = true;
-  status: number;
+  groupId = petitionHistoryGroupId;
+  pageToGetHistory = 0;
+  sizePerPageHistory = 15;
 
-  constructor(private actRoute: ActivatedRoute, private dialog: MatDialog) {
-    this.petitionId = this.actRoute.snapshot.params.id;
-    this.getPetition(this.petitionId);
-    this.status = this.getState(this.petition.status);
-    this.commentDataSource.data = TREE_DATA;
-  }
+  constructor(
+    private route: ActivatedRoute,
+    public dialog: MatDialog,
+    private service: AcceptPetitionService,
+    public snackBar: MatSnackBar,
+    private apiProviderService: ApiProviderService
+  ) {}
 
   ngOnInit(): void {
-    const id = this.petitionId;
-    if (id === undefined) {
-      console.log('ID không xác định');
-    }
+    this.petitionId = this.route.snapshot.params.id;
+    this.getPetitionDetail();
+    this.getPetitionHistory();
+  }
+
+  getPetitionDetail() {
+    this.service.getPetitionDetail(this.petitionId).subscribe(
+      (data) => {
+        this.response.push(data);
+        console.log(this.response);
+        this.setViewData();
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+  }
+
+  setViewData() {
+    // console.log(this.history);
+
+    this.agencyName = this.response[0].agency.name;
+    this.createdDate = this.response[0].createdDate;
+    this.description = this.response[0].description;
+    this.file = this.response[0].file;
+    this.isAnonymous = this.response[0].isAnonymous;
+    this.isPublic = this.response[0].isPublic;
+    this.receptionMethod = this.response[0].receptionMethod;
+    this.receptionMethodDescription = this.receptionMethodDescription;
+
+    this.reporterAddress = this.response[0].reporter.address.address;
+    this.response[0].reporter.address.place.forEach((item) => {
+      this.reporterAddress = this.reporterAddress + ', ' + item.name;
+    });
+    this.reporterFullname = this.response[0].reporter.fullname;
+    this.reporterIdentityId = this.response[0].reporter.identityId;
+    this.reporterPhone = this.response[0].reporter.phone;
+    this.reporterLocationFullAddress = this.response[0].reporterLocation.fullAddress;
+    this.result = this.response[0].result;
+    this.status = this.response[0].status;
+    this.statusDescription = this.response[0].statusDescription;
+    this.tagName = this.response[0].tag.name;
+    this.takePlaceAtFullAddress = this.response[0].takePlaceAt.fullAddress;
+    this.takePlaceOn = this.response[0].takePlaceOn;
+    this.title = this.response[0].title;
+  }
+
+  getPetitionHistory() {
+    // tslint:disable-next-line:max-line-length
+    this.service
+      .getPetitionHistory(
+        this.groupId,
+        this.petitionId,
+        this.pageToGetHistory,
+        this.sizePerPageHistory
+      )
+      .subscribe(
+        (data) => {
+          data.content.forEach((item) => {
+            // console.log(item);
+            this.history.push(item);
+          });
+          // const size = data.numberOfElements;
+          // for (let i = 0; i < size; i++) {
+          //   this.history.push(data.content[i]);
+          // }
+          // console.log(history);
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
+  }
+
+  getPetitionComment() {
+    // tslint:disable-next-line:max-line-length
+    this.service
+      .getPetitionComment(
+        this.groupId,
+        this.petitionId,
+        this.pageToGetHistory,
+        this.sizePerPageHistory
+      )
+      .subscribe(
+        (data) => {
+          const size = data.numberOfElements;
+          for (let i = 0; i < size; i++) {
+            this.history.push(data.content[i]);
+          }
+        },
+        (err) => {
+          console.error(err);
+        }
+      );
   }
 
   isExpandToggle() {
@@ -85,50 +249,20 @@ export class DetailAcceptPetitionComponent implements OnInit {
   hasChild = (_: number, node: Comments) =>
     !!node.children && node.children.length > 0;
 
-  openDialogUpdatePetition() {
-    const dialogRef = this.dialog.open(EditPetitionComponent, {
-      width: '80%',
-      height: '600px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('This dialog was closed');
-    });
+  updatePetition(id, name): void {
+    this.service.updateRecord(id, name);
   }
 
-  openDialogAcceptPetition() {
-    const dialogRef = this.dialog.open(AcceptPetitionComponent, {
-      width: '800px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('This dialog was closed');
-    });
+  deletePetition(id, name): void {
+    this.service.deleteRecord(id, name);
   }
 
-  openDialogDelelePetition() {
-    const dialogRef = this.dialog.open(DeletePetitionComponent, {
-      width: '800px',
-      disableClose: true
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('This dialog was closed');
-    });
+  acceptPetition(id, name): void {
+    this.service.acceptPetitionDialog(id, name);
   }
 
-  openDialogCommentPetition() {
-    const dialogRef = this.dialog.open(CommentPetitionComponent, {
-      maxWidth: '80%',
-      minWidth: '60%',
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('This dialog was closed');
-    });
+  addComment(id, name): void {
+    this.service.addComment(id, name);
   }
 
   public fileOverBase(e: any): void {

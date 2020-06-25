@@ -8,21 +8,15 @@
 <div class="container">
   <mat-card>
     <mat-card-title>
-      <button
-        [ngClass]="
-          status === 0
-            ? 'btn-wait-process'
-            : 'btn-processed'
-        "
-      >
-        {{ petition.status }}
+      <button [ngClass]="status === 1 ? 'btn-wait-process' : 'btn-processed'">
+        {{ statusDescription }}
       </button>
-      Phản ánh về trật tự đô thị
+      {{ title }}
     </mat-card-title>
 
     <div class="button-action">
       <!-- Btn cập nhật -->
-      <button mat-button class="fs-13" (click)="openDialogUpdatePetition()">
+      <button mat-button class="fs-13" (click)="updatePetition(petitionId, title)">
         <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
         Cập nhật
       </button>
@@ -31,7 +25,7 @@
       <button
         mat-button
         class="ml-1 fs-13"
-        (click)="openDialogAcceptPetition()"
+        (click)="acceptPetition(petitionId, title)"
       >
         <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
         Tiếp nhận
@@ -41,7 +35,7 @@
       <button
         mat-button
         class="ml-1 fs-13"
-        (click)="openDialogDelelePetition()"
+        (click)="deletePetition(petitionId, title)"
       >
         <mat-icon fontSet="material-icons-outlined"> highlight_off </mat-icon>
         Hủy
@@ -57,24 +51,28 @@
           <table class="table-info-petition">
             <tr>
               <td class="td-1">Chuyên mục:</td>
-              <td class="td-2">Giao thông, Y tế</td>
+              <td class="td-2">{{ tagName }}</td>
             </tr>
             <tr>
               <td class="td-1">Thời gian xảy ra:</td>
-              <td class="td-2">11/12/2019 14:00:00</td>
+              <td class="td-2">
+                {{ takePlaceOn | date: "dd/MM/yyyy HH:mm:ss" }}
+              </td>
             </tr>
             <tr>
               <td class="td-1">Ngày phản ánh:</td>
-              <td class="td-2">11/12/2019 15:00:00</td>
+              <td class="td-2">
+                {{ createdDate | date: "dd/MM/yyyy HH:mm:ss" }}
+              </td>
             </tr>
             <tr>
               <td class="td-1">Người gửi:</td>
-              <td class="td-2">La Văn Tam</td>
+              <td class="td-2">{{ reporterFullname }}</td>
             </tr>
             <tr>
               <td class="td-1">Nơi tạo phản ánh:</td>
               <td class="td-2">
-                Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang (
+                {{ takePlaceAtFullAddress }} (
                 <button class="btn-map">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map">
                     place
@@ -86,7 +84,7 @@
             <tr>
               <td class="td-1">Địa điểm phản ánh:</td>
               <td>
-                Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang (
+                {{ takePlaceAtFullAddress }} (
                 <button class="btn-map">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map">
                     place
@@ -102,9 +100,9 @@
           <h4 class="mt-2">Nội dung</h4>
           <table class="table-content-petition">
             <tr>
-              Vào 6h20 phút ngày 12/12 trước cổng trường tiểu học Lê Lợi tình
-              trạng đổ xe gây mất an toàn giao thông tắc đường mong quý cơ quan
-              vào cuộc xử lý.
+              {{
+                description
+              }}
             </tr>
           </table>
           <!-- Nội dung phản ánh -->
@@ -149,47 +147,15 @@
             </table>
 
             <!-- Upload file -->
-            <div class="card-container">
+            <div class="card-container" *ngFor="let file of filesInfo">
               <mat-card class="mat-card-file short">
                 <img
                   mat-card-image
-                  src="../../../assets/img/imgFile.png"
-                  alt=""
+                  src="{{ file.url }}"
+                  alt="{{ file.fullName }}"
                 />
                 <mat-card-subtitle class="name-file">
-                  image.png
-                </mat-card-subtitle>
-                <div class="mat-icon-delete">
-                  <mat-icon fontSet="material-icons-outlined">
-                    delete
-                  </mat-icon>
-                </div>
-              </mat-card>
-
-              <mat-card class="mat-card-file short">
-                <img
-                  mat-card-image
-                  src="../../../assets/img/imgFile.png"
-                  alt=""
-                />
-                <mat-card-subtitle class="name-file">
-                  file_file_file.docx
-                </mat-card-subtitle>
-                <div class="mat-icon-delete">
-                  <mat-icon fontSet="material-icons-outlined">
-                    delete
-                  </mat-icon>
-                </div>
-              </mat-card>
-
-              <mat-card class="mat-card-file short">
-                <img
-                  mat-card-image
-                  src="../../../assets/img/imgFile.png"
-                  alt=""
-                />
-                <mat-card-subtitle class="name-file">
-                  ketqua_ketqua.pdf
+                  {{ file.name }}
                 </mat-card-subtitle>
                 <div class="mat-icon-delete">
                   <mat-icon fontSet="material-icons-outlined">
@@ -229,7 +195,7 @@
           <mat-tab-group>
             <!-- Bình luận -->
             <mat-tab label="Bình luận">
-              <mat-tree
+              <!-- <mat-tree
                 [dataSource]="commentDataSource"
                 [treeControl]="treeControl"
                 class="tree"
@@ -265,9 +231,13 @@
                   </ul>
                   <mat-divider></mat-divider>
                 </mat-nested-tree-node>
-              </mat-tree>
+              </mat-tree> -->
 
-              <button mat-button class="mt-10" (click)="openDialogCommentPetition()">
+              <button
+                mat-button
+                class="mt-10"
+                (click)="addComment(petitionId, title)"
+              >
                 <mat-icon fontSet="material-icons-outlined">
                   insert_comment
                 </mat-icon>
@@ -278,22 +248,21 @@
 
             <!-- Lịch sử -->
             <mat-tab label="Lịch sử">
-              <mat-card class="card-history">
+              <mat-card class="card-history" *ngFor="let his of history">
                 <mat-card-subtitle>
-                  <span class="name-user"> Nguyễn Văn A </span>
+                  <span class="name-user"> {{ his.user.name }} </span>
                   <span class="action">
-                    &nbsp;đã bình luận - 13/12/2019 12:30:00
+                    &nbsp;đã
+                    <ng-container *ngFor="let item of historyTypeList">
+                      <ng-container *ngIf="item.id === his.type">
+                        {{ item.name }} -
+                      </ng-container>
+                    </ng-container>
+                    {{ his.affectedDate | date: "dd/MM/yyyy HH:mm:ss" }}
                   </span>
                 </mat-card-subtitle>
               </mat-card>
-              <mat-card class="card-history">
-                <mat-card-subtitle>
-                  <span class="name-user"> Nguyễn Văn A </span>
-                  <span class="action">
-                    &nbsp;đã bình luận - 13/12/2019 13:30:00
-                  </span>
-                </mat-card-subtitle>
-              </mat-card>
+
               <mat-card class="card-history">
                 <mat-card-subtitle>
                   <span class="name-user"> Nguyễn Văn A </span>
@@ -330,24 +299,24 @@
           <table class="table-info-process">
             <tr>
               <td class="td-1 width-40">Người gửi:</td>
-              <td class="td-2 width-60">La Văn Tam</td>
+              <td class="td-2 width-60">{{ reporterFullname }}</td>
             </tr>
             <tr>
               <td class="td-1 width-40">Số điện thoại:</td>
-              <td class="td-2 width-60">0941234567</td>
+              <td class="td-2 width-60">{{ reporterPhone }}</td>
             </tr>
             <tr>
               <td class="td-1 width-40">CMND</td>
-              <td class="td-2 width-60">331223344</td>
+              <td class="td-2 width-60">{{ reporterIdentityId }}</td>
             </tr>
             <tr>
               <td class="td-1 width-40">Đối tượng</td>
-              <td class="td-2 width-60">Cá nhân</td>
+              <td class="td-2 width-60"></td>
             </tr>
             <tr>
               <td class="td-1 width-40">Địa chỉ</td>
               <td class="td-2 width-60">
-                Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang (
+                {{ reporterAddress }} (
                 <button class="btn-map">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map">
                     place

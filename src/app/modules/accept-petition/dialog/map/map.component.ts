@@ -17,12 +17,22 @@ export class MapComponent implements OnInit {
     this.map.buildMap();
   }
 
-  createMessage(placeName) {
+  createMessagePlace(placeName) {
     this.map.changePlace(placeName);
   }
 
+  createMessageLatitude(lat) {
+    this.map.changeLatitude(lat);
+  }
+
+  createMessageLongtitude(long) {
+    this.map.changeLongitude(long);
+  }
+
   search() {
-    this.createMessage(document.getElementById('placeName').innerHTML);
+    this.createMessagePlace(document.getElementById('placeName').innerHTML);
+    this.createMessageLatitude(document.getElementById('latitude').innerHTML);
+    this.createMessageLongtitude(document.getElementById('longitude').innerHTML);
   }
 
   onDismiss(): void {

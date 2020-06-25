@@ -1,4 +1,4 @@
-<!--  Title  -->
+<!--  Title bar  -->
 <mat-toolbar class="title">
   <mat-toolbar-row>
     <h6 class="name-page">Danh sách phản ánh</h6>
@@ -8,72 +8,104 @@
     </button>
   </mat-toolbar-row>
 </mat-toolbar>
-<!-- filter -->
-<mat-accordion>
-  <mat-expansion-panel>
-    <mat-expansion-panel-header>
-      <mat-panel-title> Tìm kiếm </mat-panel-title>
-    </mat-expansion-panel-header>
-    <!-- Tiêu đề -->
-    <mat-form-field appearance="outline" class="half-form-field">
-      <mat-label> Tiêu đề </mat-label>
-      <label>
-        <input matInput />
-      </label>
-    </mat-form-field>
 
-    <!-- Địa điểm phản ánh -->
-    <mat-form-field appearance="outline" class="half-form-field ml-1">
-      <mat-label> Địa điểm phản ánh </mat-label>
-      <label>
-        <input matInput />
-      </label>
-    </mat-form-field>
+<div id="search">
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title> Tìm kiếm </mat-panel-title>
+      </mat-expansion-panel-header>
 
-    <!-- Trạng thái -->
-    <mat-form-field appearance="outline" class="quarter-form-field">
-      <mat-label> Trạng thái </mat-label>
-      <mat-select>
-        <mat-option value="1"> Chưa tiếp nhận </mat-option>
-        <mat-option value="2"> Đã tiếp nhận </mat-option>
-      </mat-select>
-    </mat-form-field>
+      <form [formGroup]="searchForm" (submit)="search(0, 10)">
+        <!-- Tiêu đề -->
+        <mat-form-field appearance="outline" class="half-form-field">
+          <mat-label> Tiêu đề </mat-label>
+          <label>
+            <input
+              matInput
+              formControlName="title"
+              placeholder="Nhập tiêu đề tìm kiếm"
+            />
+          </label>
+        </mat-form-field>
 
-    <!-- Chuyên mục -->
-    <mat-form-field appearance="outline" class="quarter-form-field ml-1">
-      <mat-label> Chuyên mục </mat-label>
-      <mat-select multiple [formControl]="topics">
-        <mat-option *ngFor="let topic of topicList" [value]="topic">
-          {{ topic }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+        <!-- Địa điểm phản ánh -->
+        <mat-form-field appearance="outline" class="half-form-field ml-1">
+          <mat-label> Địa điểm phản ánh </mat-label>
+          <label>
+            <input
+              matInput
+              formControlName="takePlaceAtFullAddress"
+              placeholder="Nhập địa điểm tìm kiếm"
+            />
+          </label>
+        </mat-form-field>
 
-    <!-- Từ ngày -->
-    <mat-form-field appearance="outline" class="quarter-form-field ml-1">
-      <mat-label> Từ ngày </mat-label>
-      <label>
-        <input matInput [matDatepicker]="toDate" />
-      </label>
-      <mat-datepicker-toggle matSuffix [for]="toDate"></mat-datepicker-toggle>
-      <mat-datepicker #toDate></mat-datepicker>
-    </mat-form-field>
+        <!-- Chuyên mục -->
+        <mat-form-field appearance="outline" class="quarter-form-field">
+          <mat-label> Chuyên mục </mat-label>
+          <mat-select multiple formControlName="tag">
+            <mat-option *ngFor="let tag of tagList" value="{{ tag.id }}">
+              {{ tag.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-    <!-- Đến ngày -->
-    <mat-form-field appearance="outline" class="quarter-form-field ml-1">
-      <mat-label> Đến ngày </mat-label>
-      <label>
-        <input matInput [matDatepicker]="fromDate" />
-      </label>
-      <mat-datepicker-toggle matSuffix [for]="fromDate"></mat-datepicker-toggle>
-      <mat-datepicker #fromDate></mat-datepicker>
-    </mat-form-field>
+        <!-- Hình thức phản ánh -->
+        <mat-form-field appearance="outline" class="quarter-form-field ml-1">
+          <mat-label> Hình thức phản ánh </mat-label>
+          <mat-select formControlName="receptionMethod">
+            <mat-option
+              *ngFor="let receptionMethod of receptionMethodList; let i = index"
+              [value]="i"
+            >
+              {{ receptionMethod }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-    <button mat-button class="btn-search">Tìm kiếm</button>
-    <button mat-button class="btn-clr">Làm mới</button>
-  </mat-expansion-panel>
-</mat-accordion>
-<!-- filter -->
+        <!-- Từ ngày -->
+        <mat-form-field appearance="outline" class="quarter-form-field ml-1">
+          <mat-label> Từ ngày </mat-label>
+          <label>
+            <input
+              matInput
+              formControlName="startDate"
+              [matDatepicker]="toDate"
+            />
+          </label>
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="toDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #toDate></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Đến ngày -->
+        <mat-form-field appearance="outline" class="quarter-form-field ml-1">
+          <mat-label> Đến ngày </mat-label>
+          <label>
+            <input
+              matInput
+              formControlName="endDate"
+              [matDatepicker]="fromDate"
+            />
+          </label>
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="fromDate"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #fromDate></mat-datepicker>
+        </mat-form-field>
+
+        <button mat-button class="btn-search" type="submit">Tìm kiếm</button>
+        <button mat-button class="btn-clr" (click)="searchForm.reset()">
+          Làm mới
+        </button>
+      </form>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
 
 <!-- Table-data -->
 <div class="padding-table">
@@ -86,10 +118,10 @@
       matSortDirection="asc"
       matSortDisableClear
     >
-      <!-- STT -->
-      <ng-container matColumnDef="STT">
+      <!-- Số thứ tự -->
+      <ng-container matColumnDef="no">
         <th mat-header-cell *matHeaderCellDef>STT</th>
-        <td mat-cell *matCellDef="let element">{{ element.STT }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.num }}</td>
       </ng-container>
 
       <!-- Tiêu đề -->
@@ -103,21 +135,21 @@
       </ng-container>
 
       <!-- Chuyên mục -->
-      <ng-container matColumnDef="topic">
+      <ng-container matColumnDef="tag">
         <th mat-header-cell *matHeaderCellDef>Chuyên mục</th>
-        <td mat-cell *matCellDef="let element">{{ element.topic }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.tag.name }}</td>
       </ng-container>
 
       <!-- Ngày phản ánh -->
-      <ng-container matColumnDef="date">
+      <ng-container matColumnDef="createDate">
         <th mat-header-cell *matHeaderCellDef>Ngày phản ánh</th>
-        <td mat-cell *matCellDef="let element">{{ element.date }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.createdDate | date : 'dd/MM/yyyy' }}</td>
       </ng-container>
 
       <!-- Địa điểm phản ánh -->
-      <ng-container matColumnDef="place">
+      <ng-container matColumnDef="takePlaceAt">
         <th mat-header-cell *matHeaderCellDef>Địa điểm phản ánh</th>
-        <td mat-cell *matCellDef="let element">{{ element.place }}</td>
+        <td mat-cell *matCellDef="let element">{{ element.takePlaceAt.fullAddress }}</td>
       </ng-container>
 
       <!-- Trạng thái -->
@@ -126,12 +158,12 @@
         <td mat-cell *matCellDef="let element">
           <span
             [ngClass]="
-              element.status === 'Chờ tiếp nhận'
+              element.status === '1'
                 ? 'btn-wait-process'
                 : 'btn-processed'
             "
           >
-            {{ element.status }}
+            {{ element.statusDescription }}
           </span>
         </td>
       </ng-container>
@@ -203,11 +235,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
     <!-- table data -->
-    <mat-paginator
-      [pageSizeOptions]="pageSizes"
-      [pageSize]="10"
-      showFirstLastButtons
-    ></mat-paginator>
+    <mat-paginator #paginator [length]="totalElements" (page)="onPaginateChange($event)" [pageSizeOptions]="pageSizes" showFirstLastButtons></mat-paginator>
   </div>
   <!-- div mat-elavation-z8 -->
 </div>

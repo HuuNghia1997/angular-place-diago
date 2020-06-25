@@ -1,47 +1,65 @@
-<h3 class="dialog_title" mat-dialog-title>{{ title }}</h3>
-<form>
+<h3 class="dialog_title" mat-dialog-title>Tiếp nhận phản ánh</h3>
+
+<form [formGroup]="acceptForm" (submit)="onConfirm()">
   <p>
     Tiếp nhận xử lí phản ánh <strong>{{ petitionTitle }}</strong>
   </p>
   <div class="mb-1">
     <span>Chọn quy trình tiếp nhận</span>
-    <mat-checkbox
-      color="primary"
-      class="ml-2"
-      [formControl]="options"
-      *ngFor="let option of optionList"
-      [value]="option"
-    >
-      {{ option }}
+    <mat-checkbox color="primary" formControlName="sendSms" class="ml-2">
+      Gửi tin nhắn SMS
+    </mat-checkbox>
+    <mat-checkbox color="primary" formControlName="isPublic" class="ml-2">
+      Công khai phản ánh
     </mat-checkbox>
   </div>
-  <table>
-    <tr *ngFor="let process of processList">
+  <!-- <table>
+    <tr *ngFor="let workflow of workflowList">
       <button
         mat-button
+
         class="input-full-width btn-choose-process"
-        [value]="process"
+        [value]="workflow.id"
       >
-        {{ process }}
+        {{ workflow.name }}
         <mat-icon class="mat-icon" fontSet="material-icons-outlined">
           description
         </mat-icon>
       </button>
     </tr>
-  </table>
+  </table> -->
+
+  <!-- Qui trình phản ánh -->
+  <mat-form-field appearance="outline" class="input-full-width">
+    <mat-label> Quy trình phản ánh </mat-label>
+    <mat-select formControlName="workflowId" required>
+      <mat-option *ngFor="let workflow of workflowList" value="{{ workflow.id }}">
+        {{ workflow.name }}
+      </mat-option>
+      <mat-error *ngIf="workflowId.invalid"> {{ getErrorMessage(9) }}</mat-error>
+    </mat-select>
+  </mat-form-field>
 
   <!-- Nội dung -->
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Nội dung </mat-label>
     <label>
-      <textarea matInput cdkTextareaAutosize></textarea>
+      <textarea matInput formControlName="content" cdkTextareaAutosize rows="5"></textarea>
     </label>
   </mat-form-field>
+
+  <mat-dialog-actions align="center">
+    <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
+    <button
+      mat-button
+      class="btn-save"
+      [mat-dialog-close]="true"
+      type="submit"
+      [disabled]="acceptForm.invalid"
+    >
+      Đồng ý
+    </button>
+  </mat-dialog-actions>
 </form>
 
-<mat-dialog-actions align="center">
-  <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
-  <button mat-button class="btn-save" type="submit">
-    Đồng ý
-  </button>
-</mat-dialog-actions>
+

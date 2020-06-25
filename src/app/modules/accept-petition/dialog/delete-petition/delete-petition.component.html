@@ -1,17 +1,17 @@
 <h3 class="dialog_title" mat-dialog-title>Hủy phản ánh</h3>
-<form>
+
+<form [formGroup]="cancelForm" (submit)="onConfirm()">
   <p>
     Phản ánh <strong>{{ petitionTitle }}</strong> sẽ được hủy và không tiếp nhận
     xử lý
   </p>
+
   <div class="mb-1">
-    <mat-checkbox
-      color="primary"
-      [formControl]="options"
-      *ngFor="let option of optionList; let i = index"
-      [ngClass]="i !== 0 ? 'ml-2' : ''"
-    >
-      {{ option }}
+    <mat-checkbox color="primary" formControlName="sendSms">
+      Gửi tin nhắn SMS
+    </mat-checkbox>
+    <mat-checkbox color="primary" formControlName="isPublic" class="ml-2">
+      Công khai phản ánh
     </mat-checkbox>
   </div>
 
@@ -19,14 +19,25 @@
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Nội dung </mat-label>
     <label>
-      <textarea matInput cdkTextareaAutosize></textarea>
+      <textarea
+        matInput
+        formControlName="content"
+        cdkTextareaAutosize
+        rows="5"
+      ></textarea>
     </label>
   </mat-form-field>
-</form>
 
-<mat-dialog-actions align="center">
-  <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
-  <button mat-button class="btn-save" type="submit">
-    Đồng ý
-  </button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="center">
+    <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>
+    <button
+      mat-button
+      class="btn-save"
+      [mat-dialog-close]="true"
+      type="submit"
+      [disabled]="cancelForm.invalid"
+    >
+      Đồng ý
+    </button>
+  </mat-dialog-actions>
+</form>

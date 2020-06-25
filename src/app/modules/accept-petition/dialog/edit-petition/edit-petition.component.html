@@ -1,76 +1,91 @@
 <h3 class="dialog_title" mat-dialog-title>Cập nhật {{ titleDialog }}</h3>
-<form [formGroup]="updateForm">
+
+<form [formGroup]="updateForm" (submit)="onConfirm()">
   <h4 id="title">Thông tin người {{ titleDialog }}</h4>
-  <!-- Tiêu đề -->
+
+  <!-- Người gửi -->
   <mat-form-field appearance="outline" class="input-1-3-width">
     <mat-label> Người gửi </mat-label>
-    <input matInput required formControlName="personName" />
-    <mat-error *ngIf="personName.invalid"> {{ getErrorMessage(1) }} </mat-error>
+    <input matInput required formControlName="reporterFullName" />
+    <mat-error *ngIf="reporterFullName.invalid">
+      {{ getErrorMessage(1) }}
+    </mat-error>
   </mat-form-field>
 
-  <!-- Tiêu đề -->
+  <!-- Số điện thoại -->
   <mat-form-field appearance="outline" class="input-1-3-width ml-1">
     <mat-label> Số điện thoại </mat-label>
-    <input matInput required formControlName="phone" />
-    <mat-error *ngIf="phone.invalid"> {{ getErrorMessage(2) }} </mat-error>
+    <input matInput required formControlName="reporterPhone" />
+    <mat-error *ngIf="reporterPhone.invalid">
+      {{ getErrorMessage(2) }}
+    </mat-error>
   </mat-form-field>
 
-  <!-- Tiêu đề -->
+  <!-- CMND -->
   <mat-form-field appearance="outline" class="input-1-3-width float-right">
     <mat-label> CMND </mat-label>
-    <input matInput value=" {{ acceptPetition.person.identifyId }} " />
+    <input matInput formControlName="reporterIdentityId" />
   </mat-form-field>
 
-  <!-- Tiêu đề -->
-  <mat-form-field appearance="outline" class="input-2-3-width">
-    <mat-label> Địa chỉ </mat-label>
-    <input matInput value=" {{ acceptPetition.person.address }} " />
-  </mat-form-field>
-
-  <!-- Đơn vị phản ánh -->
-  <mat-form-field appearance="outline" class="input-1-3-width float-right">
-    <mat-label> Đối tượng </mat-label>
-    <mat-select [formControl]="objectType">
-      <mat-option
-        *ngFor="let objectType of objectTypeList"
-        [value]="objectType"
-      >
-        {{ objectType }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <!-- Đơn vị phản ánh -->
+  <!-- Tỉnh thành -->
   <mat-form-field appearance="outline" class="input-1-3-width">
-    <mat-label> Phường xã </mat-label>
-    <mat-select [formControl]="village">
-      <mat-option *ngFor="let village of villageList" [value]="village">
-        {{ village }}
+    <mat-label> Tỉnh thành </mat-label>
+    <mat-select formControlName="reporterPlaceProvince">
+      <mat-option
+        *ngFor="let place of placeList"
+        [value]="place.id"
+        (click)="setValueTown()"
+      >
+        {{ place.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <!-- Đơn vị phản ánh -->
+  <!-- Quận huyện -->
   <mat-form-field appearance="outline" class="input-1-3-width ml-1">
     <mat-label> Quận huyện </mat-label>
-    <mat-select [formControl]="town">
-      <mat-option *ngFor="let town of townList" [value]="town">
-        {{ town }}
+    <mat-select formControlName="reporterPlaceTown">
+      <mat-option
+        *ngFor="let town of placeListTown"
+        [value]="town.id"
+        (click)="setValueVillage()"
+      >
+        {{ town.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
-  <!-- Đơn vị phản ánh -->
+  <!-- Phường xã -->
   <mat-form-field appearance="outline" class="input-1-3-width float-right">
-    <mat-label> Tỉnh thành </mat-label>
-    <mat-select [formControl]="province">
-      <mat-option *ngFor="let province of provinceList" [value]="province">
-        {{ province }}
+    <mat-label> Phường xã </mat-label>
+    <mat-select [formControl]="village">
+      <mat-option *ngFor="let village of placeListVillage" [value]="village.id">
+        {{ village.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Địa chỉ người phản ánh -->
+  <mat-form-field appearance="outline" class="input-2-3-width">
+    <mat-label> Địa chỉ </mat-label>
+    <input matInput formControlName="reporterFullAddress" />
+  </mat-form-field>
+
+  <!-- Loại đối tượng -->
+  <mat-form-field appearance="outline" class="input-1-3-width float-right">
+    <mat-label> Đối tượng </mat-label>
+    <mat-select formControlName="reporterType">
+      <mat-option
+        *ngFor="let reporterType of reporterTypeList"
+        [value]="reporterType.id"
+      >
+        {{ reporterType.name }}
       </mat-option>
     </mat-select>
   </mat-form-field>
 
   <h4 id="title">Thông tin phản ánh</h4>
+
   <!-- Tiêu đề -->
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Tiêu đề </mat-label>
@@ -81,9 +96,9 @@
   <!-- Chuyên mục phản ánh -->
   <mat-form-field appearance="outline" class="input-1-3-width">
     <mat-label> Chuyên mục phản ánh </mat-label>
-    <mat-select multiple required [formControl]="topic">
-      <mat-option *ngFor="let topic of topicList" [value]="topic">
-        {{ topic }}
+    <mat-select required formControlName="tag">
+      <mat-option *ngFor="let tag of tagList" value="{{ tag.id }}">
+        {{ tag.name }}
       </mat-option>
     </mat-select>
     <mat-error *ngIf="tag.invalid"> {{ getErrorMessage(4) }} </mat-error>
@@ -97,7 +112,7 @@
         matInput
         required
         [ngxMatDatetimePicker]="pickerOccurred"
-        [formControl]="dateApprove"
+        formControlName="takePlaceOn"
       />
     </label>
     <mat-datepicker-toggle
@@ -115,7 +130,7 @@
       [enableMeridian]="enableMeridian"
     >
     </ngx-mat-datetime-picker>
-    <mat-error *ngIf="occurredDate.invalid">
+    <mat-error *ngIf="title.invalid">
       {{ getErrorMessage(5) }}
     </mat-error>
   </mat-form-field>
@@ -123,10 +138,11 @@
   <!-- Đơn vị phản ánh -->
   <mat-form-field appearance="outline" class="input-1-3-width float-right">
     <mat-label> Đơn vị phản ánh </mat-label>
-    <mat-select multiple [formControl]="agency">
-      <mat-option *ngFor="let agency of agencyList" [value]="agency">
-        {{ agency }}
+    <mat-select formControlName="agency" required>
+      <mat-option *ngFor="let agen of agencyList" value="{{ agen.id }}">
+        {{ agen.name }}
       </mat-option>
+      <mat-error *ngIf="agency.invalid"> {{ getErrorMessage(3) }}</mat-error>
     </mat-select>
   </mat-form-field>
 
@@ -134,38 +150,43 @@
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Nội dung </mat-label>
     <label>
-      <textarea matInput cdkTextareaAutosize required formControlName="content">
-        {{ acceptPetition.petition.content }}
-      </textarea>
+      <textarea
+        matInput
+        cdkTextareaAutosize
+        required
+        formControlName="description"
+      ></textarea>
     </label>
-    <mat-error *ngIf="content.invalid"> {{ getErrorMessage(6) }} </mat-error>
+    <mat-error *ngIf="description.invalid">
+      {{ getErrorMessage(6) }}
+    </mat-error>
   </mat-form-field>
 
   <!-- Địa điểm phản ánh -->
   <mat-form-field appearance="outline" class="place-input">
     <mat-label> Địa điểm phản ánh </mat-label>
     <label>
-      <input matInput required formControlName="placePetition" />
+      <input
+        matInput
+        [value]="searchedPlace"
+        required
+        formControlName="takePlaceAt"
+      />
     </label>
-    <mat-error *ngIf="placePetition.invalid">
+    <mat-error *ngIf="takePlaceAt.invalid">
       {{ getErrorMessage(7) }}
     </mat-error>
   </mat-form-field>
 
-  <button mat-button class="btn-choose" (click)="openDialogMap()">
+  <a mat-button class="btn-choose" (click)="openDialogMap()">
     <mat-icon fontSet="material-icons-outlined" class="icon-map">
       place
     </mat-icon>
     Chọn
-  </button>
+  </a>
 
-  <mat-checkbox
-    color="primary"
-    [formControl]="options"
-    *ngFor="let option of optionList; let i = index"
-    [ngClass]="i !== 0 ? 'ml-2' : ''"
-  >
-    {{ option }}
+  <mat-checkbox color="primary" formControlName="isPublic">
+    Công khai phản ánh
   </mat-checkbox>
 
   <h4 id="title">Tập tin đính kèm</h4>
@@ -272,14 +293,20 @@
     <!-- Upload file -->
   </div>
   <!-- File đính kèm -->
-</form>
 
-<mat-dialog-actions align="center">
-  <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
-  <button mat-button class="btn-cancel" [mat-dialog-close]="true">
-    Lưu và Áp dụng
-  </button>
-  <button mat-button class="btn-save" [mat-dialog-close]="true">
-    Lưu lại
-  </button>
-</mat-dialog-actions>
+  <mat-dialog-actions align="center">
+    <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>
+    <button mat-button class="btn-cancel" [mat-dialog-close]="true">
+      Lưu và Áp dụng
+    </button>
+    <button
+      mat-button
+      class="btn-save"
+      [mat-dialog-close]="true"
+      type="submit"
+      [disabled]="updateForm.invalid"
+    >
+      Lưu lại
+    </button>
+  </mat-dialog-actions>
+</form>

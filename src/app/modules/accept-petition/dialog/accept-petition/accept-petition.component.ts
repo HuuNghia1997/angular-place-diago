@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 import {
+  MatDialog,
   MatDialogRef,
   MAT_DIALOG_DATA,
-  MatDialog,
 } from '@angular/material/dialog';
+import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
 
 @Component({
   selector: 'app-accept-petition',
@@ -12,26 +13,187 @@ import {
   styleUrls: ['./accept-petition.component.scss'],
 })
 export class AcceptPetitionComponent implements OnInit {
-  title: string = 'Tiếp nhận phản ánh';
-  petitionTitle: string = 'Phản ánh về trật tự đô thị';
-  optionList: string[] = ['Gửi tin nhắn SMS', 'Công khai phản ánh'];
-  processList: string[] = [
-    'Quy trình phản ánh chung',
-    'Quy trình phản ánh về môi trường',
-    'Quy trình phản ánh về môi trường 2',
-  ];
+  // Khởi tạo
+  petition = [];
+  petitionId: string;
+  petitionTitle: string;
+  tagId: number;
+  workflowList = [];
 
-  options = new FormControl('Công khai phản ánh');
+  // Form
+  public reg = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+  acceptForm = new FormGroup({
+    workflowId: new FormControl(''),
+    content: new FormControl(''),
+    sendSms: new FormControl(''),
+    isPublic: new FormControl(''),
+  });
+  workflowId = new FormControl('', [Validators.required]);
 
-  constructor(public dialogRef: MatDialogRef<AcceptPetitionComponent>) {}
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmAcceptDialogModel,
+    public dialogRef: MatDialogRef<AcceptPetitionComponent>,
+    private service: AcceptPetitionService
+  ) {
+    this.petitionId = data.id;
+  }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getPetitionDetail();
+  }
+
+  getPetitionDetail() {
+    this.service.getPetitionDetail(this.petitionId).subscribe(
+      (data) => {
+        this.petition.push(data);
+        this.setViewData();
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+  }
+
+  setViewData() {
+    this.petitionTitle = this.petition[0].title;
+    this.tagId = this.petition[0].tag.id;
+    this.getWorkflow(this.petition[0].tag.id);
+
+    let smsDescription: string;
+    let publicDescription: string;
+
+    if (this.petition[0].sendSms) {
+      smsDescription = 'Gửi tin nhắn SMS';
+    }
+
+    if (this.petition[0].isPublic) {
+      publicDescription = 'Công khai phản ánh';
+    }
+
+    this.acceptForm = new FormGroup({
+      workflowId: new FormControl(''),
+      content: new FormControl(''),
+      sendSms: new FormControl(smsDescription),
+      isPublic: new FormControl(publicDescription),
+    });
+  }
+
+  getWorkflow(tagId) {
+    this.service.getWorkflow(tagId).subscribe((data) => {
+      data.forEach((item) => {
+        this.workflowList.push(item);
+      });
+    });
+  }
+
+  getErrorMessage(id) {
+    return this.service.formErrorMessage(id);
+  }
+
+  // Post process instances
+  postProcessInstances(requestBody) {
+    this.service.postProcessInstances(requestBody).subscribe(
+      (data) => {
+        // Close dialog, return true
+        let result = {
+          body: requestBody,
+          data: data,
+        };
+        // this.dialogRef.close(result);
+      },
+      (err) => {
+        // Close dialog, return false
+        this.dialogRef.close(false);
+        // Call api delete file
+      }
+    );
+  }
+
+  acceptPetition(requestBody) {
+    this.service.acceptPetition(requestBody, this.petitionId).subscribe(
+      (data) => {
+        // Close dialog, return true
+        let result = {
+          body: requestBody,
+          data: data,
+        };
+        this.dialogRef.close(result);
+      },
+      (err) => {
+        // Close dialog, return false
+        this.dialogRef.close(false);
+        // Call api delete file
+      }
+    );
+  }
+
+  // Add comment
+  addComment(requestBody) {
+    this.service.addCommentPetition(requestBody);
+  }
+
+  onConfirm(): void {
+    this.setFormObject();
+  }
+
+  setFormObject() {
+    const formObject = this.acceptForm.getRawValue();
+
+    const selectedWorkflowId = formObject.workflowId;
+    let selectedWorkflow = this.workflowList.find(
+      (p) => p.id == selectedWorkflowId
+    );
+    formObject.workflowName = selectedWorkflow.name;
+    formObject.processDefinitionId = selectedWorkflow.processDefinitionId;
+
+    // Set sendSms
+    if (formObject.sendSms) {
+      formObject.sendSms = true;
+    } else {
+      formObject.sendSms = false;
+    }
+
+    // Set public
+    if (formObject.isPublic) {
+      formObject.isPublic = true;
+    } else {
+      formObject.isPublic = false;
+    }
+
+    // Set comment
+    let commentObject = {
+      groupId: 1,
+      itemId: this.petitionId,
+      user: {
+        id: this.petition[0].reporter.id,
+        fullname: this.petition[0].reporter.fullname,
+      },
+      content: formObject.content,
+    };
+    const resultJson = JSON.stringify(commentObject, null, 2);
+
+    // Set process Instances
+    let processInstancesObject = {
+      processDefinitionId: selectedWorkflow.processDefinitionId,
+      payloadType: 'StartProcessPayload',
+      variables: {
+        title: this.petitionTitle,
+        petitionData: this.petition[0],
+      },
+      commandType: 'StartProcessInstanceCmd',
+    };
+
+    this.addComment(commentObject);
+    this.postProcessInstances(processInstancesObject);
+    this.acceptPetition(formObject);
+  }
 
   onDismiss(): void {
-    // Close dialog, return false
+    // Close dialog
     this.dialogRef.close();
   }
 }
+
 export class ConfirmAcceptDialogModel {
   constructor(
     public title: string,

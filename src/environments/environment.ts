@@ -54,6 +54,36 @@ export const environment = {
           name: 'logman',
           path: 'lo',
         },
+        {
+          name: 'surfeed',
+          path: 'su',
+        },
+        {
+          name: 'surfeed-rb-petition',
+          path: 'rb-petition',
+        },
+        {
+          name: 'messenger',
+          path: 'me',
+        },
+        {
+          name: 'basedata',
+          path: 'ba',
+        },
+      ],
+    },
+    {
+      name: 'digo-microservice-basedata',
+      rootUrl: 'https://digo-api.vnptigate.vn/',
+      services: [
+        {
+          name: 'basedata',
+          path: 'ba',
+        },
+        {
+          name: 'messenger',
+          path: 'me',
+        },
       ],
     },
   ],
