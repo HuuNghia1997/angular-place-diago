@@ -129,6 +129,7 @@ export class DeletePetitionComponent implements OnInit {
     };
     const resultJson = JSON.stringify(commentObject, null, 2);
 
+
     this.addComment(commentObject);
     this.cancelPetition(formObject);
   }
