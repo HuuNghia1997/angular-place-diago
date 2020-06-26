@@ -1,3 +1,7 @@
+#main {
+  margin-top: 1em;
+}
+
 .title {
   font-weight: bold;
   background-color: #F5F8FF;
@@ -105,6 +109,13 @@ th.mat-sort-header-sorted {
   color: black;
 }
 
+.btn-wait-process {
+  color: #fff;
+  padding: .2em;
+  border-radius: 4px;
+  background-color: #377DCD;
+}
+
 .btn-wait-get-process {
   color: #fff;
   padding: .2em;
@@ -112,11 +123,11 @@ th.mat-sort-header-sorted {
   background-color: #FF9900;
 }
 
-.btn-wait-process {
+.btn-cancel {
   color: #fff;
   padding: .2em;
   border-radius: 4px;
-  background-color: #377DCD;
+  background-color: #FF3225
 }
 
 .btn-processed {

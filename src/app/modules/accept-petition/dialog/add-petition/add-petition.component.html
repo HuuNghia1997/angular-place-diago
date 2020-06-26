@@ -1,4 +1,5 @@
 <h3 class="dialog_title" mat-dialog-title>Thêm mới phản ánh</h3>
+
 <form [formGroup]="addForm" (submit)="onConfirm()">
   <h4 id="title">Thông tin người gửi</h4>
   <!-- Người gửi -->
@@ -165,9 +166,9 @@
     <label>
       <input
         matInput
-        [value]="searchedPlace"
+
         required
-        formControlName="takePlaceAt"
+        formControlName="petitionFullAddress"
       />
     </label>
     <mat-error *ngIf="takePlaceAt.invalid">
@@ -175,12 +176,12 @@
     </mat-error>
   </mat-form-field>
 
-  <button mat-button class="btn-choose" (click)="openDialogMap()">
+  <a mat-button class="btn-choose" (click)="openDialogMap()">
     <mat-icon fontSet="material-icons-outlined" class="icon-map" required>
       place
     </mat-icon>
     Chọn
-  </button>
+  </a>
 
   <mat-checkbox color="primary" formControlName="sendSms">
     Gửi tin nhắn SMS
@@ -235,11 +236,11 @@
   </div>
 
   <mat-dialog-actions align="center">
-    <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
-    <button mat-button class="btn-cancel" [mat-dialog-close]="true">
+    <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>
+    <a mat-button class="btn-cancel" [mat-dialog-close]="true">
       Lưu và Áp dụng
-    </button>
-    <button mat-button class="btn-save" [mat-dialog-close]="true" type="submit" [disabled]="addForm.invalid && submitted">
+    </a>
+    <button mat-button class="btn-save" [mat-dialog-close]="true" type="submit" [disabled]="addForm.invalid">
       Lưu lại
     </button>
   </mat-dialog-actions>

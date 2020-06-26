@@ -14,6 +14,7 @@ import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
 })
 export class CommentPetitionComponent implements OnInit {
   // Khởi tạo
+  petition = [];
   petitionId: string;
 
   // Comment Form
@@ -36,7 +37,20 @@ export class CommentPetitionComponent implements OnInit {
     this.petitionId = data.id;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getPetitionDetail();
+  }
+
+  getPetitionDetail() {
+    this.service.getPetitionDetail(this.petitionId).subscribe(
+      (data) => {
+        this.petition.push(data);
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+  }
 
   onDismiss(): void {
     // Close dialog, return false
@@ -69,19 +83,19 @@ export class CommentPetitionComponent implements OnInit {
   formToJSON() {
     const formObject = this.commentForm.getRawValue();
 
-    formObject.groupId = 0;
-
-    formObject.itemId = this.petitionId;
-
-    formObject.user = {
-      id: '12345g1e810c19729de860ea',
-      fullname: 'Nguyễn Văn A',
+    let commentObject = {
+      groupId: 1,
+      itemId: this.petitionId,
+      user: {
+        id: this.petition[0].reporter.id,
+        fullname: this.petition[0].reporter.fullname,
+      },
+      content: formObject.content,
     };
 
-    const resultJson = JSON.stringify(formObject, null, 2);
+    const resultJson = JSON.stringify(commentObject, null, 2);
 
-    console.log(resultJson);
-    // this.postPetition(resultJson);
+    this.addCommentPetition(resultJson);
   }
 }
 

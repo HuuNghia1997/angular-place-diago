@@ -108,7 +108,6 @@ export class AcceptPetitionService {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     return this.http.post<any>(this.postURL, requestBody, { headers });
-    console.log('ok');
   }
 
   // Detail petition
@@ -205,7 +204,7 @@ export class AcceptPetitionService {
     let headers = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
     return this.http.get(
-      this.getHistory +
+      this.getComment +
         groupId +
         '&item-id=' +
         itemId +
@@ -302,9 +301,7 @@ export class AcceptPetitionService {
           'success_notification'
         );
         // tslint:disable-next-line:only-arrow-functions
-        setTimeout(function () {
-          window.location.replace('/tiep-nhan-xu-li/chi-tiet/' + data.data.id);
-        }, reloadTimeout);
+        window.location.replace('/tiep-nhan-phan-anh/chi-tiet/' + data.data.id);
       }
       if (data.data.id === null) {
         this.main.openSnackBar(
@@ -446,35 +443,33 @@ export class AcceptPetitionService {
       disableClose: true,
     });
 
-    // const message = 'Bình luận phản ánh';
-    // const content = name;
-    // const result = 'thành công';
-    // const reason = '';
-    // dialogRef.afterClosed().subscribe((dialogResult) => {
-    //   this.result = dialogResult;
-    //   if (this.result === true) {
-    //     this.main.openSnackBar(
-    //       message,
-    //       content,
-    //       result,
-    //       reason,
-    //       'success_notification'
-    //     );
-    //     // tslint:disable-next-line:only-arrow-functions
-    //     setTimeout(function () {
-    //       window.location.reload();
-    //     }, reloadTimeout);
-    //   }
-    //   if (this.result === false) {
-    //     this.main.openSnackBar(
-    //       message,
-    //       content,
-    //       'thất bại',
-    //       reason,
-    //       'error_notification'
-    //     );
-    //   }
-    // });
+    const message = 'Bình luận phản ánh';
+    const content = name;
+    const result = 'thành công';
+    const reason = '';
+    dialogRef.afterClosed().subscribe((dialogResult) => {
+      this.result = dialogResult;
+      if (this.result === true) {
+        this.main.openSnackBar(
+          message,
+          content,
+          result,
+          reason,
+          'success_notification'
+        );
+        // tslint:disable-next-line:only-arrow-functions
+        window.location.reload(true);
+      }
+      if (this.result === false) {
+        this.main.openSnackBar(
+          message,
+          content,
+          'thất bại',
+          reason,
+          'error_notification'
+        );
+      }
+    });
   }
 
   formErrorMessage(id: number) {

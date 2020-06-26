@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -13,7 +19,6 @@ import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
 import { PaginatorService } from 'src/app/data/service/paginator.service';
-import { MatDialog } from '@angular/material/dialog';
 import { petitionCategoryId } from 'src/app/data/service/config.service';
 
 @Component({
@@ -26,23 +31,18 @@ import { petitionCategoryId } from 'src/app/data/service/config.service';
     DatePipe,
   ],
 })
-export class ListAcceptPetitionComponent implements OnInit {
-  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-
+export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
+  // Khởi tạo
   categoryId = petitionCategoryId;
-
-  pageSizes = pageSizeOptions;
-
-  // Initialization for searching and paginating
-  totalElements: number;
-  totalPages: number;
-  selectedPageSize: number;
-  currentPage: number;
-
-  // Initialization list of tag
   tagList = [];
-  receptionMethodList: string[] = ['Công khai', 'không công khai'];
+  receptionMethodList = [
+    {
+      id: 1,
+      name: 'Tiếp nhận từ app công dân',
+    },
+    { id: 2, name: 'Tiếp nhận trực tiếp' },
+    { id: 3, name: 'Tiếp nhận từ web công dân' },
+  ];
 
   // Setting table data
   displayedColumns: string[] = [
@@ -56,6 +56,15 @@ export class ListAcceptPetitionComponent implements OnInit {
   ];
   ELEMENTDATA: AcceptPetitionElement[] = [];
   dataSource: MatTableDataSource<AcceptPetitionElement>;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  // Initialization for searching and paginating
+  pageSizes = pageSizeOptions;
+  totalElements: number;
+  totalPages: number;
+  selectedPageSize: number;
+  currentPage: number;
 
   searchForm = new FormGroup({
     title: new FormControl(''),
@@ -69,16 +78,72 @@ export class ListAcceptPetitionComponent implements OnInit {
   constructor(
     private service: AcceptPetitionService,
     private translator: PaginatorService,
-    public datepipe: DatePipe
+    public datepipe: DatePipe,
+    private cdRef: ChangeDetectorRef
   ) {
     this.dataSource = new MatTableDataSource(this.ELEMENTDATA);
   }
 
   ngOnInit(): void {
+    this.search(0, pageSizeOptions[1]);
+    this.getListTag();
+  }
+
+  ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.getListTag();
-    this.search(0, pageSizeOptions[1]);
+    this.paginator.pageSize = pageSizeOptions[1];
+    this.translator.translatePaginator(this.paginator);
+    this.paginator.nextPage = () =>
+      this.paginatorChange(this.currentPage + 1, this.paginator.pageSize, 1);
+    this.paginator.previousPage = () =>
+      this.paginatorChange(this.currentPage - 1, this.paginator.pageSize, 2);
+    this.paginator.lastPage = () =>
+      this.paginatorChange(this.totalPages - 1, this.paginator.pageSize, 3);
+    this.paginator.firstPage = () =>
+      this.paginatorChange(0, this.paginator.pageSize, 4);
+    this.cdRef.detectChanges();
+  }
+
+  onPaginateChange($event) {
+    this.paginatorChange(0, $event.pageSize, 5);
+  }
+
+  public paginatorChange(page, pageSize, type) {
+    switch (type) {
+      case 1:
+        this.search(page, pageSize);
+        this.currentPage++;
+        this.resetPageSize();
+        break;
+      case 2:
+        this.search(page, pageSize);
+        this.currentPage--;
+        this.resetPageSize();
+        break;
+      case 3:
+        this.search(page, pageSize);
+        this.currentPage = this.totalPages;
+        this.resetPageSize();
+        break;
+      case 4:
+        this.search(page, pageSize);
+        this.currentPage = 0;
+        this.resetPageSize();
+        break;
+      case 5:
+        this.search(page, pageSize);
+        this.currentPage = 0;
+        this.resetPageSize();
+        break;
+    }
+  }
+
+  public resetPageSize() {
+    setTimeout(() => {
+      this.paginator.pageIndex = this.currentPage;
+      this.dataSource.paginator.length = this.totalElements;
+    }, 500);
   }
 
   // Lấy danh sách chuyên mục từ service
@@ -143,12 +208,6 @@ export class ListAcceptPetitionComponent implements OnInit {
       formObject.endDate = formObject.endDate.replace('+', '%2B');
       searchString = searchString + '&end-date=' + formObject.endDate;
     }
-    // if (formObject.startDate != null) {
-    //   searchString = searchString + '&start-date=' + formObject.startDate;
-    // }
-    // if (formObject.startDate != null) {
-    //   searchString = searchString + '&end-date=' + formObject.endDate;
-    // }
 
     this.service.search(searchString).subscribe(
       (data) => {
@@ -171,47 +230,6 @@ export class ListAcceptPetitionComponent implements OnInit {
       }
     );
     searchString = '';
-  }
-
-  public resetPageSize() {
-    setTimeout(() => {
-      this.paginator.pageIndex = this.currentPage;
-      this.dataSource.paginator.length = this.totalElements;
-    }, 500);
-  }
-
-  onPaginateChange($event) {
-    this.paginatorChange(0, $event.pageSize, 5);
-  }
-
-  public paginatorChange(page, pageSize, type) {
-    switch (type) {
-      case 1:
-        this.search(page, pageSize);
-        this.currentPage++;
-        this.resetPageSize();
-        break;
-      case 2:
-        this.search(page, pageSize);
-        this.currentPage--;
-        this.resetPageSize();
-        break;
-      case 3:
-        this.search(page, pageSize);
-        this.currentPage = this.totalPages;
-        this.resetPageSize();
-        break;
-      case 4:
-        this.search(page, pageSize);
-        this.currentPage = 0;
-        this.resetPageSize();
-        break;
-      case 5:
-        this.search(page, pageSize);
-        this.currentPage = 0;
-        this.resetPageSize();
-        break;
-    }
   }
 
   // Add dialog

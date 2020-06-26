@@ -1,4 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  ɵNOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR,
+} from '@angular/core';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -32,10 +37,18 @@ import { User } from 'src/app/data/schema/user';
   ],
 })
 export class AddPetitionComponent implements OnInit {
-
-  submitted = true;
+  // Khởi tạo
   categoryId = petitionCategoryId;
+  tagList = [];
+  agencyList: AgencyInfo[] = [];
+  reporterTypeList: any = [
+    { id: 1, name: 'Cá nhân' },
+    { id: 2, name: 'Tổ chức' },
+    { id: 3, name: 'Khác' },
+  ];
+  place = [];
   accountId: string;
+  username: string;
 
   // Form
   public reg = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -50,6 +63,9 @@ export class AddPetitionComponent implements OnInit {
     reporterPlaceTown: new FormControl(''),
     reporterPlaceProvince: new FormControl(''),
     reporterLocation: new FormControl(''),
+    petitionFullAddress: new FormControl(''),
+    petitionLatitude: new FormControl(''),
+    petitionLongitude: new FormControl(''),
 
     // Body post request
     title: new FormControl(''),
@@ -66,7 +82,6 @@ export class AddPetitionComponent implements OnInit {
     isAnonymous: new FormControl(),
     receptionMethod: new FormControl(),
   });
-
   reporterFullName = new FormControl('', [
     Validators.required,
     Validators.pattern(this.reg),
@@ -87,21 +102,6 @@ export class AddPetitionComponent implements OnInit {
     Validators.pattern(this.reg),
   ]);
 
-  // Initialization list of tag
-  tagList = [];
-  agencyList: AgencyInfo[] = [];
-  place = [];
-
-  topicList: string[] = [
-    'Giao thông',
-    'Y tế',
-    'Giáo dục',
-    'Môi trường',
-    'Cơ sở hạ tầng',
-  ];
-
-  reporterList: string[] = ['Tổ chức', 'Cá nhân'];
-
   uploaded: boolean;
   blankVal: any;
   uploadedImage = [];
@@ -120,7 +120,6 @@ export class AddPetitionComponent implements OnInit {
   takePlaceAtItem: any;
 
   @ViewChild('pickerOccurred') pickerOccurred: any;
-
   public showSpinners = true;
   public showSeconds = true;
   public touchUi = true;
@@ -128,10 +127,6 @@ export class AddPetitionComponent implements OnInit {
   public stepHour = 1;
   public stepMinute = 1;
   public stepSecond = 1;
-
-  searchedPlace: string = '';
-  latitude: string = '';
-  longitude: string = '';
 
   constructor(
     private service: AcceptPetitionService,
@@ -145,24 +140,24 @@ export class AddPetitionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.getUserProfile();
     this.getListTag();
     this.getAgency();
     this.getProvince();
-    this.map.currentPlace.subscribe(
-      (searchedPlace) => (this.searchedPlace = searchedPlace)
+    this.map.currentPlace.subscribe((searchedPlace) =>
+      this.addForm.controls.petitionFullAddress.setValue(searchedPlace)
     );
-    this.map.currentLatitude.subscribe((latitude) => (this.latitude = latitude));
-    this.map.currentLongitude.subscribe((longitude) => (this.longitude = longitude));
+    this.map.currentLatitude.subscribe((latitude) =>
+      this.addForm.controls.petitionLatitude.setValue(latitude)
+    );
+    this.map.currentLongitude.subscribe((longitude) =>
+      this.addForm.controls.petitionLongitude.setValue(longitude)
+    );
   }
 
   placeList = [];
   placeListTown = [];
   placeListVillage = [];
-  reporterTypeList: any = [
-    { id: 1, name: 'Cá nhân' },
-    { id: 2, name: 'Tổ chức' },
-    { id: 3, name: 'Khác' },
-  ];
 
   // Lấy danh sách chuyên mục từ service
   public getListTag() {
@@ -189,8 +184,6 @@ export class AddPetitionComponent implements OnInit {
       // this.place = data;
     });
   }
-
-
 
   public getTown(parentId) {
     this.resetTown();
@@ -223,9 +216,7 @@ export class AddPetitionComponent implements OnInit {
   }
 
   setValueTown() {
-    return this.getTown(
-      this.addForm.controls.reporterPlaceProvince.value
-    );
+    return this.getTown(this.addForm.controls.reporterPlaceProvince.value);
   }
 
   setValueVillage() {
@@ -260,32 +251,42 @@ export class AddPetitionComponent implements OnInit {
         this.dialogRef.close(result);
       },
       (err) => {
-        // Close dialog, return false
+        // Close dialog
         this.dialogRef.close(false);
         // Call api delete file
       }
     );
   }
 
-  onConfirm(): void {
-    this.submitted = false;
-    if (this.files.length > 0) {
-      this.keycloak.loadUserProfile().then((user) => {
-        // tslint:disable-next-line: no-string-literal
-        this.accountId = user['attributes'].user_id;
+  getUserProfile(): void {
+    this.keycloak.loadUserProfile().then((user) => {
+      this.accountId = user['attributes'].user_id;
+      this.username = user.username;
+    });
+  }
 
-        this.service.uploadMultiImages(this.files, this.accountId).subscribe(
-          (data: any) => {
-            data.forEach((imgInfo) => {
-              this.uploadedImage.push(imgInfo.id);
-            });
-            this.formToJSON();
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      });
+  onConfirm(): void {
+    if (this.files.length > 0) {
+      this.service.uploadMultiImages(this.files, this.accountId).subscribe(
+        (data: any) => {
+          data.forEach((imgInfo) => {
+            let temp = {
+              id: imgInfo.id,
+              name: imgInfo.filename,
+              group: 1,
+              updateDate: this.datepipe.transform(
+                new Date(),
+                "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+              ),
+            };
+            this.uploadedImage.push(temp);
+          });
+          this.formToJSON();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
     } else {
       this.formToJSON();
     }
@@ -294,14 +295,9 @@ export class AddPetitionComponent implements OnInit {
   formToJSON() {
     const formObject = this.addForm.getRawValue();
 
-    // Title, Description
-    // formObject.title = 'Test post phan anh 4';
-    // formObject.description = 'Mô tả phản ánh';
-
-    // Tag
+    // Set Tag
     const selectedTag = formObject.tag;
     formObject.tag = this.tagList.find((p) => p.id == selectedTag);
-    delete formObject.agency.logoId;
     delete formObject.tag.parentId;
     delete formObject.tag.orderNumber;
     delete formObject.tag.status;
@@ -309,27 +305,7 @@ export class AddPetitionComponent implements OnInit {
     delete formObject.tag.description;
     delete formObject.tag.iconId;
 
-    // for (const i of formObject.tag) {
-    //   // tslint:disable-next-line: triple-equals
-    //   const item = this.tagList.find((p) => p.id == i);
-    //   this.itemTagList.push(item);
-    // }
-    // this.itemTagList = this.itemTagList.map((item) => {
-    //   delete item.parentId;
-    //   delete item.orderNumber;
-    //   delete item.status;
-    //   delete item.createdDate;
-    //   delete item.description;
-    //   delete item.iconId;
-    //   return item;
-    // });
-    // formObject.tag = this.itemTagList;
-    // formObject.tag = {
-    //   id: 1,
-    //   name: "Trật tự đô thị"
-    // }
-
-    // Format takePlaceOn
+    // Set takePlaceOn
     formObject.takePlaceOn = this.datepipe.transform(
       formObject.takePlaceOn,
       "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -339,51 +315,35 @@ export class AddPetitionComponent implements OnInit {
     const selectedAgency = formObject.agency;
     formObject.agency = this.agencyList.find((p) => p.id == selectedAgency);
     delete formObject.agency.logoId;
-    // formObject.agency = {
-    //   id: 1,
-    //   name: 'UBND Tỉnh Tiền Giang',
-    // };
 
-    // Add takePlaceAt
-    if(this.searchedPlace == null) {
-      this.addForm.controls.takePlaceAt.setValue(this.searchedPlace);
-    }
-
+    // Set takePlaceAt
     formObject.takePlaceAt = {
-      latitude: this.latitude,
-      longitude: this.longitude,
-      fullAddress: this.searchedPlace,
+      latitude: formObject.petitionLatitude,
+      longitude: formObject.petitionLongitude,
+      fullAddress: formObject.petitionFullAddress,
     };
 
-
-    // take reporter location
+    // Set reporter location
     formObject.reporterLocation = {
       latitude: '10.341645',
       longitude: '106.458985',
-      fullAddress:
-        'Ấp Phong Thuận, Xã Tân Mỹ Chánh, TP Mỹ tho, Tỉnh Tiền Giang',
+      fullAddress: formObject.reporterFullAddress,
     };
 
-    // file
-    formObject.file = [
-      {
-        id: '5df0aa1579279af9f7ba4412',
-        name: 'image1.png',
-        group: '1',
-        updateDate: '2019-07-21T17:32:28.236+0700',
-      },
-      {
-        id: '5df0aa1579229af9f7ba4415',
-        name: 'image2.jpg',
-        group: '1',
-        updateDate: '2019-07-21T17:32:28.236+0700',
-      },
-    ];
+    // Set reporter
+    let province = this.placeList.find(
+      (p) => p.id == formObject.reporterPlaceProvince
+    );
+    let town = this.placeListTown.find(
+      (p) => p.id == formObject.reporterPlaceTown
+    );
+    let village = this.placeListVillage.find(
+      (p) => p.id == formObject.reporterPlaceVillage
+    );
 
-    // reporter
     formObject.reporter = {
-      id: '5df0aa1579279af9f7ba4432',
-      username: '+84941234567',
+      id: this.accountId[0],
+      username: this.username,
       fullname: formObject.reporterFullName,
       phone: formObject.reporterPhone,
       identityId: formObject.reporterIdentityId,
@@ -392,40 +352,36 @@ export class AddPetitionComponent implements OnInit {
         address: formObject.reporterFullAddress,
         place: [
           {
-            id: 3,
+            id: village.id,
             typeId: 3,
-            name: 'Tân Mỹ Chánh',
+            name: village.name,
           },
           {
-            id: 2,
+            id: town.id,
             typeId: 2,
-            name: 'Mỹ Tho',
+            name: town.name,
           },
           {
-            id: 1,
+            id: province.id,
             typeId: 1,
-            name: 'Tiền Giang',
+            name: province.name,
           },
         ],
       },
     };
 
-    // Format publish
+    // Set public
     if (formObject.isPublic) {
       formObject.isPublic = true;
     } else {
       formObject.isPublic = false;
     }
 
-    // thumbnailId
+    // Set thumbnailId
     formObject.thumbnailId = '5df0aa1579279af9f7ba1234';
 
-    // isAnonymous
-    if (formObject.isPublic) {
-      formObject.isAnonymous = true;
-    } else {
-      formObject.isAnonymous = false;
-    }
+    // Set isAnonymous
+    formObject.isAnonymous = false;
 
     // Format send sms
     if (formObject.sendSms) {
@@ -435,10 +391,10 @@ export class AddPetitionComponent implements OnInit {
     }
 
     // receptionMethod
-    formObject.receptionMethod = 1;
+    formObject.receptionMethod = 3;
 
     // Add Image
-    // formObject.imageId = this.uploadedImage;
+    formObject.file = this.uploadedImage;
 
     // // Temporary variable - Final result
     delete formObject.reporterFullName;
@@ -449,10 +405,14 @@ export class AddPetitionComponent implements OnInit {
     delete formObject.reporterPlaceVillage;
     delete formObject.reporterPlaceTown;
     delete formObject.reporterPlaceProvince;
+    delete formObject.petitionFullAddress;
+    delete formObject.petitionLatitude;
+    delete formObject.petitionLongitude;
+
     const resultJson = JSON.stringify(formObject, null, 2);
 
     console.log(resultJson);
-    // this.postPetition(resultJson);
+    this.postPetition(resultJson);
   }
 
   onDismiss(): void {

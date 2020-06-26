@@ -22,6 +22,7 @@ import {
   Comments,
   TREE_DATA,
 } from 'src/app/data/schema/accept-petition-element';
+import { BehaviorSubject } from 'rxjs';
 
 function readBase64(file): Promise<any> {
   const reader = new FileReader();
@@ -116,7 +117,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   history = [];
 
   // Bình luận
-  comment = [];
+  comments = [];
 
   treeControl = new NestedTreeControl<Comments>((node) => node.children);
   commentDataSource = new MatTreeNestedDataSource<Comments>();
@@ -134,6 +135,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   petition: AcceptPetitionElement;
   isExpand = true;
   groupId = petitionHistoryGroupId;
+
   pageToGetHistory = 0;
   sizePerPageHistory = 15;
 
@@ -149,13 +151,13 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.petitionId = this.route.snapshot.params.id;
     this.getPetitionDetail();
     this.getPetitionHistory();
+    this.getPetitionComment();
   }
 
   getPetitionDetail() {
     this.service.getPetitionDetail(this.petitionId).subscribe(
       (data) => {
         this.response.push(data);
-        console.log(this.response);
         this.setViewData();
       },
       (err) => {
@@ -165,7 +167,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   }
 
   setViewData() {
-    // console.log(this.history);
+    console.log(this.response);
 
     this.agencyName = this.response[0].agency.name;
     this.createdDate = this.response[0].createdDate;
@@ -191,13 +193,65 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.takePlaceAtFullAddress = this.response[0].takePlaceAt.fullAddress;
     this.takePlaceOn = this.response[0].takePlaceOn;
     this.title = this.response[0].title;
+
+    if (this.response[0].file.length > 0) {
+      this.response[0].file.forEach((image) => {
+        let urlResult: any;
+        let fileName = '';
+        let fileNamesFull = '';
+
+        this.service.getImage(image.id).subscribe(
+          (data) => {
+            const reader = new FileReader();
+            reader.addEventListener(
+              'load',
+              () => {
+                urlResult = reader.result;
+                this.service.getImageName_Size(image.id).subscribe(
+                  (data: any) => {
+                    if (data.filename.length > 20) {
+                      // Tên file quá dài
+                      const startText = data.filename.substr(0, 5);
+                      const shortText = data.filename.substr(
+                        data.filename.length - 7,
+                        data.filename.length
+                      );
+                      fileName = startText + '...' + shortText;
+                      // Tên file gốc - hiển thị tooltip
+                      fileNamesFull = data.filename;
+                    } else {
+                      fileName = data.filename;
+                      fileNamesFull = data.filename;
+                    }
+                    this.filesInfo.push({
+                      id: image.id,
+                      url: urlResult,
+                      name: fileName,
+                      fullName: fileNamesFull,
+                    });
+                  },
+                  (err) => {
+                    console.error(err);
+                  }
+                );
+              },
+              false
+            );
+            reader.readAsDataURL(data);
+          },
+          (err) => {
+            console.error(err);
+          }
+        );
+      });
+    }
   }
 
   getPetitionHistory() {
     // tslint:disable-next-line:max-line-length
     this.service
       .getPetitionHistory(
-        this.groupId,
+        petitionHistoryGroupId,
         this.petitionId,
         this.pageToGetHistory,
         this.sizePerPageHistory
@@ -208,11 +262,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
             // console.log(item);
             this.history.push(item);
           });
-          // const size = data.numberOfElements;
-          // for (let i = 0; i < size; i++) {
-          //   this.history.push(data.content[i]);
-          // }
-          // console.log(history);
         },
         (err) => {
           console.error(err);
@@ -224,23 +273,36 @@ export class DetailAcceptPetitionComponent implements OnInit {
     // tslint:disable-next-line:max-line-length
     this.service
       .getPetitionComment(
-        this.groupId,
+        petitionCommentGroupId,
         this.petitionId,
         this.pageToGetHistory,
         this.sizePerPageHistory
       )
       .subscribe(
         (data) => {
-          const size = data.numberOfElements;
-          for (let i = 0; i < size; i++) {
-            this.history.push(data.content[i]);
-          }
+          data.content.forEach((item) => {
+            let temp = {
+              name: item.user.fullname,
+              time: item.createdDate,
+              children: [
+                {
+                  name: item.content,
+                  time: '',
+                },
+              ],
+            };
+            this.comments.push(temp);
+          });
+
+          this.commentDataSource.data = this.comments;
         },
         (err) => {
           console.error(err);
         }
       );
   }
+
+  buildTree(item) {}
 
   isExpandToggle() {
     this.isExpand = !this.isExpand;
