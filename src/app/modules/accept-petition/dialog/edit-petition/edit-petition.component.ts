@@ -9,6 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { PickDatetimeAdapter } from 'src/app/data/schema/pick-datetime-adapter';
 import { PICK_FORMATS } from 'src/app/data/service/config.service';
+import { ImageInfo } from 'src/app/data/schema/image-info';
 import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import {
   NgxMatDateAdapter,
@@ -69,17 +70,17 @@ export class EditPetitionComponent implements OnInit {
   categoryId = petitionCategoryId;
   response = [];
   accountId: string;
-  submitted = false;
+  username: string;
 
   // Upload file
-  countDefaultImage;
-
   uploaded: boolean;
   blankVal: any;
   uploadedImage = [];
+  countDefaultImage;
   listTags = [];
   itemTagList = [];
   files = [];
+  filesInfo: ImageInfo[] = [];
   urls = [];
   fileNames = [];
   fileNamesFull = [];
@@ -108,9 +109,9 @@ export class EditPetitionComponent implements OnInit {
     reporterPlaceTown: new FormControl(''),
     reporterPlaceProvince: new FormControl(''),
     reporterLocation: new FormControl(''),
-    takePlaceAtAddress: new FormControl(''),
-    takePlaceAtLatitude: new FormControl(''),
-    takePlaceAtLongitude: new FormControl(''),
+    petitionFullAddress: new FormControl(''),
+    petitionLatitude: new FormControl(''),
+    petitionLongitude: new FormControl(''),
 
     // Body post request
     title: new FormControl(''),
@@ -121,7 +122,7 @@ export class EditPetitionComponent implements OnInit {
     description: new FormControl(''),
     takePlaceAt: new FormControl(''),
     sendSms: new FormControl(''),
-    isPublic: new FormControl('Công khai phản ánh'),
+    isPublic: new FormControl(''),
     file: new FormControl(),
     thumbnailId: new FormControl(),
     isAnonymous: new FormControl(),
@@ -168,7 +169,6 @@ export class EditPetitionComponent implements OnInit {
   provinceId: number;
 
   @ViewChild('pickerOccurred') pickerOccurred: any;
-
   public showSpinners = true;
   public showSeconds = true;
   public touchUi = true;
@@ -176,10 +176,6 @@ export class EditPetitionComponent implements OnInit {
   public stepHour = 1;
   public stepMinute = 1;
   public stepSecond = 1;
-
-  village = new FormControl('Phường 10');
-  town = new FormControl('Thành phố Mỹ Tho');
-  province = new FormControl('Tiền Giang');
 
   public uploader: FileUploader = new FileUploader({
     disableMultipart: true,
@@ -205,6 +201,7 @@ export class EditPetitionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getUserProfile();
     this.getPetitionDetail();
     this.getListTag();
     this.getAgency();
@@ -218,6 +215,13 @@ export class EditPetitionComponent implements OnInit {
     this.map.currentLongitude.subscribe(
       (longitude) => (this.longitude = longitude)
     );
+  }
+
+  getUserProfile(): void {
+    this.keycloak.loadUserProfile().then((user) => {
+      this.accountId = user['attributes'].user_id;
+      this.username = user.username;
+    });
   }
 
   // Lấy danh sách chuyên mục từ service
@@ -245,8 +249,6 @@ export class EditPetitionComponent implements OnInit {
       // this.place = data;
     });
   }
-
-
 
   public getTown(parentId) {
     this.resetTown();
@@ -279,9 +281,7 @@ export class EditPetitionComponent implements OnInit {
   }
 
   setValueTown() {
-    return this.getTown(
-      this.updateForm.controls.reporterPlaceProvince.value
-    );
+    return this.getTown(this.updateForm.controls.reporterPlaceProvince.value);
   }
 
   setValueVillage() {
@@ -335,17 +335,23 @@ export class EditPetitionComponent implements OnInit {
       reporterPhone: new FormControl(oldReporter.phone),
       reporterIdentityId: new FormControl(oldReporter.identityId),
       reporterType: new FormControl(oldReporter.type),
-      reporterFullAddress: new FormControl(oldReporterLocation.fullAddress),
-      reporterPlaceVillage: new FormControl('Phường 10'),
-      reporterPlaceTown: new FormControl('Thành phố Mỹ Tho'),
-      reporterPlaceProvince: new FormControl('Tiền Giang'),
-      takePlaceAtAddress: new FormControl(
+      reporterFullAddress: new FormControl(
+        this.response[0].reporter.address.address
+      ),
+      reporterPlaceVillage: new FormControl(
+        this.response[0].reporter.address.place[0].id
+      ),
+      reporterPlaceTown: new FormControl(
+        this.response[0].reporter.address.place[1].id
+      ),
+      reporterPlaceProvince: new FormControl(
+        this.response[0].reporter.address.place[2].id
+      ),
+      petitionFullAddress: new FormControl(
         this.response[0].takePlaceAt.fullAddress
       ),
-      takePlaceAtLatitude: new FormControl(
-        this.response[0].takePlaceAt.latitude
-      ),
-      takePlaceAtLongitude: new FormControl(
+      petitionLatitude: new FormControl(this.response[0].takePlaceAt.latitude),
+      petitionLongitude: new FormControl(
         this.response[0].takePlaceAt.longitude
       ),
 
@@ -358,13 +364,70 @@ export class EditPetitionComponent implements OnInit {
       agency: new FormControl('' + this.response[0].agency.id),
       description: new FormControl(this.response[0].description),
       takePlaceAt: new FormControl(this.response[0].takePlaceAt.fullAddress),
-
       isPublic: new FormControl(publicDescription),
       file: new FormControl(),
-      thumbnailId: new FormControl(),
-      isAnonymous: new FormControl(),
-      receptionMethod: new FormControl(),
+      thumbnailId: new FormControl(this.response[0].thumbnailId),
+      isAnonymous: new FormControl(this.response[0].isAnonymous),
+      receptionMethod: new FormControl(this.response[0].receptionMethod),
     });
+
+    this.getTown(this.response[0].reporter.address.place[2].id);
+    this.getVillage(this.response[0].reporter.address.place[1].id);
+
+    this.response[0].file.forEach((item) => {
+      let temp = {
+        id: item.id,
+        name: item.name,
+        group: item.group[0],
+        updateDate: this.datepipe.transform(
+          new Date(),
+          "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        ),
+      };
+      this.uploadedImage.push(temp);
+    });
+
+    this.countDefaultImage = this.uploadedImage.length;
+
+    if (this.response[0].file.length > 0) {
+      for (let i of this.response[0].file) {
+        let urlResult: any;
+        let fileName = '';
+        let fileNamesFull = '';
+
+        this.service.getImage(i.id).subscribe(data => {
+          const reader = new FileReader();
+          reader.addEventListener('load', () => {
+            urlResult = reader.result;
+            this.service.getImageName_Size(i.id).subscribe((data: any ) => {
+              if (data.filename.length > 20) {
+                // Tên file quá dài
+                const startText = data.filename.substr(0, 5);
+                const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                fileName = startText + '...' + shortText;
+                // Tên file gốc - hiển thị tooltip
+                fileNamesFull = data.filename;
+              } else {
+                fileName = data.filename;
+                fileNamesFull = data.filename;
+              }
+              this.filesInfo.push({
+                id: i,
+                url: urlResult,
+                name: fileName,
+                fullName: fileNamesFull
+              });
+            }, err => {
+              console.error(err);
+            });
+          }, false);
+          reader.readAsDataURL(data);
+        }, err => {
+          console.error(err);
+        });
+      }
+    }
+    this.uploaded = true;
   }
 
   updatePetition(requestBody) {
@@ -383,78 +446,72 @@ export class EditPetitionComponent implements OnInit {
   }
 
   onConfirm(): void {
-    this.keycloak.loadUserProfile().then((user) => {
-      // tslint:disable-next-line: no-string-literal
-      this.accountId = user['attributes'].user_id;
-      this.countDefaultImage = this.uploadedImage.length;
-      if (this.countDefaultImage > 0) {
-        if (this.files.length > 0) {
-          this.service
-            .uploadMultiImages(this.files, this.accountId)
-            .subscribe((data) => {
-              data.forEach((imgInfo) => {
-                this.uploadedImage.push(imgInfo.id);
-              });
-              this.formToJSON();
+    this.countDefaultImage = this.uploadedImage.length;
+    if (this.countDefaultImage > 0) {
+      if (this.files.length > 0) {
+        this.service.uploadMultiImages(this.files, this.accountId).subscribe(
+          (data: any) => {
+            data.forEach((imgInfo) => {
+              let temp = {
+                id: imgInfo.id,
+                name: imgInfo.filename,
+                group: 1,
+                updateDate: this.datepipe.transform(
+                  new Date(),
+                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                ),
+              };
+              this.uploadedImage.push(temp);
             });
-          // });
-        } else {
-          this.formToJSON();
-        }
+            this.formToJSON();
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
       } else {
-        if (this.files.length > 0) {
-          this.service
-            .uploadMultiImages(this.files, this.accountId)
-            .subscribe((data) => {
-              data.forEach((imgInfo) => {
-                this.uploadedImage.push(imgInfo.id);
-              });
-              this.formToJSON();
-            });
-        } else {
-          this.formToJSON();
-        }
+        this.formToJSON();
       }
-    });
+    } else {
+      if (this.files.length > 0) {
+        this.service.uploadMultiImages(this.files, this.accountId).subscribe(
+          (data: any) => {
+            data.forEach((imgInfo) => {
+              let temp = {
+                id: imgInfo.id,
+                name: imgInfo.filename,
+                group: 1,
+                updateDate: this.datepipe.transform(
+                  new Date(),
+                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                ),
+              };
+              this.uploadedImage.push(temp);
+            });
+            this.formToJSON();
+          },
+          (error) => {
+            console.error(error);
+          }
+        );
+      } else {
+        this.formToJSON();
+      }
+    }
   }
 
   formToJSON() {
     const formObject = this.updateForm.getRawValue();
 
-    // Title, Description
-    // formObject.title = 'Test post phan anh 4';
-    // formObject.description = 'Mô tả phản ánh';
-
     // Tag
     const selectedTag = formObject.tag;
     formObject.tag = this.tagList.find((p) => p.id == selectedTag);
-    delete formObject.agency.logoId;
     delete formObject.tag.parentId;
     delete formObject.tag.orderNumber;
     delete formObject.tag.status;
     delete formObject.tag.createdDate;
     delete formObject.tag.description;
     delete formObject.tag.iconId;
-
-    // for (const i of formObject.tag) {
-    //   // tslint:disable-next-line: triple-equals
-    //   const item = this.tagList.find((p) => p.id == i);
-    //   this.itemTagList.push(item);
-    // }
-    // this.itemTagList = this.itemTagList.map((item) => {
-    //   delete item.parentId;
-    //   delete item.orderNumber;
-    //   delete item.status;
-    //   delete item.createdDate;
-    //   delete item.description;
-    //   delete item.iconId;
-    //   return item;
-    // });
-    // formObject.tag = this.itemTagList;
-    // formObject.tag = {
-    //   id: 1,
-    //   name: "Trật tự đô thị"
-    // }
 
     // Format takePlaceOn
     formObject.takePlaceOn = this.datepipe.transform(
@@ -466,21 +523,7 @@ export class EditPetitionComponent implements OnInit {
     const selectedAgency = formObject.agency;
     formObject.agency = this.agencyList.find((p) => p.id == selectedAgency);
     delete formObject.agency.logoId;
-    // formObject.agency = {
-    //   id: 1,
-    //   name: 'UBND Tỉnh Tiền Giang',
-    // };
 
-    // Add takePlaceAt
-    // if(this.searchedPlace == null) {
-    //   this.updateForm.controls.takePlaceAt.setValue(this.searchedPlace);
-    // }
-
-    // formObject.reporterFullAddress
-    // let updateReporterFullAddress;
-    // if (this.searchedPlace == null)
-    // let a = formObject.takePlaceAt;
-    // console.log(formObject.takePlaceAtLatitude);
     // let b: string;
     if (this.searchedPlace != '') {
       this.updateForm.controls.takePlaceAt.setValue(this.searchedPlace);
@@ -503,30 +546,23 @@ export class EditPetitionComponent implements OnInit {
     formObject.reporterLocation = {
       latitude: '10.341645',
       longitude: '106.458985',
-      fullAddress:
-        'Ấp Phong Thuận, Xã Tân Mỹ Chánh, TP Mỹ tho, Tỉnh Tiền Giang',
+      fullAddress: formObject.reporterFullAddress,
     };
 
-    // file
-    formObject.file = [
-      {
-        id: '5df0aa1579279af9f7ba4412',
-        name: 'image1.png',
-        group: '1',
-        updateDate: '2019-07-21T17:32:28.236+0700',
-      },
-      {
-        id: '5df0aa1579229af9f7ba4415',
-        name: 'image2.jpg',
-        group: '1',
-        updateDate: '2019-07-21T17:32:28.236+0700',
-      },
-    ];
-
     // reporter
+    let province = this.placeList.find(
+      (p) => p.id == formObject.reporterPlaceProvince
+    );
+    let town = this.placeListTown.find(
+      (p) => p.id == formObject.reporterPlaceTown
+    );
+    let village = this.placeListVillage.find(
+      (p) => p.id == formObject.reporterPlaceVillage
+    );
+
     formObject.reporter = {
-      id: '5df0aa1579279af9f7ba4432',
-      username: '+84941234567',
+      id: this.accountId[0],
+      username: this.username,
       fullname: formObject.reporterFullName,
       phone: formObject.reporterPhone,
       identityId: formObject.reporterIdentityId,
@@ -535,40 +571,36 @@ export class EditPetitionComponent implements OnInit {
         address: formObject.reporterFullAddress,
         place: [
           {
-            id: 3,
+            id: village.id,
             typeId: 3,
-            name: 'Tân Mỹ Chánh',
+            name: village.name,
           },
           {
-            id: 2,
+            id: town.id,
             typeId: 2,
-            name: 'Mỹ Tho',
+            name: town.name,
           },
           {
-            id: 1,
+            id: province.id,
             typeId: 1,
-            name: 'Tiền Giang',
+            name: province.name,
           },
         ],
       },
     };
 
-    // Format publish
+    // Set public
     if (formObject.isPublic) {
       formObject.isPublic = true;
     } else {
       formObject.isPublic = false;
     }
 
-    // thumbnailId
+    // Set thumbnailId
     formObject.thumbnailId = '5df0aa1579279af9f7ba1234';
 
-    // isAnonymous
-    if (formObject.isPublic) {
-      formObject.isAnonymous = true;
-    } else {
-      formObject.isAnonymous = false;
-    }
+    // Set isAnonymous
+    formObject.isAnonymous = false;
 
     // Format send sms
     if (formObject.sendSms) {
@@ -578,12 +610,10 @@ export class EditPetitionComponent implements OnInit {
     }
 
     // receptionMethod
-    formObject.receptionMethod = 1;
-
-    console.log(formObject.reporterPlaceProvince);
+    formObject.receptionMethod = 3;
 
     // Add Image
-    // formObject.imageId = this.uploadedImage;
+    formObject.file = this.uploadedImage;
 
     // // Temporary variable - Final result
     delete formObject.reporterFullName;
@@ -594,14 +624,13 @@ export class EditPetitionComponent implements OnInit {
     delete formObject.reporterPlaceVillage;
     delete formObject.reporterPlaceTown;
     delete formObject.reporterPlaceProvince;
-    delete formObject.takePlaceAtLatitude;
-    delete formObject.takePlaceAtLongitude;
-    delete formObject.takePlaceAtAddress;
+    delete formObject.petitionFullAddress;
+    delete formObject.petitionLatitude;
+    delete formObject.petitionLongitude;
 
     const resultJson = JSON.stringify(formObject, null, 2);
 
-    console.log(resultJson);
-    // console.log(this.province);
+    // console.log(resultJson);
     this.updatePetition(resultJson);
   }
 
@@ -639,12 +668,18 @@ export class EditPetitionComponent implements OnInit {
     });
   }
 
-  // File upload
+  // File uploads
   onSelectFile(event) {
     let i = 0;
     if (event.target.files && event.target.files[0]) {
       for (const file of event.target.files) {
+        // =============================================
         let urlNone: any;
+        let urlResult: any;
+        let fileName = '';
+        let fileNamesFull = '';
+
+        // =============================================
         const reader = new FileReader();
         reader.onload = (eventLoad) => {
           this.uploaded = true;
@@ -653,12 +688,9 @@ export class EditPetitionComponent implements OnInit {
             .compressFile(urlNone, -1, 75, 50)
             .then((result) => {
               this.urlPreview = result;
-              this.fileImport = this.convertBase64toFile(
-                this.urlPreview,
-                file.name
-              );
-              if (this.urls.length + 1 <= 5) {
-                this.urls.push(this.urlPreview);
+              urlResult = result.split(',')[1];
+              this.fileImport = this.convertBase64toFile(result, file.name);
+              if (this.filesInfo.length < 5) {
                 this.files.push(this.fileImport);
                 if (this.fileImport.name.length > 20) {
                   // Tên file quá dài
@@ -668,13 +700,20 @@ export class EditPetitionComponent implements OnInit {
                     event.target.files[i].name.length - 7,
                     event.target.files[i].name.length
                   );
-                  this.fileNames.push(startText + '...' + shortText);
+                  fileName = startText + '...' + shortText;
                   // Tên file gốc - hiển thị tooltip
-                  this.fileNamesFull.push(event.target.files[i].name);
+                  fileNamesFull = event.target.files[i].name;
                 } else {
-                  this.fileNames.push(this.fileImport.name);
-                  this.fileNamesFull.push(this.fileImport.name);
+                  fileName = this.fileImport.name;
+                  fileNamesFull = this.fileImport.name;
                 }
+
+                this.filesInfo.push({
+                  id: i,
+                  url: this.urlPreview,
+                  name: fileName,
+                  fullName: fileNamesFull,
+                });
               } else {
                 this.main.openSnackBar(
                   'Số lượng ',
@@ -712,11 +751,19 @@ export class EditPetitionComponent implements OnInit {
   }
 
   // Xoá file
-  removeItem(index: number) {
-    this.urls.splice(index, 1);
-    this.fileNames.splice(index, 1);
-    this.fileNamesFull.splice(index, 1);
+  removeItem(id: string) {
+    let counter = 0;
+    let index = 0;
+    this.filesInfo.forEach((file) => {
+      if (file.id === id) {
+        index = counter;
+      }
+      counter++;
+    });
+    this.uploadedImage = this.uploadedImage.filter((item) => item != id);
+    this.filesInfo.splice(index, 1);
     this.files.splice(index, 1);
+
     this.blankVal = '';
   }
 }

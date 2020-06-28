@@ -339,9 +339,9 @@ export class AcceptPetitionService {
           'success_notification'
         );
         // tslint:disable-next-line:only-arrow-functions
-        setTimeout(function () {
-          window.location.reload();
-        }, reloadTimeout);
+        // setTimeout(function () {
+        //   window.location.reload();
+        // }, reloadTimeout);
       }
       if (this.result === false) {
         this.main.openSnackBar(
