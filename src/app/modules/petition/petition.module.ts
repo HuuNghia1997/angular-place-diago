@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { PetitionRoutingModule } from './petition-routing.module';
 import { ListPetitionComponent } from './pages/list-petition/list-petition.component';
@@ -39,6 +39,9 @@ import {
     ShowProcessComponent,
     UpdatePetitionComponent,
     UpdateResultComponent
+  ],
+  providers: [
+    DatePipe
   ]
 })
 export class PetitionModule { }

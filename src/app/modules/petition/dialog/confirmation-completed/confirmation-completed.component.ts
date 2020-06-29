@@ -2,9 +2,7 @@ import { Component, OnInit, Inject, Input } from '@angular/core';
 import { PetitionService } from 'src/app/data/service/petition.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { KeycloakService } from 'keycloak-angular';
-import { FormGroup, FormControl, FormControlName } from '@angular/forms';
-import { element } from 'protractor';
-
+import { FormGroup, FormControl } from '@angular/forms';
 @Component({
   selector: 'app-confirmation-completed',
   templateUrl: './confirmation-completed.component.html',
@@ -20,8 +18,12 @@ export class ConfirmationCompletedComponent implements OnInit {
   exclusive: boolean;
   outGoingFlow = [];
   requestBody = [];
-  body = new FormGroup({});
-  formTemplate: any;
+  body = new FormGroup({
+    variables: new FormGroup({}),
+    payloadType: new FormControl('')
+  });
+
+  variables = new FormGroup({});
 
   select: string;
   commonArray = [];
@@ -47,13 +49,14 @@ export class ConfirmationCompletedComponent implements OnInit {
 
   ngOnInit(): void {
     this.getNextFlow();
+  }
 
-    let variables = {};
-    this.commonArray.forEach(e => {
-      variables[this.splitString(e)] = new FormControl('');
+  createForm(fields: string[]) {
+    let variables: any = {};
+    fields.forEach(x => {
+      variables[this.splitString(x)] = new FormControl();
     });
-    this.body = new FormGroup(variables);
-
+    return new FormGroup(variables);
   }
 
   getNextFlow() {
@@ -122,17 +125,19 @@ export class ConfirmationCompletedComponent implements OnInit {
   }
 
   getCheckboxes(event, value) {
-    const a = this.splitString(value);
-    if (event.checked) {
-      this.commonArray.push(value);
-    }
-    if (!event.checked) {
-      const index = this.commonArray.indexOf(value);
-      if (index > -1) {
-        this.commonArray.splice(index, 1);
+    // this.outGoingFlow.forEach(e => {
+      if (event.checked) {
+        this.commonArray.push(value);
       }
-    }
+      if (!event.checked) {
+        const index = this.commonArray.indexOf(value);
+        if (index > -1) {
+          this.commonArray.splice(index, 1);
+        }
+      }
+    // });
     console.log(this.commonArray);
+    // this.createForm(this.commonArray);
     this.formToJson();
   }
 

@@ -1,59 +1,33 @@
 <div mat-dialog-title class="fw-500"> Xác nhận hoàn thành </div>
 
 <!-- <form [formGroup]="body">
-  <mat-horizontal-stepper [linear]="isLinear" #stepper labelPosition="bottom" class="mt-1">
-    <mat-step>
-      <div *ngIf="exclusive === true">
-        <mat-radio-group *ngFor='let flow of outGoingFlow' [(ngModel)]="checkedStep1"
-                          (ngModelChange)="setValue(flow.name)" formControlName="splitString(flow.conditionExpression)">
-          <mat-radio-button value="{{ flow.conditionExpression }}" class="mt-10"> {{ flow.name }} </mat-radio-button>
-          <br/>
-        </mat-radio-group>
-      </div>
-
-      <div *ngIf="exclusive === true">
-        <section *ngFor='let flow of outGoingFlow'>
-          <mat-checkbox value="flow.conditionExpression" (change)="getCheckboxes($event, flow.conditionExpression)"
-                        formControlName="splitString(flow.conditionExpression)">
-            {{ flow.name }}
-          </mat-checkbox>
-          <br>
-          <div class="mt-10"></div>
-        </section>
-      </div>
-
-      <br/>
-      <mat-dialog-actions class="align-right">
-        <button mat-button class="btn-cancel" (click)="onDismiss()"> Hủy bỏ </button>
-        <button mat-button class="btn-update"> Đồng ý </button>
-      </mat-dialog-actions>
-    </mat-step>
-  </mat-horizontal-stepper>
-</form> -->
-
-<mat-horizontal-stepper [linear]="isLinear" #stepper labelPosition="bottom" class="mt-1">
-  <mat-step>
-    <div *ngIf="exclusive === true">
+  <form [formControl]="variables"> -->
+    <!-- <div *ngIf="exclusive === true">
       <mat-radio-group *ngFor='let flow of outGoingFlow' [(ngModel)]="checkedStep1"
-                        (ngModelChange)="setValue(flow.name)">
+                        (ngModelChange)="setValue(flow.name)" [formControlName]="splitString(flow.conditionExpression)">
         <mat-radio-button value="{{ flow.conditionExpression }}" class="mt-10"> {{ flow.name }} </mat-radio-button>
         <br/>
       </mat-radio-group>
-    </div>
+    </div> -->
 
     <div *ngIf="exclusive === true">
       <section *ngFor='let flow of outGoingFlow'>
-        <mat-checkbox value="flow.conditionExpression" (change)="getCheckboxes($event, flow.conditionExpression)"> {{ flow.name }} </mat-checkbox>
+        <mat-checkbox
+                      (change)="getCheckboxes($event, flow.conditionExpression)">
+          {{ flow.name }}
+        </mat-checkbox>
         <br>
         <div class="mt-10"></div>
       </section>
     </div>
 
     <br/>
-    <mat-dialog-actions class="align-right">
-      <button mat-button class="btn-cancel" (click)="onDismiss()"> Hủy bỏ </button>
-      <button mat-button class="btn-update"> Đồng ý </button>
-    </mat-dialog-actions>
-  </mat-step>
-</mat-horizontal-stepper>
+
+  <!-- </form> -->
+
+  <mat-dialog-actions class="align-right">
+    <button mat-button class="btn-cancel" (click)="onDismiss()"> Hủy bỏ </button>
+    <button mat-button class="btn-update"> Đồng ý </button>
+  </mat-dialog-actions>
+<!-- </form> -->
 

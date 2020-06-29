@@ -11,6 +11,7 @@ import {
 import { reloadTimeout } from './config.service';
 import { SnackbarService } from './snackbar.service';
 import { ConfirmationCompletedPetitionDialogModel, ConfirmationCompletedComponent } from 'src/app/modules/petition/dialog/confirmation-completed/confirmation-completed.component';
+import { ConfirmUpdateResultDialogModel, UpdateResultComponent } from 'src/app/modules/petition/dialog/update-result/update-result.component';
 
 @Injectable({
   providedIn: 'root'
@@ -21,11 +22,12 @@ export class PetitionService {
   public getTagsUrl = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';
   public getPetitionUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/task/--with-variables';
   public getFileUrl = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
-  public getModelUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/process-instances/';
+  public uploadFilesURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/--multiple';
+  public processInstanceUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/process-instances/';
   public getHistoryURL = this.apiProviderService.getUrl('digo-microservice', 'logman') + '/history?group-id=';
   public taskUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/tasks/';
   public nextFlowUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/task/';
-  public setVariablesUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/process-instances/';
+  public getPlaceUrl = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/place?nation-id=';
 
   constructor(private apiProviderService: ApiProviderService,
               private http: HttpClient,
@@ -34,6 +36,14 @@ export class PetitionService {
 
   getListTag(categoryId): Observable<any> {
     return this.http.get(this.getTagsUrl + categoryId);
+  }
+
+  getProvince(nationId, provinceTypeId) {
+    return this.http.get<any>(this.getPlaceUrl + nationId + '&parent-type-id=' + provinceTypeId);
+  }
+
+  getDistrict(nationId, districtTypeId, provinceId) {
+    return this.http.get<any>(this.getPlaceUrl + nationId + '&parent-type-id=' + districtTypeId + '&parent-id=' + provinceId);
   }
 
   getPetitionList(): Observable<any> {
@@ -63,7 +73,7 @@ export class PetitionService {
 
   getModel(processInstanceId) {
     const headers = new HttpHeaders().set('Accept', 'image/svg+xml');
-    return this.http.get(this.getModelUrl + processInstanceId + '/model', { headers, responseType: 'blob' });
+    return this.http.get(this.processInstanceUrl + processInstanceId + '/model', { headers, responseType: 'blob' });
   }
 
   getHistory(groupId: number, itemId: string, page: number, size: number): Observable<any> {
@@ -76,10 +86,11 @@ export class PetitionService {
     return this.http.get<any>(this.nextFlowUrl + taskId + '/--next-flow-element?level=2');
   }
 
+  // Cập nhật phản ánh & cập nhật kết quả
   postVariable(processInstancesId, requestBody) {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
-    return this.http.post<any>(this.setVariablesUrl + processInstancesId + '/variables', requestBody, { headers });
+    return this.http.post<any>(this.processInstanceUrl + processInstancesId + '/variables', requestBody, { headers });
   }
 
   completeTask(taskId, requestBody) {
@@ -98,6 +109,18 @@ export class PetitionService {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     return this.http.post<any>(this.taskUrl + taskId + '/release', { headers });
+  }
+
+  uploadMultiImages(imgFiles, accountId): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Accept', 'application/json');
+    const formData: FormData = new FormData();
+    imgFiles.forEach(files => {
+        const file: File = files;
+        formData.append('files', file, file.name);
+    });
+    formData.append('accountId', accountId);
+    return this.http.post(this.uploadFilesURL, formData, { headers });
   }
 
   showProcess(id, name): void {
@@ -120,6 +143,34 @@ export class PetitionService {
     });
 
     const message = 'Cập nhật phản ánh';
+    const content = name;
+    const result = 'thành công';
+    const reason = '';
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      this.result = dialogResult;
+      if (this.result === true) {
+        this.snackbar.openSnackBar(message, content, result, reason, 'success_notification');
+        // tslint:disable-next-line:only-arrow-functions
+        setTimeout(function() {
+          window.location.reload();
+        }, reloadTimeout);
+      }
+      if (this.result === false) {
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+      }
+    });
+  }
+
+  updateResult(id, name): void {
+    const dialogData = new ConfirmUpdateResultDialogModel('Cập nhật phản ánh', id);
+    const dialogRef = this.dialog.open(UpdateResultComponent, {
+      width: '80%',
+      maxHeight: '600px',
+      data: dialogData,
+      disableClose: true
+    });
+
+    const message = 'Cập nhật kết quả';
     const content = name;
     const result = 'thành công';
     const reason = '';

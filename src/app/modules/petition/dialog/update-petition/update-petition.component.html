@@ -1,105 +1,110 @@
 <h3 mat-dialog-title class="dialog_title"> Cập nhật phản ánh </h3>
-<form>
-  <h4 class="fs-14 fw-500"> Thông tin phản ánh </h4>
-  <!-- Tiêu đề -->
-  <mat-form-field appearance="outline" class="full-input">
-    <mat-label> Tiêu đề </mat-label>
-    <input matInput formControlName="title">
-  </mat-form-field>
+<form [formGroup]="updateForm" (submit)="onSubmit()">
+  <form [formGroup]="update">
+    <h4 class="fs-14 fw-500"> Thông tin phản ánh </h4>
+    <!-- Tiêu đề -->
+    <mat-form-field appearance="outline" class="full-input">
+      <mat-label> Tiêu đề </mat-label>
+      <input matInput formControlName="title">
+    </mat-form-field>
 
-  <!-- Chuyên mục -->
-  <mat-form-field appearance="outline" class="short-input">
-    <mat-label> Chuyên mục </mat-label>
-    <mat-select formControlName="tag">
-      <mat-option *ngFor="let topic of topicList" [value]="topic"> {{ topic }} </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- Thời gian xảy ra -->
+    <mat-form-field appearance="outline" class="full-input">
+      <mat-label> Thời gian xảy ra </mat-label>
+      <input matInput [ngxMatDatetimePicker]="pickerOccurred" formControlName="takePlaceOn">
+      <mat-datepicker-toggle matSuffix [for]="pickerOccurred"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #pickerOccurred [showSpinners]="showSpinners" [showSeconds]="showSeconds"
+                                [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond"
+                                [touchUi]="touchUi" [enableMeridian]="enableMeridian">
+      </ngx-mat-datetime-picker>
+    </mat-form-field>
 
-  <!-- Thời gian xảy ra -->
-  <mat-form-field appearance="outline" class="short-input ml-2">
-    <mat-label> Thời gian xảy ra </mat-label>
-    <input matInput [ngxMatDatetimePicker]="pickerOccurred" formControlName="dateOccurred">
-    <mat-datepicker-toggle matSuffix [for]="pickerOccurred"></mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #pickerOccurred [showSpinners]="showSpinners" [showSeconds]="showSeconds"
-                              [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond"
-                              [touchUi]="touchUi" [enableMeridian]="enableMeridian">
-    </ngx-mat-datetime-picker>
-  </mat-form-field>
+    <!-- Địa điểm phản ánh -->
+    <mat-form-field appearance="outline" class="place-input">
+      <mat-label> Địa điểm phản ánh </mat-label>
+      <input matInput formControlName="takePlaceAt">
+    </mat-form-field>
 
-  <!-- Ngày phản ánh -->
-  <mat-form-field appearance="outline" class="short-input ml-2">
-    <mat-label> Ngày phản ánh </mat-label>
-    <input matInput [ngxMatDatetimePicker]="pickerCreate" formControlName="dateCreate" disabled>
-    <ngx-mat-datetime-picker #pickerCreate [showSpinners]="showSpinners" [showSeconds]="showSeconds"
-                              [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond"
-                              [touchUi]="touchUi" [enableMeridian]="enableMeridian">
-    </ngx-mat-datetime-picker>
-  </mat-form-field>
+    <button mat-button class="btn-choose">
+      <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
+      <span> Chọn </span>
+    </button>
 
-  <!-- Người gửi -->
-  <mat-form-field appearance="outline" class="short-input">
-    <mat-label> Người gửi </mat-label>
-    <input matInput formControlName="reporter">
-  </mat-form-field>
+    <!-- Nội dung -->
+    <mat-form-field appearance="outline" class="full-input">
+      <mat-label> Nội dung </mat-label>
+      <textarea matInput cdkTextareaAutosize formControlName="description"> </textarea>
+    </mat-form-field>
 
-  <!-- Nơi tạo phản ánh -->
-  <mat-form-field appearance="outline" class="medium-input ml-2">
-    <mat-label> Nơi tạo phản ánh </mat-label>
-    <input matInput formControlName="placeCreate">
-  </mat-form-field>
+    <!-- Công khai -->
+    <mat-checkbox formControlName="isPublic" (change)="checkPublic($event)">
+      Công khai
+    </mat-checkbox>
 
-  <!-- Địa điểm phản ánh -->
-  <mat-form-field appearance="outline" class="place-input">
-    <mat-label> Địa điểm phản ánh </mat-label>
-    <input matInput formControlName="placePetition">
-  </mat-form-field>
+    <h4 class="fs-14 fw-500 mt-2"> Thông tin người phản ánh </h4>
+    <!-- Người gửi -->
+    <mat-form-field appearance="outline" class="short-input">
+      <mat-label> Người gửi </mat-label>
+      <input matInput formControlName="name">
+    </mat-form-field>
 
-  <button mat-button class="btn-choose">
-    <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
-    <span> Chọn </span>
-  </button>
+    <!-- SĐT -->
+    <mat-form-field appearance="outline" class="short-input ml-2">
+      <mat-label> Số điện thoại </mat-label>
+      <input matInput formControlName="phone">
+    </mat-form-field>
 
-  <!-- Nội dung -->
-  <mat-form-field appearance="outline" class="full-input">
-    <mat-label> Nội dung </mat-label>
-    <textarea matInput cdkTextareaAutosize formControlName="description"> </textarea>
-  </mat-form-field>
+    <!-- CMND -->
+    <mat-form-field appearance="outline" class="short-input ml-2">
+      <mat-label> CMND </mat-label>
+      <input matInput formControlName="identityId">
+    </mat-form-field>
 
-  <h4 class="fs-14 fw-500"> Thông tin xử lý </h4>
-  <!-- Người theo dõi -->
-  <mat-form-field appearance="outline" class="short-input">
-    <mat-label> Người theo dõi </mat-label>
-    <mat-select multiple [formControl]="followers">
-        <mat-option *ngFor="let fol of List" [value]="fol"> {{ fol }} </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- Địa chỉ -->
+    <mat-form-field appearance="outline" class="input-2-3">
+      <mat-label> Địa chỉ </mat-label>
+      <input matInput formControlName="address">
+    </mat-form-field>
 
-  <!-- Người duyệt -->
-  <mat-form-field appearance="outline" class="short-input ml-2">
-    <mat-label> Người duyệt </mat-label>
-    <mat-select [formControl]="approver">
-      <mat-option *ngFor="let app of List" [value]="app"> {{ app }} </mat-option>
-    </mat-select>
-  </mat-form-field>
+    <!-- Đối tượng -->
+    <mat-form-field appearance="outline" class="short-input ml-2">
+      <mat-label> Đối tượng </mat-label>
+      <mat-select formControlName="type">
+        <mat-option value="1"> Cá nhân </mat-option>
+        <mat-option value="2"> Tổ chức </mat-option>
+        <mat-option value="3"> Khác </mat-option>
+      </mat-select>
+    </mat-form-field>
 
-  <!-- Ngày duyệt -->
-  <mat-form-field appearance="outline" class="short-input ml-2">
-    <mat-label> Ngày duyệt </mat-label>
-    <label>
-      <input matInput [ngxMatDatetimePicker]="picker" [formControl]="dateApprove">
-    </label>
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <ngx-mat-datetime-picker #picker [showSpinners]="showSpinners" [showSeconds]="showSeconds"
-                              [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond"
-                              [touchUi]="touchUi" [enableMeridian]="enableMeridian">
-    </ngx-mat-datetime-picker>
-  </mat-form-field>
+    <!-- Phường xã -->
+    <mat-form-field appearance="outline" class="short-input">
+      <mat-label> Phường xã </mat-label>
+      <mat-select formControlName="commue">
+        <mat-option *ngFor='let com of listCommue' value="{{ com.id }}"> {{ com.name }} </mat-option>
+      </mat-select>
+      <mat-hint *ngIf="selectDistrict === false"> Vui lòng chọn quận huyện trước </mat-hint>
+    </mat-form-field>
 
-  <!-- Công khai -->
-  <mat-slide-toggle checked="checked" color="primary"> Công khai </mat-slide-toggle>
+    <!-- Quận huyện -->
+    <mat-form-field appearance="outline" class="short-input ml-2">
+      <mat-label> Quận huyện </mat-label>
+      <mat-select formControlName="district" (selectionChange)="getDistrictId($event.value)">
+        <mat-option *ngFor='let dis of listDistrict' value="{{ dis.id }}"> {{ dis.name }} </mat-option>
+      </mat-select>
+      <mat-hint *ngIf="selectProvince === false"> Vui lòng chọn tỉnh thành trước </mat-hint>
+    </mat-form-field>
+
+    <!-- Tỉnh thành -->
+    <mat-form-field appearance="outline" class="short-input ml-2">
+      <mat-label> Tỉnh thành </mat-label>
+      <mat-select formControlName="province" (selectionChange)="getProvinceId($event.value)">
+        <mat-option *ngFor='let pro of listProvince;' value="{{ pro.id }}"> {{ pro.name }} </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
 
   <mat-dialog-actions align="center">
-    <button mat-button class="btn-cancel" [mat-dialog-close]="true"> Hủy bỏ </button>
+    <button mat-button class="btn-cancel" (click)="onDismiss()"> Hủy bỏ </button>
     <button mat-button class="btn-update"> Cập nhật </button>
   </mat-dialog-actions>
 </form>

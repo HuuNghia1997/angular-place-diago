@@ -3,10 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatDialog } from '@angular/material/dialog';
-import { UpdateResultComponent } from 'src/app/modules/petition/dialog/update-result/update-result.component';
 import { FileUploader } from 'ng2-file-upload';
-import { UpdatePetitionComponent } from 'src/app/modules/petition/dialog/update-petition/update-petition.component';
-import { ConfirmationCompletedComponent } from 'src/app/modules/petition/dialog/confirmation-completed/confirmation-completed.component';
 import { Comments, TREE_DATA } from 'src/app/data/schema/petition-element';
 import { PetitionService } from 'src/app/data/service/petition.service';
 import { ImageInfo } from 'src/app/data/schema/image-info';
@@ -77,7 +74,7 @@ export class DetailPetitionComponent implements OnInit {
 
   filesInfo: ImageInfo[] = [];
 
-  groupId = 8;
+  groupId = 2;
   pageToGetHistory = 0;
   sizePerPageHistory = 15;
   history = [];
@@ -91,12 +88,26 @@ export class DetailPetitionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // console.log(this.petitionId);
     this.getDetail();
+  }
+
+  public fileOverBase(e: any): void {
+    this.hasBaseDropZoneOver = e;
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event[0];
+    // console.log(file);
+    // tslint:disable-next-line:only-arrow-functions
+    readBase64(file).then(function(data) {
+      // console.log(data);
+    });
   }
 
   getDetail() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      console.log(data.list.entries[0].entry);
+      console.log(data.list.entries);
       this.petition.push(data.list.entries[0].entry);
       this.setViewData();
     }, err => {
@@ -183,7 +194,6 @@ export class DetailPetitionComponent implements OnInit {
   claimTask() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       const taskId = data.list.entries[0].entry.id;
-      console.log(data.list.entries[0].entry.id);
       this.service.claimTask(taskId).subscribe(res => {
         // tslint:disable-next-line: only-arrow-functions
         setTimeout(function() {
@@ -204,7 +214,6 @@ export class DetailPetitionComponent implements OnInit {
   releaseTask() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       const taskId = data.list.entries[0].entry.id;
-      console.log(data.list.entries[0].entry.id);
       this.service.releaseTask(taskId).subscribe(res => {
         // tslint:disable-next-line: only-arrow-functions
         setTimeout(function() {
@@ -232,35 +241,16 @@ export class DetailPetitionComponent implements OnInit {
     this.service.updatePetition(id, name);
   }
 
+  updateResult(id, name) {
+    this.service.updateResult(id, name);
+  }
+
   showProcess(id, name) {
     this.service.showProcess(id, name);
   }
 
   completePetition(id, name) {
     this.service.completePetition(id, name);
-  }
-
-  openDialogUpdateResult() {
-    const dialogRef = this.dialog.open(UpdateResultComponent, {
-      width: '80%'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
-  }
-
-  public fileOverBase(e: any): void {
-    this.hasBaseDropZoneOver = e;
-  }
-
-  onFileSelected(event: any) {
-    const file: File = event[0];
-    // console.log(file);
-    // tslint:disable-next-line:only-arrow-functions
-    readBase64(file).then(function(data) {
-      // console.log(data);
-    });
   }
 
   getStatus(status: string) {
