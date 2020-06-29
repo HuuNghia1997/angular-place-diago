@@ -32,12 +32,12 @@
   <!-- Qui trình phản ánh -->
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Quy trình phản ánh </mat-label>
-    <mat-select formControlName="workflowId" required>
+    <mat-select formControlName="workflowId" show required>
       <mat-option *ngFor="let workflow of workflowList" value="{{ workflow.id }}">
         {{ workflow.name }}
       </mat-option>
-      <mat-error *ngIf="workflowId.invalid"> {{ getErrorMessage(9) }}</mat-error>
     </mat-select>
+    <mat-error *ngIf="workflowId.invalid"> {{ getErrorMessage(9) }}</mat-error>
   </mat-form-field>
 
   <!-- Nội dung -->
