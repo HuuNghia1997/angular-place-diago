@@ -6,6 +6,7 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
+import { WorkflowDiagramComponent } from 'src/app/modules/accept-petition/dialog/workflow-diagram/workflow-diagram.component';
 
 @Component({
   selector: 'app-accept-petition',
@@ -13,14 +14,14 @@ import { AcceptPetitionService } from 'src/app/data/service/accept-petition.serv
   styleUrls: ['./accept-petition.component.scss'],
 })
 export class AcceptPetitionComponent implements OnInit {
-  // Khởi tạo
+  // Initialization
   petition = [];
   petitionId: string;
   petitionTitle: string;
   tagId: number;
   workflowList = [];
 
-  // Form
+  // Set form control
   public reg = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
   acceptForm = new FormGroup({
     workflowId: new FormControl(''),
@@ -33,13 +34,18 @@ export class AcceptPetitionComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ConfirmAcceptDialogModel,
     public dialogRef: MatDialogRef<AcceptPetitionComponent>,
-    private service: AcceptPetitionService
+    private service: AcceptPetitionService,
+    private dialog: MatDialog
   ) {
     this.petitionId = data.id;
   }
 
   ngOnInit(): void {
     this.getPetitionDetail();
+  }
+
+  getErrorMessage(id) {
+    return this.service.formErrorMessage(id);
   }
 
   getPetitionDetail() {
@@ -52,6 +58,14 @@ export class AcceptPetitionComponent implements OnInit {
         console.error(err);
       }
     );
+  }
+
+  getWorkflow(tagId) {
+    this.service.getWorkflow(tagId).subscribe((data) => {
+      data.forEach((item) => {
+        this.workflowList.push(item);
+      });
+    });
   }
 
   setViewData() {
@@ -78,21 +92,8 @@ export class AcceptPetitionComponent implements OnInit {
     });
   }
 
-  getWorkflow(tagId) {
-    this.service.getWorkflow(tagId).subscribe((data) => {
-      data.forEach((item) => {
-        this.workflowList.push(item);
-      });
-    });
-  }
-
-  getErrorMessage(id) {
-    return this.service.formErrorMessage(id);
-  }
-
-  // Post process instances
   postProcessInstances(requestBody) {
-    this.service.postProcessInstances(requestBody).subscribe(
+    this.service.postProcessInstances(this.petitionId, requestBody).subscribe(
       (data) => {
         // Close dialog, return true
         let result = {
@@ -128,12 +129,8 @@ export class AcceptPetitionComponent implements OnInit {
   }
 
   // Add comment
-  addComment(requestBody) {
-    this.service.addCommentPetition(requestBody);
-  }
-
-  onConfirm(): void {
-    this.setFormObject();
+  comment(requestBody) {
+    this.service.commentPetition(requestBody);
   }
 
   setFormObject() {
@@ -183,14 +180,22 @@ export class AcceptPetitionComponent implements OnInit {
       commandType: 'StartProcessInstanceCmd',
     };
 
-    this.addComment(commentObject);
-    this.postProcessInstances(processInstancesObject);
+    this.comment(commentObject);
+    // this.postProcessInstances(processInstancesObject);
     this.acceptPetition(formObject);
+  }
+
+  onConfirm(): void {
+    this.setFormObject();
   }
 
   onDismiss(): void {
     // Close dialog
     this.dialogRef.close();
+  }
+
+  openWorkflowDiagramDialog(id, name): void {
+    this.service.openWorkflowDiagramDialog(id, name);
   }
 }
 

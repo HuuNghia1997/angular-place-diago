@@ -90,7 +90,7 @@ export class DeletePetitionComponent implements OnInit {
 
   // Add comment
   addComment(requestBody) {
-    this.service.addCommentPetition(requestBody);
+    this.service.commentPetition(requestBody);
   }
 
   onConfirm(): void {

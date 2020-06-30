@@ -87,6 +87,7 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.search(0, pageSizeOptions[1]);
     this.getListTag();
+
   }
 
   ngAfterViewInit() {
@@ -209,6 +210,8 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
       searchString = searchString + '&end-date=' + formObject.endDate;
     }
 
+    searchString = searchString + '&status=1';
+
     this.service.search(searchString).subscribe(
       (data) => {
         this.ELEMENTDATA = [];
@@ -216,6 +219,7 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
         for (let i = 0; i < size; i++) {
           this.ELEMENTDATA.push(data.content[i]);
         }
+
         this.dataSource.data = this.ELEMENTDATA;
         this.dataSource.paginator.pageSize = pageSize;
         this.totalElements = data.totalElements;
@@ -229,6 +233,7 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
         console.error(err);
       }
     );
+
     searchString = '';
   }
 
@@ -246,6 +251,6 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
   }
 
   acceptPetition(id, name): void {
-    this.service.acceptPetition(id, name);
+    this.service.acceptPetitionDialog(id, name);
   }
 }

@@ -17,6 +17,7 @@ import {
 import { AcceptPetitionComponent } from './dialog/accept-petition/accept-petition.component';
 import { CommentPetitionComponent } from './dialog/comment-petition/comment-petition.component';
 import { MapComponent } from './dialog/map/map.component';
+import { WorkflowDiagramComponent } from './dialog/workflow-diagram/workflow-diagram.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MapComponent } from './dialog/map/map.component';
     AcceptPetitionComponent,
     CommentPetitionComponent,
     MapComponent,
+    WorkflowDiagramComponent,
   ],
   imports: [
     CommonModule,

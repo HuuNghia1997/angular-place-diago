@@ -84,6 +84,9 @@ export class DetailAcceptPetitionComponent implements OnInit {
     },
   ];
 
+  checkAccept: boolean = true;
+  checkDeny: boolean = true;
+
   // Kết quả trả về khi lấy chi tiết phản ánh theo id
   response = [];
 
@@ -167,8 +170,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
   }
 
   setViewData() {
-    console.log(this.response);
-
     this.agencyName = this.response[0].agency.name;
     this.createdDate = this.response[0].createdDate;
     this.description = this.response[0].description;
@@ -188,6 +189,12 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.reporterLocationFullAddress = this.response[0].reporterLocation.fullAddress;
     this.result = this.response[0].result;
     this.status = this.response[0].status;
+    if (this.status === 1) {
+      this.checkAccept = false;
+    }
+    if (this.status === 1 || this.status === 2) {
+      this.checkDeny = false;
+    }
     this.statusDescription = this.response[0].statusDescription;
     this.tagName = this.response[0].tag.name;
     this.takePlaceAtFullAddress = this.response[0].takePlaceAt.fullAddress;
@@ -238,6 +245,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
               false
             );
             reader.readAsDataURL(data);
+            this.checkFiles = true;
           },
           (err) => {
             console.error(err);
@@ -357,4 +365,23 @@ export class DetailAcceptPetitionComponent implements OnInit {
       return 1;
     }
   }
+
+  selectStyleStatus(status) {
+    switch (status) {
+      case 1:
+        return 'btn-wait-process';
+        break;
+      case 2:
+        return 'btn-wait-get-process';
+        break;
+      case 3:
+        return 'btn-processed';
+        break;
+      case 4:
+        return 'btn-cancel';
+        break;
+    }
+  }
+
+  checkFiles: boolean = false;
 }

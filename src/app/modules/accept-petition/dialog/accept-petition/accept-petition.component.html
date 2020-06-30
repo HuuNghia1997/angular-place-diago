@@ -1,4 +1,4 @@
-<h3 class="dialog_title" mat-dialog-title>Tiếp nhận phản ánh</h3>
+<h3 class="dialog-title" mat-dialog-title>Tiếp nhận phản ánh</h3>
 
 <form [formGroup]="acceptForm" (submit)="onConfirm()">
   <p>
@@ -13,43 +13,47 @@
       Công khai phản ánh
     </mat-checkbox>
   </div>
-  <!-- <table>
-    <tr *ngFor="let workflow of workflowList">
-      <button
-        mat-button
 
-        class="input-full-width btn-choose-process"
-        [value]="workflow.id"
-      >
+  <mat-selection-list formControlName="workflowId" [multiple]="false" required>
+    <mat-list-option
+      *ngFor="let workflow of workflowList"
+      value="{{ workflow.id }}"
+    >
+      <span>
         {{ workflow.name }}
-        <mat-icon class="mat-icon" fontSet="material-icons-outlined">
-          description
-        </mat-icon>
-      </button>
-    </tr>
-  </table> -->
 
-  <!-- Qui trình phản ánh -->
-  <mat-form-field appearance="outline" class="input-full-width">
-    <mat-label> Quy trình phản ánh </mat-label>
-    <mat-select formControlName="workflowId" show required>
-      <mat-option *ngFor="let workflow of workflowList" value="{{ workflow.id }}">
-        {{ workflow.name }}
-      </mat-option>
-    </mat-select>
-    <mat-error *ngIf="workflowId.invalid"> {{ getErrorMessage(9) }}</mat-error>
-  </mat-form-field>
+        <a
+          class="btn-action"
+          (click)="
+            openWorkflowDiagramDialog(
+              workflow.processDefinitionId,
+              workflow.name
+            )
+          "
+        >
+          <mat-icon class="mat-icon" fontSet="material-icons-outlined">
+            description
+          </mat-icon>
+        </a>
+      </span>
+    </mat-list-option>
+  </mat-selection-list>
 
   <!-- Nội dung -->
   <mat-form-field appearance="outline" class="input-full-width">
     <mat-label> Nội dung </mat-label>
     <label>
-      <textarea matInput formControlName="content" cdkTextareaAutosize rows="5"></textarea>
+      <textarea
+        matInput
+        formControlName="content"
+        cdkTextareaAutosize
+        rows="5"
+      ></textarea>
     </label>
   </mat-form-field>
 
   <mat-dialog-actions align="center">
-    <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
+    <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>
     <button
       mat-button
       class="btn-save"
@@ -61,5 +65,3 @@
     </button>
   </mat-dialog-actions>
 </form>
-
-

@@ -59,7 +59,7 @@ export class CommentPetitionComponent implements OnInit {
 
   // add comment
   addCommentPetition(requestBody) {
-    this.service.addCommentPetition(requestBody).subscribe(
+    this.service.commentPetition(requestBody).subscribe(
       (data) => {
         // Close dialog, return true
         let result = {
