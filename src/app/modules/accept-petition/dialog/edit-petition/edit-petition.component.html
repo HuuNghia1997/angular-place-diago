@@ -178,7 +178,7 @@
     </mat-error>
   </mat-form-field>
 
-  <a mat-button class="btn-choose" (click)="openDialogMap()">
+  <a mat-button class="btn-choose" (click)="openMapDialog('address', 0, 0)">
     <mat-icon fontSet="material-icons-outlined" class="icon-map">
       place
     </mat-icon>
@@ -211,8 +211,9 @@
         </div>
       </div>
     </div>
+
     <mat-progress-bar
-        class="progress"
+
         mode="determinate"
         *ngIf="progress > 0"
         [value]="progress"

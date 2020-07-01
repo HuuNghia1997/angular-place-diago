@@ -35,6 +35,10 @@ import {
   ConfirmCommentDialogModel,
   CommentPetitionComponent,
 } from 'src/app/modules/accept-petition/dialog/comment-petition/comment-petition.component';
+import {
+  ConfirmMapDialogModel,
+  MapComponent,
+} from 'src/app/modules/accept-petition/dialog/map/map.component';
 import { SnackbarService } from './snackbar.service';
 import { query } from '@angular/animations';
 import { catchError, map } from 'rxjs/operators';
@@ -393,9 +397,9 @@ export class AcceptPetitionService {
           'success_notification'
         );
         // tslint:disable-next-line:only-arrow-functions
-        // setTimeout(function () {
-        //   window.location.reload();
-        // }, reloadTimeout);
+        setTimeout(function () {
+          window.location.reload();
+        }, reloadTimeout);
       }
       if (this.result === false) {
         this.main.openSnackBar(
@@ -541,6 +545,23 @@ export class AcceptPetitionService {
           'error_notification'
         );
       }
+    });
+  }
+
+  openMapDialog(address, center) {
+    const dialogData = new ConfirmMapDialogModel(
+      address,
+      center.longitude,
+      center.latitude
+    );
+    const dialogRef = this.dialog.open(MapComponent, {
+      minWidth: '80%',
+      data: dialogData,
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('This dialog was closed');
     });
   }
 

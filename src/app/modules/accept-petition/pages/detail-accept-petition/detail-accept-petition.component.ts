@@ -23,6 +23,8 @@ import {
   TREE_DATA,
 } from 'src/app/data/schema/accept-petition-element';
 import { BehaviorSubject } from 'rxjs';
+import { MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
+import { MapboxService } from 'src/app/data/service/mapbox.service';
 
 function readBase64(file): Promise<any> {
   const reader = new FileReader();
@@ -108,6 +110,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   status: number;
   statusDescription: string;
   tagName: string;
+  takePlaceAt: any;
   takePlaceAtFullAddress: string;
   takePlaceOn: string;
   title: string;
@@ -147,7 +150,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
     public dialog: MatDialog,
     private service: AcceptPetitionService,
     public snackBar: MatSnackBar,
-    private apiProviderService: ApiProviderService
+    private map: MapboxService
   ) {}
 
   ngOnInit(): void {
@@ -170,6 +173,8 @@ export class DetailAcceptPetitionComponent implements OnInit {
   }
 
   setViewData() {
+
+    console.log(this.response[0]);
     this.agencyName = this.response[0].agency.name;
     this.createdDate = this.response[0].createdDate;
     this.description = this.response[0].description;
@@ -198,6 +203,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.statusDescription = this.response[0].statusDescription;
     this.tagName = this.response[0].tag.name;
     this.takePlaceAtFullAddress = this.response[0].takePlaceAt.fullAddress;
+    this.takePlaceAt = this.response[0].takePlaceAt;
     this.takePlaceOn = this.response[0].takePlaceOn;
     this.title = this.response[0].title;
 
@@ -335,6 +341,10 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.service.openCommentDialog(id, name);
   }
 
+  openMapDialog(address, long, lat) {
+    this.service.openMapDialog(address, {longitude: long, latitude: lat});
+  }
+
   public fileOverBase(e: any): void {
     this.hasBaseDropZoneOver = e;
   }
@@ -357,6 +367,8 @@ export class DetailAcceptPetitionComponent implements OnInit {
       }
     });
   }
+
+
 
   getState(status: string): number {
     if (status === 'Chờ tiếp nhận') {
@@ -385,3 +397,4 @@ export class DetailAcceptPetitionComponent implements OnInit {
 
   checkFiles: boolean = false;
 }
+

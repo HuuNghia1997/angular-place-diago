@@ -531,16 +531,8 @@ export class AddPetitionComponent implements OnInit {
     this.blankVal = '';
   }
 
-  openDialogMap() {
-    const dialogRef = this.dialog.open(MapComponent, {
-      width: '80%',
-      height: '600px',
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('This dialog was closed');
-    });
+  openMapDialog(address, long, lat) {
+    this.service.openMapDialog(address, {longitude: long, latitude: lat});
   }
 }
 

@@ -310,7 +310,6 @@ export class EditPetitionComponent implements OnInit {
     this.service.getPetitionDetail(this.petitionId).subscribe(
       (data) => {
         this.response.push(data);
-        console.log(this.response);
         this.setViewData();
       },
       (err) => {
@@ -443,6 +442,10 @@ export class EditPetitionComponent implements OnInit {
       }
     }
     this.uploaded = true;
+
+    this.searchedPlace = this.response[0].takePlaceAt.fullAddress;
+    this.longitude = this.response[0].takePlaceAt.longitude;
+    this.latitude = this.response[0].takePlaceAt.latitude;
   }
 
   updatePetition(requestBody) {
@@ -461,58 +464,7 @@ export class EditPetitionComponent implements OnInit {
   }
 
   onConfirm(): void {
-    this.countDefaultImage = this.uploadedImage.length;
-    if (this.countDefaultImage > 0) {
-      if (this.files.length > 0) {
-        this.service.uploadMultiImages(this.files, this.accountId).subscribe(
-          (data: any) => {
-            data.forEach((imgInfo) => {
-              let temp = {
-                id: imgInfo.id,
-                name: imgInfo.filename,
-                group: 1,
-                updateDate: this.datepipe.transform(
-                  new Date(),
-                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                ),
-              };
-              this.uploadedImage.push(temp);
-            });
-            this.formToJSON();
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      } else {
-        this.formToJSON();
-      }
-    } else {
-      if (this.files.length > 0) {
-        this.service.uploadMultiImages(this.files, this.accountId).subscribe(
-          (data: any) => {
-            data.forEach((imgInfo) => {
-              let temp = {
-                id: imgInfo.id,
-                name: imgInfo.filename,
-                group: 1,
-                updateDate: this.datepipe.transform(
-                  new Date(),
-                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                ),
-              };
-              this.uploadedImage.push(temp);
-            });
-            this.formToJSON();
-          },
-          (error) => {
-            console.error(error);
-          }
-        );
-      } else {
-        this.formToJSON();
-      }
-    }
+    this.formToJSON();
   }
 
   formToJSON() {
@@ -645,7 +597,7 @@ export class EditPetitionComponent implements OnInit {
 
     const resultJson = JSON.stringify(formObject, null, 2);
 
-    // console.log(resultJson);
+    console.log(resultJson);
     this.updatePetition(resultJson);
   }
 
@@ -658,16 +610,8 @@ export class EditPetitionComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  openDialogMap() {
-    const dialogRef = this.dialog.open(MapComponent, {
-      width: '80%',
-      height: '600px',
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('This dialog was closed');
-    });
+  openMapDialog(address, long, lat) {
+    this.service.openMapDialog(address, {longitude: long, latitude: lat});
   }
 
   public fileOverBase(e: any): void {
@@ -756,31 +700,68 @@ export class EditPetitionComponent implements OnInit {
   }
 
   uploadImages(files) {
-    this.service
-      .uploadMultiImages(files, this.accountId)
-      .subscribe((event: HttpEvent<any>) => {
-        switch (event.type) {
-          case HttpEventType.UploadProgress:
-            this.progress = Math.round((event.loaded / event.total) * 100);
-            break;
-          case HttpEventType.Response:
-            event.body.forEach((imgInfo) => {
-              let temp = {
-                id: imgInfo.id,
-                name: imgInfo.filename,
-                group: 1,
-                updateDate: this.datepipe.transform(
-                  new Date(),
-                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                ),
-              };
-              this.uploadedImage.push(temp);
-            });
-            setTimeout(() => {
-              this.progress = 0;
-            }, 1500);
-        }
-      });
+    this.countDefaultImage = this.uploadedImage.length;
+    if (this.countDefaultImage > 0) {
+      if (files.length > 0) {
+        this.service
+          .uploadMultiImages(files, this.accountId)
+          .subscribe((event: HttpEvent<any>) => {
+            switch (event.type) {
+              case HttpEventType.UploadProgress:
+                this.progress = Math.round((event.loaded / event.total) * 100);
+                break;
+              case HttpEventType.Response:
+                console.log(event.body);
+                event.body.forEach((imgInfo) => {
+                  let temp = {
+                    id: imgInfo.id,
+                    name: imgInfo.filename,
+                    group: 1,
+                    updateDate: this.datepipe.transform(
+                      new Date(),
+                      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    ),
+                  };
+                  this.uploadedImage.push(temp);
+                });
+                setTimeout(() => {
+                  this.progress = 0;
+                }, 1500);
+            }
+          });
+      }
+    } else {
+      if (files.length > 0) {
+        this.service
+          .uploadMultiImages(files, this.accountId)
+          .subscribe((event: HttpEvent<any>) => {
+            switch (event.type) {
+              case HttpEventType.UploadProgress:
+                this.progress = Math.round((event.loaded / event.total) * 100);
+                break;
+              case HttpEventType.Response:
+                console.log(event.body);
+                event.body.forEach((imgInfo) => {
+                  let temp = {
+                    id: imgInfo.id,
+                    name: imgInfo.filename,
+                    group: 1,
+                    updateDate: this.datepipe.transform(
+                      new Date(),
+                      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    ),
+                  };
+                  this.uploadedImage.push(temp);
+                });
+                setTimeout(() => {
+                  this.progress = 0;
+                }, 1500);
+            }
+          });
+      }
+    }
+
+    // console.log(this.uploadedImage);
   }
 
   dataURItoBlob(dataURI) {

@@ -9,6 +9,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class MapboxService {
+
+
   centerPoint = [];
   private map: mapboxgl.Map;
 
@@ -27,7 +29,7 @@ export class MapboxService {
     mapboxgl.accessToken = environment.mapbox.accessToken;
   }
 
-  buildMap() {
+  buildMap(center) {
     const style = 'mapbox://styles/mapbox/streets-v11';
     const longitude = 106.3713;
     const latitude = 10.3629;
