@@ -351,11 +351,11 @@ export class AcceptPetitionService {
         );
         // tslint:disable-next-line:only-arrow-functions
 
-        // setTimeout(() => {
-        //   window.location.replace(
-        //     '/tiep-nhan-phan-anh/chi-tiet/' + data.data.id
-        //   );
-        // }, 1500);
+        setTimeout(() => {
+          window.location.replace(
+            '/tiep-nhan-phan-anh/chi-tiet/' + data.data.id
+          );
+        }, 1500);
       }
       if (data.data.id === null) {
         this.main.openSnackBar(

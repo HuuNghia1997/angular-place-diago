@@ -211,6 +211,12 @@
         </div>
       </div>
     </div>
+    <mat-progress-bar
+        class="progress"
+        mode="determinate"
+        *ngIf="progress > 0"
+        [value]="progress"
+      ></mat-progress-bar>
   </div>
 
   <mat-dialog-actions align="center">

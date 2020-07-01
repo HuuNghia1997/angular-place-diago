@@ -392,7 +392,7 @@ export class AddPetitionComponent implements OnInit {
     const resultJson = JSON.stringify(formObject, null, 2);
 
     console.log(resultJson);
-    // this.postPetition(resultJson);
+    this.postPetition(resultJson);
   }
 
   onDismiss(): void {

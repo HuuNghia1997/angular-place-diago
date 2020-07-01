@@ -23,6 +23,7 @@ import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { KeycloakService } from 'keycloak-angular';
 import { query } from '@angular/animations';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 function readBase64(file): Promise<any> {
   const reader = new FileReader();
@@ -71,6 +72,7 @@ export class EditPetitionComponent implements OnInit {
   response = [];
   accountId: string;
   username: string;
+  progress: number = 0;
 
   // Upload file
   uploaded: boolean;
@@ -395,36 +397,49 @@ export class EditPetitionComponent implements OnInit {
         let fileName = '';
         let fileNamesFull = '';
 
-        this.service.getImage(i.id).subscribe(data => {
-          const reader = new FileReader();
-          reader.addEventListener('load', () => {
-            urlResult = reader.result;
-            this.service.getImageName_Size(i.id).subscribe((data: any ) => {
-              if (data.filename.length > 20) {
-                // Tên file quá dài
-                const startText = data.filename.substr(0, 5);
-                const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
-                fileName = startText + '...' + shortText;
-                // Tên file gốc - hiển thị tooltip
-                fileNamesFull = data.filename;
-              } else {
-                fileName = data.filename;
-                fileNamesFull = data.filename;
-              }
-              this.filesInfo.push({
-                id: i,
-                url: urlResult,
-                name: fileName,
-                fullName: fileNamesFull
-              });
-            }, err => {
-              console.error(err);
-            });
-          }, false);
-          reader.readAsDataURL(data);
-        }, err => {
-          console.error(err);
-        });
+        this.service.getImage(i.id).subscribe(
+          (data) => {
+            const reader = new FileReader();
+            reader.addEventListener(
+              'load',
+              () => {
+                urlResult = reader.result;
+                this.service.getImageName_Size(i.id).subscribe(
+                  (data: any) => {
+                    if (data.filename.length > 20) {
+                      // Tên file quá dài
+                      const startText = data.filename.substr(0, 5);
+                      const shortText = data.filename.substr(
+                        data.filename.length - 7,
+                        data.filename.length
+                      );
+                      fileName = startText + '...' + shortText;
+                      // Tên file gốc - hiển thị tooltip
+                      fileNamesFull = data.filename;
+                    } else {
+                      fileName = data.filename;
+                      fileNamesFull = data.filename;
+                    }
+                    this.filesInfo.push({
+                      id: i,
+                      url: urlResult,
+                      name: fileName,
+                      fullName: fileNamesFull,
+                    });
+                  },
+                  (err) => {
+                    console.error(err);
+                  }
+                );
+              },
+              false
+            );
+            reader.readAsDataURL(data);
+          },
+          (err) => {
+            console.error(err);
+          }
+        );
       }
     }
     this.uploaded = true;
@@ -671,6 +686,9 @@ export class EditPetitionComponent implements OnInit {
   // File uploads
   onSelectFile(event) {
     let i = 0;
+    let files = [];
+    let fileImport;
+
     if (event.target.files && event.target.files[0]) {
       for (const file of event.target.files) {
         // =============================================
@@ -690,8 +708,10 @@ export class EditPetitionComponent implements OnInit {
               this.urlPreview = result;
               urlResult = result.split(',')[1];
               this.fileImport = this.convertBase64toFile(result, file.name);
+              fileImport = this.convertBase64toFile(result, file.name);
               if (this.filesInfo.length < 5) {
                 this.files.push(this.fileImport);
+                files.push(fileImport);
                 if (this.fileImport.name.length > 20) {
                   // Tên file quá dài
                   const startText = event.target.files[i].name.substr(0, 5);
@@ -729,6 +749,38 @@ export class EditPetitionComponent implements OnInit {
         i++;
       }
     }
+
+    setTimeout(() => {
+      this.uploadImages(files);
+    }, 1500);
+  }
+
+  uploadImages(files) {
+    this.service
+      .uploadMultiImages(files, this.accountId)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round((event.loaded / event.total) * 100);
+            break;
+          case HttpEventType.Response:
+            event.body.forEach((imgInfo) => {
+              let temp = {
+                id: imgInfo.id,
+                name: imgInfo.filename,
+                group: 1,
+                updateDate: this.datepipe.transform(
+                  new Date(),
+                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                ),
+              };
+              this.uploadedImage.push(temp);
+            });
+            setTimeout(() => {
+              this.progress = 0;
+            }, 1500);
+        }
+      });
   }
 
   dataURItoBlob(dataURI) {
