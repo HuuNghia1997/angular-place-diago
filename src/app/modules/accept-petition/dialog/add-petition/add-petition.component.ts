@@ -59,7 +59,7 @@ export class AddPetitionComponent implements OnInit {
     reporterFullAddress: new FormControl(''),
     reporterPlaceVillage: new FormControl(''),
     reporterPlaceTown: new FormControl(''),
-    reporterPlaceProvince: new FormControl(''),
+    reporterPlaceProvince: new FormControl(82),
     reporterLocation: new FormControl(''),
     petitionFullAddress: new FormControl(''),
     petitionLatitude: new FormControl(''),
@@ -142,6 +142,7 @@ export class AddPetitionComponent implements OnInit {
     this.getListTag();
     this.getAgency();
     this.getProvince();
+    this.getTown(82);
     this.map.currentPlace.subscribe((searchedPlace) =>
       this.addForm.controls.petitionFullAddress.setValue(searchedPlace)
     );
@@ -152,8 +153,6 @@ export class AddPetitionComponent implements OnInit {
       this.addForm.controls.petitionLongitude.setValue(longitude)
     );
   }
-
-
 
   // Lấy danh sách chuyên mục từ service
   public getListTag() {
@@ -262,43 +261,18 @@ export class AddPetitionComponent implements OnInit {
   }
 
   onConfirm(): void {
-    if (this.files.length > 0) {
-      this.service
-        .uploadMultiImages(this.files, this.accountId)
-        .subscribe((event: HttpEvent<any>) => {
-          switch (event.type) {
-            case HttpEventType.UploadProgress:
-              this.progress = Math.round((event.loaded / event.total) * 100);
-              break;
-            case HttpEventType.Response:
-              event.body.forEach((imgInfo) => {
-                let temp = {
-                  id: imgInfo.id,
-                  name: imgInfo.filename,
-                  group: 1,
-                  updateDate: this.datepipe.transform(
-                    new Date(),
-                    "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                  ),
-                };
-                this.uploadedImage.push(temp);
-              });
-              this.formToJSON();
-              setTimeout(() => {
-                this.progress = 0;
-              }, 1500);
-          }
-        });
-    } else {
-      this.formToJSON();
-    }
+    this.formToJSON();
   }
 
   formToJSON() {
     const formObject = this.addForm.getRawValue();
 
+    // if(formObject.reporterIdentityId === null) {
+    //   formObject.reporterIdentityId = "";
+    // }
     // Set Tag
     const selectedTag = formObject.tag;
+    console.log(formObject.tag);
     formObject.tag = this.tagList.find((p) => p.id == selectedTag);
     delete formObject.tag.parentId;
     delete formObject.tag.orderNumber;
@@ -314,9 +288,11 @@ export class AddPetitionComponent implements OnInit {
     );
 
     // Add agency
-    const selectedAgency = formObject.agency;
-    formObject.agency = this.agencyList.find((p) => p.id == selectedAgency);
-    delete formObject.agency.logoId;
+    if (formObject.agency !== null) {
+      const selectedAgency = formObject.agency;
+      formObject.agency = this.agencyList.find((p) => p.id == selectedAgency);
+      delete formObject.agency.logoId;
+    }
 
     // Set takePlaceAt
     formObject.takePlaceAt = {
@@ -336,12 +312,14 @@ export class AddPetitionComponent implements OnInit {
     let province = this.provinces.find(
       (p) => p.id == formObject.reporterPlaceProvince
     );
-    let town = this.towns.find(
-      (p) => p.id == formObject.reporterPlaceTown
-    );
+    let town = this.towns.find((p) => p.id == formObject.reporterPlaceTown);
     let village = this.villages.find(
       (p) => p.id == formObject.reporterPlaceVillage
     );
+
+    // if (formObject.reporterPlaceTown == '') {
+
+    // }
 
     formObject.reporter = {
       id: this.accountId[0],
@@ -414,7 +392,7 @@ export class AddPetitionComponent implements OnInit {
     const resultJson = JSON.stringify(formObject, null, 2);
 
     console.log(resultJson);
-    this.postPetition(resultJson);
+    // this.postPetition(resultJson);
   }
 
   onDismiss(): void {
@@ -436,6 +414,10 @@ export class AddPetitionComponent implements OnInit {
   // File upload
   onSelectFile(event) {
     let i = 0;
+    let urlPreview;
+    let fileImport;
+    let files = [];
+
     if (event.target.files && event.target.files[0]) {
       for (const file of event.target.files) {
         let urlNone: any;
@@ -447,13 +429,16 @@ export class AddPetitionComponent implements OnInit {
             .compressFile(urlNone, -1, 75, 50)
             .then((result) => {
               this.urlPreview = result;
+              urlPreview = result;
               this.fileImport = this.convertBase64toFile(
                 this.urlPreview,
                 file.name
               );
+              fileImport = this.convertBase64toFile(urlPreview, file.name);
               if (this.urls.length + 1 <= 5) {
                 this.urls.push(this.urlPreview);
                 this.files.push(this.fileImport);
+                files.push(fileImport);
                 if (this.fileImport.name.length > 20) {
                   // Tên file quá dài
                   const startText = event.target.files[i].name.substr(0, 5);
@@ -484,6 +469,38 @@ export class AddPetitionComponent implements OnInit {
         i++;
       }
     }
+
+    setTimeout(() => {
+      this.uploadImages(files);
+    }, 1500);
+  }
+
+  uploadImages(files) {
+    this.service
+      .uploadMultiImages(files, this.accountId)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round((event.loaded / event.total) * 100);
+            break;
+          case HttpEventType.Response:
+            event.body.forEach((imgInfo) => {
+              let temp = {
+                id: imgInfo.id,
+                name: imgInfo.filename,
+                group: 1,
+                updateDate: this.datepipe.transform(
+                  new Date(),
+                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                ),
+              };
+              this.uploadedImage.push(temp);
+            });
+            setTimeout(() => {
+              this.progress = 0;
+            }, 1500);
+        }
+      });
   }
 
   dataURItoBlob(dataURI) {

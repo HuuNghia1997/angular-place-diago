@@ -323,16 +323,16 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.service.updateRecord(id, name);
   }
 
-  deletePetition(id, name): void {
-    this.service.deleteRecord(id, name);
+  openCancelDialog(id, name): void {
+    this.service.openCancelDialog(id, name);
   }
 
-  acceptPetition(id, name): void {
-    this.service.acceptPetitionDialog(id, name);
+  openAcceptDialog(id, name): void {
+    this.service.openAcceptDialog(id, name);
   }
 
-  addComment(id, name): void {
-    this.service.addComment(id, name);
+  openCommentDialog(id, name): void {
+    this.service.openCommentDialog(id, name);
   }
 
   public fileOverBase(e: any): void {

@@ -71,26 +71,19 @@ export class DeletePetitionComponent implements OnInit {
     });
   }
 
-  cancelPetition(requestBody) {
-    this.service.cancelPetition(requestBody, this.petitionId).subscribe(
-      (data) => {
-        // Close dialog, return true
-        let result = {
-          body: requestBody,
-          data: data,
-        };
-        this.dialogRef.close(result);
-      },
-      (err) => {
-        // Close dialog, return false
-        this.dialogRef.close(false);
+  cancel(requestBody) {
+    this.service.cancel(requestBody, this.petitionId).subscribe((data) => {
+      if (data.affectedRows !== 0) {
+        return true;
       }
-    );
+    });
+
+    return false;
   }
 
   // Add comment
-  addComment(requestBody) {
-    this.service.commentPetition(requestBody);
+  comment(requestBody) {
+    this.service.comment(requestBody).subscribe();
   }
 
   onConfirm(): void {
@@ -129,8 +122,9 @@ export class DeletePetitionComponent implements OnInit {
     };
     const resultJson = JSON.stringify(commentObject, null, 2);
 
-    this.addComment(commentObject);
-    this.cancelPetition(formObject);
+    if (this.cancel(formObject)) {
+      this.comment(commentObject);
+    }
   }
 
   onDismiss(): void {

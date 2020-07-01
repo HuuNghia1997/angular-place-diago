@@ -242,8 +242,8 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
     this.service.addRecord();
   }
 
-  deleteRecord(id, name): void {
-    this.service.deleteRecord(id, name);
+  openCancelDialog(id, name): void {
+    this.service.openCancelDialog(id, name);
   }
 
   updateRecord(id, name): void {
@@ -251,6 +251,6 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
   }
 
   acceptPetition(id, name): void {
-    this.service.acceptPetitionDialog(id, name);
+    this.service.openAcceptDialog(id, name);
   }
 }

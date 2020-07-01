@@ -130,7 +130,7 @@ export class AcceptPetitionComponent implements OnInit {
 
   // Add comment
   comment(requestBody) {
-    this.service.commentPetition(requestBody);
+    this.service.comment(requestBody).subscribe();
   }
 
   setFormObject() {
@@ -180,6 +180,8 @@ export class AcceptPetitionComponent implements OnInit {
       commandType: 'StartProcessInstanceCmd',
     };
 
+    // console.log(commentObject);
+    // console.log(formObject);
     this.comment(commentObject);
     // this.postProcessInstances(processInstancesObject);
     this.acceptPetition(formObject);

@@ -191,7 +191,7 @@ export class AcceptPetitionService {
   }
 
   // Hủy tiếp nhận phản ánh
-  cancelPetition(requestBody, id) {
+  cancel(requestBody, id) {
     let headers = new HttpHeaders();
     headers = headers.append('Accept', 'application/json');
     const formData: FormData = new FormData();
@@ -205,8 +205,7 @@ export class AcceptPetitionService {
     });
   }
 
-  // Thêm bình luận
-  commentPetition(requestBody) {
+  comment(requestBody) {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     return this.http.post<any>(this.postCommentURL, requestBody, { headers });
@@ -352,9 +351,11 @@ export class AcceptPetitionService {
         );
         // tslint:disable-next-line:only-arrow-functions
 
-        setTimeout(() => {
-          window.location.replace('/tiep-nhan-phan-anh/chi-tiet/' + data.data.id);
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.replace(
+        //     '/tiep-nhan-phan-anh/chi-tiet/' + data.data.id
+        //   );
+        // }, 1500);
       }
       if (data.data.id === null) {
         this.main.openSnackBar(
@@ -408,7 +409,7 @@ export class AcceptPetitionService {
     });
   }
 
-  deleteRecord(id, name): void {
+  openCancelDialog(id, name): void {
     const dialogData = new ConfirmDeleteDialogModel('Hủy phản ánh', name, id);
     const dialogRef = this.dialog.open(DeletePetitionComponent, {
       width: '800px',
@@ -445,7 +446,7 @@ export class AcceptPetitionService {
     });
   }
 
-  acceptPetitionDialog(id, name) {
+  openAcceptDialog(id, name) {
     const dialogData = new ConfirmAcceptDialogModel(
       'Tiếp nhận phản ánh',
       name,
@@ -453,7 +454,6 @@ export class AcceptPetitionService {
     );
     const dialogRef = this.dialog.open(AcceptPetitionComponent, {
       minWidth: '80%',
-      height: '400px',
       data: dialogData,
       disableClose: true,
     });
@@ -472,7 +472,7 @@ export class AcceptPetitionService {
           reason,
           'success_notification'
         );
-        // tslint:disable-next-line: deprecation
+        // tslint:disable-next-line: deprecations
         window.location.reload(true);
       }
       if (this.result === false) {
@@ -504,7 +504,7 @@ export class AcceptPetitionService {
     });
   }
 
-  addComment(id, name): void {
+  openCommentDialog(id, name): void {
     const dialogData = new ConfirmCommentDialogModel('Thêm bình luận', id);
     const dialogRef = this.dialog.open(CommentPetitionComponent, {
       maxWidth: '80%',
@@ -528,7 +528,9 @@ export class AcceptPetitionService {
           'success_notification'
         );
         // tslint:disable-next-line:only-arrow-functions
-        window.location.reload(true);
+        // setTimeout(function () {
+        window.location.reload();
+        // }, reloadTimeout);
       }
       if (this.result === false) {
         this.main.openSnackBar(

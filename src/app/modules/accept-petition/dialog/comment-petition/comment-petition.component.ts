@@ -6,6 +6,7 @@ import {
 } from '@angular/material/dialog';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-comment-petition',
@@ -57,23 +58,8 @@ export class CommentPetitionComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  // add comment
-  addCommentPetition(requestBody) {
-    this.service.commentPetition(requestBody).subscribe(
-      (data) => {
-        // Close dialog, return true
-        let result = {
-          body: requestBody,
-          data: data,
-        };
-        this.dialogRef.close(result);
-      },
-      (err) => {
-        // Close dialog, return false
-        this.dialogRef.close(false);
-        // Call api delete file
-      }
-    );
+  comment(requestBody) {
+    this.service.comment(requestBody).subscribe();
   }
 
   onConfirm(): void {
@@ -95,7 +81,9 @@ export class CommentPetitionComponent implements OnInit {
 
     const resultJson = JSON.stringify(commentObject, null, 2);
 
-    this.addCommentPetition(resultJson);
+    // console.log(resultJson);
+
+    this.comment(resultJson);
   }
 }
 

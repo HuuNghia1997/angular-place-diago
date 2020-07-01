@@ -227,14 +227,14 @@
           </a>
         </div>
       </div>
+      <mat-progress-bar
+        class="progress"
+        mode="determinate"
+        *ngIf="progress > 0"
+        [value]="progress"
+      ></mat-progress-bar>
     </div>
   </div>
-
-  <mat-progress-bar
-    mode="determinate"
-    *ngIf="progress > 0"
-    [value]="progress"
-  ></mat-progress-bar>
 
   <mat-dialog-actions align="center">
     <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>

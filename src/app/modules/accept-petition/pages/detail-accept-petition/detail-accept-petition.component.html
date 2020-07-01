@@ -29,7 +29,7 @@
       <button
         mat-button
         class="ml-1 fs-13"
-        (click)="acceptPetition(petitionId, title)"
+        (click)="openAcceptDialog(petitionId, title)"
         [disabled]="checkAccept"
       >
         <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
@@ -40,7 +40,7 @@
       <button
         mat-button
         class="ml-1 fs-13"
-        (click)="deletePetition(petitionId, title)"
+        (click)="openCancelDialog(petitionId, title)"
         [disabled]="checkDeny"
       >
         <mat-icon fontSet="material-icons-outlined"> highlight_off </mat-icon>
@@ -201,7 +201,7 @@
               <button
                 mat-button
                 class="mt-10"
-                (click)="addComment(petitionId, title)"
+                (click)="openCommentDialog(petitionId, title)"
               >
                 <mat-icon fontSet="material-icons-outlined">
                   insert_comment
