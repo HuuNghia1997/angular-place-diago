@@ -1,32 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FileUploader } from 'ng2-file-upload';
 import { FormGroup, FormControl } from '@angular/forms';
 import { KeycloakService } from 'keycloak-angular';
 import { PetitionService } from 'src/app/data/service/petition.service';
 import * as jwt_decode from 'jwt-decode';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
-import { ImageInfo } from 'src/app/data/schema/image-info';
+import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { DatePipe } from '@angular/common';
 import { NgxImageCompressService } from 'ngx-image-compress';
-
-function readBase64(file): Promise<any> {
-  const reader  = new FileReader();
-  const future = new Promise((resolve, reject) => {
-    // tslint:disable-next-line:only-arrow-functions
-    reader.addEventListener('load', function() {
-      resolve(reader.result);
-    }, false);
-
-    // tslint:disable-next-line:only-arrow-functions
-    reader.addEventListener('error', function(event) {
-      reject(event);
-    }, false);
-
-    reader.readAsDataURL(file);
-  });
-  return future;
-}
 
 @Component({
   selector: 'app-update-result',
@@ -102,7 +83,8 @@ export class UpdateResultComponent implements OnInit {
   notificationId: string;
   accountId: string;
 
-  uploadedImage = [];
+  uploadedImage: UpdateFile[] = [];
+  type: number[] = [];
   countDefaultImage;
   listTags = [];
   itemsListTags = [];
@@ -126,37 +108,12 @@ export class UpdateResultComponent implements OnInit {
     this.petitionId = data.id;
   }
 
-  public uploader: FileUploader = new FileUploader({
-    disableMultipart: true,
-    autoUpload: true,
-    method: 'post',
-    itemAlias: 'attachment',
-    allowedFileType: ['image', 'pdf', 'doc', 'xls', 'ppt'],
-    url: ''
-  });
-  public hasBaseDropZoneOver = false;
-
   ngOnInit(): void {
     this.getRoleUser();
     this.getDetailPetition();
   }
 
-  public fileOverBase(e: any): void {
-    this.hasBaseDropZoneOver = e;
-  }
-
-  splitBase64(base64) {
-    const a = base64.split('/', 2)[0];
-    return a;
-  }
-
   onFileSelected(event: any) {
-    // const file: File = event[0];
-    // console.log(file);
-    // // tslint:disable-next-line:only-arrow-functions
-    // readBase64(file).then(function(data) {
-    //   console.log(data);
-    // });
     let i = 0;
     if (event.target.files && event.target.files[0]) {
         for (const file of event.target.files) {
@@ -190,10 +147,6 @@ export class UpdateResultComponent implements OnInit {
                     fullName: fileNamesFull
                 });
             };
-            console.log('List files: ');
-            console.log(this.files);
-            console.log('Result file: ');
-            console.log(event.target.files[i]);
             reader.readAsDataURL(event.target.files[i]);
             i++;
         }
@@ -229,11 +182,13 @@ export class UpdateResultComponent implements OnInit {
       }
       counter++;
     });
-    this.uploadedImage = this.uploadedImage.filter(item => item != id);
+    this.uploadedImage = this.uploadedImage.filter(item => item.id != id);
     this.filesInfo.splice(index, 1);
     this.files.splice(index, 1);
 
     this.blankVal = '';
+    console.log('List file còn lại: ');
+    console.log(this.files);
   }
 
   getRoleUser() {
@@ -281,22 +236,67 @@ export class UpdateResultComponent implements OnInit {
       isPublic: new FormControl(this.checkedIsPublic),
       approved: new FormControl(this.checkedIsApproved)
     });
+
+    this.uploadedImage = this.petition[0].processVariables.petitionData.file;
+
+    this.countDefaultImage = this.uploadedImage.length;
+
+    if (this.petition[0].processVariables.petitionData.file.length > 0) {
+      for (const i of this.petition[0].processVariables.petitionData.file) {
+        let urlResult: any;
+        let fileName = '';
+        let fileNamesFull = '';
+
+        this.service.getFile(i.id).subscribe(data => {
+          const reader = new FileReader();
+          reader.addEventListener('load', () => {
+            urlResult = reader.result;
+            this.service.getFileName_Size(i.id).subscribe((data: any ) => {
+              if (data.filename.length > 20) {
+                // Tên file quá dài
+                const startText = data.filename.substr(0, 5);
+                const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                fileName = startText + '...' + shortText;
+                // Tên file gốc - hiển thị tooltip
+                fileNamesFull = data.filename;
+              } else {
+                fileName = data.filename;
+                fileNamesFull = data.filename;
+              }
+              this.filesInfo.push({
+                id: i,
+                url: urlResult,
+                name: fileName,
+                fullName: fileNamesFull
+              });
+            }, err => {
+              console.error(err);
+            });
+          }, false);
+          reader.readAsDataURL(data);
+        }, err => {
+          console.error(err);
+        });
+      }
+    }
+    this.uploaded = true;
   }
 
   getDetailPetition() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       this.petition.push(data.list.entries[0].entry);
       this.setViewData();
-      this.processInstanceId = this.petition[0].processVariables.petitionData.processInstanceId;
     });
   }
 
   updateResult(requestBody) {
-    this.service.postVariable(this.processInstanceId, requestBody).subscribe(res => {
-      this.dialogRef.close(true);
-    }, err => {
-      this.dialogRef.close(false);
-      console.error(err);
+    this.service.getDetailPetition(this.petitionId).subscribe(data => {
+      this.service.postVariable(data.list.entries[0].entry.processInstanceId, requestBody).subscribe(res => {
+        this.dialogRef.close(true);
+      }, err => {
+        this.dialogRef.close(false);
+        console.error(err);
+      });
     });
   }
 
@@ -313,7 +313,6 @@ export class UpdateResultComponent implements OnInit {
     formObj.variables.petitionData.confirm = this.petition[0].processVariables.confirm;
     formObj.variables.petitionData.workflow = this.petition[0].processVariables.petitionData.workflow;
     formObj.variables.petitionData.tag = this.petition[0].processVariables.petitionData.tag;
-    formObj.variables.petitionData.file = this.petition[0].processVariables.petitionData.file;
 
     formObj.variables.petitionData.reporter  = this.petition[0].processVariables.petitionData.reporter;
     formObj.variables.petitionData.thumbnailId = this.petition[0].processVariables.petitionData.thumbnailId;
@@ -324,6 +323,8 @@ export class UpdateResultComponent implements OnInit {
     formObj.variables.petitionData.deploymentId = this.petition[0].processVariables.petitionData.deploymentId;
     formObj.variables.petitionData.agency = this.petition[0].processVariables.petitionData.agency;
     formObj.variables.petitionData.receptionMethod = this.petition[0].processVariables.petitionData.receptionMethod;
+
+    formObj.variables.petitionData.file = this.uploadedImage;
 
     const a = this.result.getRawValue();
     formObj.variables.petitionData.result.content = a.content;
@@ -343,7 +344,7 @@ export class UpdateResultComponent implements OnInit {
 
     const resultJSON = JSON.stringify(formObj, null, 2);
     // console.log(resultJSON);
-    // this.updateResult(resultJSON);
+    this.updateResult(resultJSON);
   }
 
   onSubmit() {
@@ -351,7 +352,45 @@ export class UpdateResultComponent implements OnInit {
       this.token = this.keycloak.getKeycloakInstance().token;
       this.decodeToken(this.token);
       this.petition.push(data.list.entries[0].entry);
-      this.formToJson();
+
+      this.keycloak.loadUserProfile().then(user => {
+        // tslint:disable-next-line: no-string-literal
+        this.accountId = user['attributes'].user_id;
+        this.countDefaultImage = this.uploadedImage.length;
+        if (this.countDefaultImage > 0) {
+          if (this.files.length > 0) {
+            this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+              this.uploadedImage = file;
+              const size = file.length;
+              for (let i = 0; i < size; i++) {
+                this.type.push(3);
+                this.uploadedImage[i].group = this.type;
+                this.uploadedImage[i].name = file[i].filename;
+                this.type = [];
+              }
+              this.formToJson();
+            });
+          } else {
+            this.formToJson();
+          }
+        } else {
+          if (this.files.length > 0) {
+            this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+              this.uploadedImage = file;
+              const size = file.length;
+              for (let i = 0; i < size; i++) {
+                this.type.push(3);
+                this.uploadedImage[i].group = this.type;
+                this.uploadedImage[i].name = file[i].filename;
+                this.type = [];
+              }
+              this.formToJson();
+            });
+          } else {
+            this.formToJson();
+          }
+        }
+      });
     }, err => {
       if (err.status === 401) {
         this.keycloak.login();

@@ -158,13 +158,11 @@ input, textarea, mat-select {
   stroke: #1976D2 !important;
 }
 
-
-
-
 .img_uploaded {
   border: 1px solid #9e9e9e96;
   border-style: dashed;
 }
+
 .drag_upload_btn {
   position: relative;
   overflow: hidden;
@@ -177,26 +175,66 @@ input, textarea, mat-select {
   cursor: pointer;
   z-index: 4;
 }
+
+.drag_upload_btn button {
+  width: 100%;
+  padding: 5em;
+}
+
+.drag_upload_btn button a {
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.drag_upload_btn button a:hover {
+  color: #2196F3;
+}
+
+.drag_upload_btn button a:visited {
+  color: #2196F3;
+}
+
+.drag_upload_btn input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  height: 100%;
+  cursor: pointer;
+}
+
 .no_boder {
   border: none;
 }
+
 .btn_uploaded {
   padding: 1em !important;
 }
+
 .clear_img_queue {
   padding: 5em !important;
 }
+
+.img_uploaded {
+  border: 1px solid #9e9e9e96;
+  border-style: dashed;
+}
+
 .image_drag_upload_preview {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
 }
+
 .list_uploaded {
   height: 200px;
   width: 24%;
   margin: 0 0.5% 5em 0.5%;
   background-color: #44444450;
 }
+
 .img_items {
   width: 100%;
   height: 100%;
@@ -204,9 +242,11 @@ input, textarea, mat-select {
   background-repeat: no-repeat;
   background-size: 120%;
 }
+
 .img_control {
   width: 100%;
 }
+
 .file_name {
   font-style: medium;
   font-weight: normal;
@@ -215,7 +255,26 @@ input, textarea, mat-select {
   color: #2196F3;
   float: left;
 }
+
 .delete_img {
   float: right;
   color: rgba(0, 0, 0, 0.54);
+}
+
+.icon {
+  font-size: 20px;
+}
+
+.primary-blue-btn {
+  background-color: #1976D2;
+  color: #fff;
+}
+
+.btn-cancel {
+  border: 1px solid #333333;
+}
+
+.btn-cancel:focus {
+  background-color: #ffffff;
+  display: none;
 }

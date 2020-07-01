@@ -4,3 +4,12 @@ export interface ImageInfo {
   name: string;
   fullName: string;
 }
+
+export interface UpdateFile {
+  id: any;
+  filename: string;
+  name: string;
+  size: any;
+  group: number[];
+}
+
