@@ -186,3 +186,36 @@ input, textarea, mat-select {
 .clear_img_queue {
   padding: 5em !important;
 }
+.image_drag_upload_preview {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.list_uploaded {
+  height: 200px;
+  width: 24%;
+  margin: 0 0.5% 5em 0.5%;
+  background-color: #44444450;
+}
+.img_items {
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 120%;
+}
+.img_control {
+  width: 100%;
+}
+.file_name {
+  font-style: medium;
+  font-weight: normal;
+  margin-left: .5em;
+  margin-top: .9em;
+  color: #2196F3;
+  float: left;
+}
+.delete_img {
+  float: right;
+  color: rgba(0, 0, 0, 0.54);
+}

@@ -159,59 +159,44 @@ export class UpdateResultComponent implements OnInit {
     // });
     let i = 0;
     if (event.target.files && event.target.files[0]) {
-      for (const file of event.target.files) {
-        // =============================================
-        let urlNone: any;
-        let urlResult: any;
-        let fileName = '';
-        let fileNamesFull = '';
-        // this.uploadedFile.push(file);
-        // console.log(this.uploadedFile);
-        // =============================================
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.uploaded = true;
-          urlNone = eventLoad.target.result;
-          this.files.push(urlNone);
-          // this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
-          //   this.urlPreview = result;
-          //   urlResult = result.split(',')[1];
-          //   this.fileImport = this.convertBase64toFile(result, file.name);
-          //   if (this.filesInfo.length < 10) {
-          //     this.files.push(this.fileImport);
+        for (const file of event.target.files) {
+            // =============================================
+            let urlResult: any;
+            let fileName = '';
+            let fileNamesFull = '';
 
-          //     if (this.fileImport.name.length > 20) {
-          //       // Tên file quá dài
-          //       const startText = event.target.files[i].name.substr(0, 5);
-          //       // tslint:disable-next-line:max-line-length
-          //       const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
-          //                                                               event.target.files[i].name.length);
-          //       fileName = startText + '...' + shortText;
-          //       // Tên file gốc - hiển thị tooltip
-          //       fileNamesFull = event.target.files[i].name;
-          //     } else {
-          //       fileName = this.fileImport.name;
-          //       fileNamesFull = this.fileImport.name ;
-          //     }
-
-          //     this.filesInfo.push({
-          //       id: i,
-          //       url: this.urlPreview,
-          //       name: fileName,
-          //       fullName: fileNamesFull
-          //     });
-          //   } else {
-          //     this.snackbar.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
-          //   }
-          // });
-        };
-        console.log('List files: ');
-        console.log(this.files);
-        console.log('Result file: ');
-        console.log(event.target.files[i]);
-        reader.readAsDataURL(event.target.files[i]);
-        i++;
-      }
+            // =============================================
+            this.files.push(file);
+            const reader = new FileReader();
+            reader.onload = (eventLoad) => {
+                this.uploaded = true;
+                urlResult = eventLoad.target.result;
+                if (file.name.length > 20) {
+                    // Tên file quá dài
+                    const startText = event.target.files[i].name.substr(0, 5);
+                    // tslint:disable-next-line:max-line-length
+                    const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
+                    fileName = startText + '...' + shortText;
+                    // Tên file gốc - hiển thị tooltip
+                    fileNamesFull = event.target.files[i].name;
+                } else {
+                    fileName = file.name;
+                    fileNamesFull = file.name ;
+                }
+                this.filesInfo.push( {
+                    id: i,
+                    url: urlResult,
+                    name: fileName,
+                    fullName: fileNamesFull
+                });
+            };
+            console.log('List files: ');
+            console.log(this.files);
+            console.log('Result file: ');
+            console.log(event.target.files[i]);
+            reader.readAsDataURL(event.target.files[i]);
+            i++;
+        }
     }
   }
 
