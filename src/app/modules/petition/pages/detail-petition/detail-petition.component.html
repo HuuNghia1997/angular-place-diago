@@ -311,12 +311,12 @@
           <table [ngClass]="resultPetition === undefined ? 'd-none' : 'table-result'">
             <tr>
               <td class="td-1 width-40"> Ngày có kết quả: </td>
-              <td class="td-2 width-60">  </td>
+              <td class="td-2 width-60"> {{ resultDatePublic | date : 'dd/MM/yyyy HH:mm:ss' }} </td>
             </tr>
             <tr>
               <td class="td-1 width-40"> Công khai: </td>
               <td class="td-2 width-60">
-                <button class="btn-public">  </button>
+                <span [ngClass]="resultIsPublic === false ? 'btn-none-public' : 'btn-public'"> {{ getPublic(resultIsPublic) }} </span>
               </td>
             </tr>
           </table>
@@ -325,8 +325,7 @@
             <tr class="td-1"> Nội dung: </tr>
             <tr class="td-2">
               <span [class.overflow]="isExpand" [ngClass]="(isExpand === true ? 'overflow' : 'show-content')">
-                Kính gửi ông/ bà, phản ánh của ông/ bà đã được xử lý xong. Kính gửi ông/bà, phản ánh của ông/bà đã được xử lý xong.
-                Thủ trưởng cơ quan hành chính nhà nước có trách nhiệm tổ chức công khai kết quả xử lý phản ánh, kiến nghị của cá nhân, tổ chức về quy định hành chính. Việc công khai được thực hiện thông qua một hoặc nhiều hình thức.
+                {{ resultContent }}
               </span>
               <a [ngClass]="(isExpand === true ? 'see-more' : 'hidden-see-more')" (click)="isExpandToggle()"> Xem thêm </a>
             </tr>

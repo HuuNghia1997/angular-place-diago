@@ -157,3 +157,32 @@ input, textarea, mat-select {
 ::ng-deep .mat-checkbox-checkmark-path {
   stroke: #1976D2 !important;
 }
+
+
+
+
+.img_uploaded {
+  border: 1px solid #9e9e9e96;
+  border-style: dashed;
+}
+.drag_upload_btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  align-self: center;
+  border: 1px solid #9e9e9e96;
+  border-style: dashed;
+  cursor: pointer;
+  z-index: 4;
+}
+.no_boder {
+  border: none;
+}
+.btn_uploaded {
+  padding: 1em !important;
+}
+.clear_img_queue {
+  padding: 5em !important;
+}

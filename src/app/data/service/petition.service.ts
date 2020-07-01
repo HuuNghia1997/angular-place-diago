@@ -12,6 +12,8 @@ import { reloadTimeout } from './config.service';
 import { SnackbarService } from './snackbar.service';
 import { ConfirmationCompletedPetitionDialogModel, ConfirmationCompletedComponent } from 'src/app/modules/petition/dialog/confirmation-completed/confirmation-completed.component';
 import { ConfirmUpdateResultDialogModel, UpdateResultComponent } from 'src/app/modules/petition/dialog/update-result/update-result.component';
+import { title } from 'process';
+import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Injectable({
   providedIn: 'root'
@@ -46,15 +48,56 @@ export class PetitionService {
     return this.http.get<any>(this.getPlaceUrl + nationId + '&parent-type-id=' + districtTypeId + '&parent-id=' + provinceId);
   }
 
-  getPetitionList(): Observable<any> {
-    return this.http.get<any>(this.getPetitionUrl);
+  getPetitionList(page, size, paged): Observable<any> {
+    return this.http.get<any>(this.getPetitionUrl + '?size=' + size + '&paged=' + paged + '&page=' + page);
+  }
+
+  search(page, paged, size, name, place, categoryId, receptionMethodId, fromDate, toDate): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    headers = headers.append('Accept', '*/*');
+    const query = {
+      processVariables:
+      {
+        title: {
+          $likeic: '%25' + name + '%25'
+        },
+        takePlaceAddress: {
+          $likeic: '%25' + place + '%25'
+        },
+        category: categoryId,
+        receptionMethod: receptionMethodId,
+        creatDate: {
+          $and: [
+            {
+              $gte: fromDate
+            },
+            {
+              $lte: toDate
+            }
+          ]
+        }
+      }
+    };
+    console.log(JSON.stringify(query));
+    const body = new HttpParams().set('query', decodeURIComponent(JSON.stringify(query)))
+                                .set('page', page)
+                                .set('paged', paged)
+                                .set('size', size);
+    // console.log(this.getPetitionUrl, { params: body, headers });
+    return this.http.get<any>(this.getPetitionUrl, { params: body, headers });
   }
 
   getDetailPetition(id): Observable<any> {
     let headers = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
     headers = headers.append('Accept', '*/*');
-    const query = { processVariables: { petitionId: id }};
+    const query = {
+      processVariables:
+      {
+        petitionId: id
+      }
+    };
     const body = new HttpParams().set('query', decodeURIComponent(JSON.stringify(query)));
     return this.http.get<any>(this.getPetitionUrl, { params: body, headers });
   }
@@ -83,7 +126,7 @@ export class PetitionService {
   }
 
   getNextFlow(taskId) {
-    return this.http.get<any>(this.nextFlowUrl + taskId + '/--next-flow-element?level=2');
+    return this.http.get<any>(this.nextFlowUrl + taskId + '/--check-gateway');
   }
 
   // Cập nhật phản ánh & cập nhật kết quả

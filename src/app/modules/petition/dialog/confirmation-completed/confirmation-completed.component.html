@@ -1,33 +1,37 @@
 <div mat-dialog-title class="fw-500"> Xác nhận hoàn thành </div>
 
-<!-- <form [formGroup]="body">
-  <form [formControl]="variables"> -->
-    <!-- <div *ngIf="exclusive === true">
-      <mat-radio-group *ngFor='let flow of outGoingFlow' [(ngModel)]="checkedStep1"
-                        (ngModelChange)="setValue(flow.name)" [formControlName]="splitString(flow.conditionExpression)">
-        <mat-radio-button value="{{ flow.conditionExpression }}" class="mt-10"> {{ flow.name }} </mat-radio-button>
-        <br/>
-      </mat-radio-group>
-    </div> -->
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+    <button mat-icon-button disabled></button>
+    <mat-checkbox *ngIf="node.gatewayType != 1" class="checklist-leaf-node"
+                  [checked]="checklistSelection.isSelected(node)"
+                  (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
+    <mat-checkbox *ngIf="node.gatewayType == 1" class="checklist-leaf-node"
+                  [checked]="checklistSelection.isSelected(node)"
+                  (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
+  </mat-tree-node>
 
-    <div *ngIf="exclusive === true">
-      <section *ngFor='let flow of outGoingFlow'>
-        <mat-checkbox
-                      (change)="getCheckboxes($event, flow.conditionExpression)">
-          {{ flow.name }}
-        </mat-checkbox>
-        <br>
-        <div class="mt-10"></div>
-      </section>
-    </div>
+  <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+    <button mat-icon-button matTreeNodeToggle
+            [attr.aria-label]="'toggle ' + node.filename">
+      <mat-icon class="mat-icon-rtl-mirror">
+        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+      </mat-icon>
+    </button>
 
-    <br/>
+    <mat-checkbox  *ngIf="node.gatewayType == 1"
+                  [checked]="checklistSelection.isSelected(node)"
+                  [indeterminate]="descendantsPartiallySelected(node)"
+                  (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
+    <mat-checkbox  *ngIf="node.gatewayType != 1"
+                  [checked]="checklistSelection.isSelected(node)"
+                  [indeterminate]="descendantsPartiallySelected(node)"
+                  (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
+  </mat-tree-node>
+</mat-tree>
 
-  <!-- </form> -->
-
-  <mat-dialog-actions class="align-right">
-    <button mat-button class="btn-cancel" (click)="onDismiss()"> Hủy bỏ </button>
-    <button mat-button class="btn-update"> Đồng ý </button>
-  </mat-dialog-actions>
-<!-- </form> -->
+<mat-dialog-actions class="align-right">
+  <button mat-button class="btn-cancel" (click)="onDismiss()"> Hủy bỏ </button>
+  <button mat-button class="btn-update"  (click)="itemClick()"> Đồng ý </button>
+</mat-dialog-actions>
 

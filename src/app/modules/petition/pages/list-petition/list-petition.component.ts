@@ -3,7 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
-import { PetitionElement, PETITION_DATA} from 'src/app/data/schema/petition-element';
+import { PetitionElement } from 'src/app/data/schema/petition-element';
 import { PICK_FORMATS, pageSizeOptions, reloadTimeout } from 'src/app/data/service/config.service';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
@@ -37,7 +37,7 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
   totalElements: number;
   totalPages: number;
   selectedPageSize: number;
-  currentPage: number;
+  currentPage = 0;
   categoryId = '3';
   listTags = [];
   lengthPetition: number;
@@ -178,40 +178,7 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     let searchString = 'page=' + page;
     searchString = searchString + '&size=' + pageSize;
 
-    formObj.startDate = this.datepipe.transform(formObj.startDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
-    formObj.endDate = this.datepipe.transform(formObj.endDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
-
-    if (formObj.name != null ) {
-      searchString = searchString + '&name=' + formObj.name;
-    }
-
-    if (formObj.tag != null ) {
-      for (const i of formObj.tag) {
-        searchString = searchString + '&tag-id=' + i;
-      }
-    }
-
-    if (formObj.status != null) {
-      searchString = searchString + '&status=' + formObj.status;
-    }
-
-    if (formObj.startDate != null) {
-      formObj.startDate = formObj.startDate.replace('+', '%2B');
-    }
-
-    if (formObj.endDate != null) {
-      formObj.endDate = formObj.endDate.replace('+', '%2B');
-    }
-
-    if (formObj.startDate != null) {
-      searchString = searchString + '&start-date=' + formObj.startDate;
-    }
-
-    if (formObj.startDate != null) {
-      searchString = searchString + '&end-date=' + formObj.endDate;
-    }
-
-    this.service.getPetitionList().subscribe(data => {
+    this.service.getPetitionList(page, pageSize, true).subscribe(data => {
       this.ELEMENT_DATA = [];
       const size = data.list.entries.length;
       for (let i = 0; i < size; i++) {
@@ -222,9 +189,9 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
       console.log(this.ELEMENT_DATA);
       this.dataSource.data = this.ELEMENT_DATA;
       this.dataSource.paginator.pageSize = pageSize;
-      this.totalElements = data.totalElements;
-      this.currentPage = data.number;
-      this.totalPages = data.totalPages;
+      this.totalElements = data.list.pagination.totalItems;
+      const totalPage = data.list.pagination.totalItems / pageSize;
+      this.totalPages = Math.ceil(totalPage);
       this.selectedPageSize = pageSize;
 
       this.resetPageSize();
@@ -234,6 +201,19 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
       }
     });
     searchString = '';
+  }
+
+  searchTest() {
+    const title = 'test';
+    const place = '';
+    const receptionMethod = 1;
+    const category = 1;
+    const fromDate = '2020-06-26T06:39:13.079+0000';
+    const toDate = '2020-06-30T03:43:20.110+0000';
+
+    this.service.search(0, true, pageSizeOptions[1], title, place, category, receptionMethod, fromDate, toDate).subscribe(res => {
+      console.log(res);
+    });
   }
 
   getStatus(status: string) {

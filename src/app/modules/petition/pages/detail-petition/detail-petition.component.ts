@@ -67,10 +67,12 @@ export class DetailPetitionComponent implements OnInit {
   reporterType: number;
   reporterAddress: string;
   reporterPlace: any;
-
   taskName: string;
   processPublic: boolean;
   resultPetition: any;
+  resultIsPublic: boolean;
+  resultDatePublic: string;
+  resultContent: string;
 
   filesInfo: ImageInfo[] = [];
 
@@ -134,48 +136,17 @@ export class DetailPetitionComponent implements OnInit {
     this.reporterAddress = this.petition[0].processVariables.petitionData.reporter.address.address + ',';
     this.reporterPlace = this.petition[0].processVariables.petitionData.reporter.address.place;
     this.processPublic = this.petition[0].processVariables.petitionData.isPublic;
-    this.resultPetition = this.petition[0].processVariables.petitionData.result;
     this.taskName = this.petition[0].name;
 
-    // if (this.petition[0].processVariables.petitionData.file.length > 0) {
-    //   console.log(this.petition[0].processVariables.petitionData.file);
-    //   this.petition[0].processVariables.petitionData.file.forEach(file => {
-    //     let urlResult: any;
-    //     let fileName = '';
-    //     let fileNamesFull = '';
-
-    //     this.service.getFile(file.id).subscribe(data => {
-    //       const reader = new FileReader();
-    //       reader.addEventListener('load', () => {
-    //         urlResult = reader.result;
-    //         this.service.getFileName_Size(file.id).subscribe((data: any ) => {
-    //           if (data.filename.length > 20) {
-    //             // Tên file quá dài
-    //             const startText = data.filename.substr(0, 5);
-    //             const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
-    //             fileName = startText + '...' + shortText;
-    //             // Tên file gốc - hiển thị tooltip
-    //             fileNamesFull = data.filename;
-    //           } else {
-    //             fileName = data.filename;
-    //             fileNamesFull = data.filename;
-    //           }
-    //           this.filesInfo.push({
-    //             id: file.id,
-    //             url: urlResult,
-    //             name: fileName,
-    //             fullName: fileNamesFull
-    //           });
-    //         }, err => {
-    //           console.error(err);
-    //         });
-    //       }, false);
-    //       reader.readAsDataURL(data);
-    //     }, err => {
-    //       console.error(err);
-    //     });
-    //   });
-    // }
+    this.resultPetition = this.petition[0].processVariables.petitionData.result;
+    if (this.resultPetition !== undefined) {
+      this.resultIsPublic = this.petition[0].processVariables.petitionData.result.isPublic;
+      this.resultDatePublic = this.petition[0].processVariables.petitionData.result.date;
+      this.resultContent = this.petition[0].processVariables.petitionData.result.content;
+      // resultIsPublic: boolean;
+      // resultDatePublic: string;
+      // resultContent: string;
+    }
   }
 
   getHistory() {

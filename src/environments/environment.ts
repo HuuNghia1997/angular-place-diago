@@ -65,6 +65,7 @@ export const environment = {
     accessToken:
       'pk.eyJ1IjoibW5oYWktbWFwYm94IiwiYSI6ImNrYmlvZ3d5bjBmdzcyem5xcWhnaDFrYjIifQ.tdsFG-l6QwZeKXDtO_r99g',
   },
+  provinceDefaultId: 82,
 };
 
 /*

@@ -5,8 +5,8 @@ import { PICK_FORMATS } from 'src/app/data/service/config.service';
 import { NgxMatDateAdapter, NGX_MAT_DATE_FORMATS } from '@angular-material-components/datetime-picker';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { PetitionService } from 'src/app/data/service/petition.service';
-import { KeycloakService } from 'keycloak-angular';
 import { DatePipe } from '@angular/common';
+import { environment } from 'env/environment';
 
 @Component({
   selector: 'app-update-petition',
@@ -118,50 +118,68 @@ export class UpdatePetitionComponent implements OnInit {
   selectDistrict = false;
   place = [];
 
+  listTypeReporter = [
+    { id: 1, name: 'Cá nhân' },
+    { id: 2, name: 'Tổ chức' },
+    { id: 3, name: 'Khác' }
+  ];
+
   constructor(public dialogRef: MatDialogRef<UpdatePetitionComponent>,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdatePetitionDialogModel,
               private service: PetitionService,
-              public datepipe: DatePipe,
-              private keycloak: KeycloakService) {
+              public datepipe: DatePipe) {
     this.petitionId = data.id;
   }
 
   ngOnInit(): void {
     this.getDetailPetition();
-    console.log(this.petitionId);
-    console.log(this.processInstanceId);
     this.getProvince();
   }
 
-  getProvince() {
+  public getProvince() {
     this.service.getProvince(this.nationId, this.provinceTypeId).subscribe(data => {
-      const size = data.length;
-      for (let i = 0; i < size; i++) {
-        this.listProvince.push(data[i]);
-      }
+      data.forEach((item) => {
+        this.listProvince.push(item);
+      });
+    });
+    console.log(this.listProvince);
+  }
+
+  public getDistrict(provinceId) {
+    this.resetListDistrict();
+    this.resetListCommue();
+    this.service.getDistrict(this.nationId, this.districtTypeId, provinceId).subscribe(data => {
+      data.forEach((item) => {
+        this.listDistrict.push(item);
+      });
     });
   }
 
-  getProvinceId(data) {
-    this.provinceId = data;
-    this.selectProvince = true;
-    this.service.getDistrict(this.nationId, this.districtTypeId, this.provinceId).subscribe(info => {
-      const size = info.length;
-      for (let i = 0; i < size; i++) {
-        this.listDistrict.push(info[i]);
-      }
+  public getCommue(districtId) {
+    this.resetListCommue();
+    this.service.getDistrict(this.nationId, this.commueTypeId, districtId).subscribe(data => {
+      data.forEach((item) => {
+        this.listCommue.push(item);
+      });
     });
   }
 
-  getDistrictId(data) {
-    this.districtId = data;
-    this.selectDistrict = true;
-    this.service.getDistrict(this.nationId, this.commueTypeId, this.districtId).subscribe(info => {
-      const size = info.length;
-      for (let i = 0; i < size; i++) {
-        this.listCommue.push(info[i]);
-      }
-    });
+  setValueDistrict() {
+    console.log(this.update.controls.province.value);
+    this.getDistrict(this.update.controls.province.value);
+  }
+
+  setValueCommue() {
+    console.log(this.update.controls.district.value);
+    this.getCommue(this.update.controls.district.value);
+  }
+
+  resetListDistrict() {
+    this.listDistrict = [];
+  }
+
+  resetListCommue() {
+    this.listCommue = [];
   }
 
   onDismiss(): void {
@@ -170,10 +188,10 @@ export class UpdatePetitionComponent implements OnInit {
   }
 
   setViewData() {
-    if (this.petition[0].processVariables.petitionData.result.isPublic === true) {
-      this.checkedIsPublic = true;
-    } else {
+    if (this.petition[0].processVariables.petitionData.result.isPublic === false) {
       this.checkedIsPublic = false;
+    } else {
+      this.checkedIsPublic = true;
     }
 
     let takePlaceOnControl = new FormControl();
@@ -181,23 +199,12 @@ export class UpdatePetitionComponent implements OnInit {
     if (this.petition[0].processVariables.petitionData.takePlaceOn != null) {
       takePlaceOnControl = new FormControl(new Date(this.petition[0].processVariables.petitionData.takePlaceOn));
     }
-    let positionCommue: string;
-    let positionDistrict: string;
-    let positionProvince: string;
-    this.petition[0].processVariables.petitionData.reporter.address.place.forEach((place, index) => {
-      if (place.typeId === 3) {
-        positionCommue = index;
-      } else {
-        if (place.typeId === 2) {
-          positionDistrict = index;
-        } else {
-          positionProvince = index;
-        }
-      }
-    });
-    // console.log(this.petition[0].processVariables.petitionData.reporter.address.place[positionCommue].id);
-    // console.log(this.petition[0].processVariables.petitionData.reporter.address.place[positionDistrict].id);
-    // console.log(this.petition[0].processVariables.petitionData.reporter.address.place[positionProvince].id);
+    let provinceView: any;
+    if (this.petition[0].processVariables.petitionData.reporter.address.place[2].id === '') {
+      provinceView = environment.provinceDefaultId;
+    } else {
+      provinceView = this.petition[0].processVariables.petitionData.reporter.address.place[2].id;
+    }
 
     this.update = new FormGroup({
       title: new FormControl(this.petition[0].processVariables.title),
@@ -210,27 +217,39 @@ export class UpdatePetitionComponent implements OnInit {
       identityId: new FormControl(this.petition[0].processVariables.petitionData.reporter.identityId),
       address: new FormControl(this.petition[0].processVariables.petitionData.reporter.address.address),
       type: new FormControl('' + this.petition[0].processVariables.petitionData.reporter.type),
-      commue: new FormControl('' + this.petition[0].processVariables.petitionData.reporter.address.place[positionCommue].id),
-      district: new FormControl('' + this.petition[0].processVariables.petitionData.reporter.address.place[positionDistrict].id),
-      province: new FormControl('' + this.petition[0].processVariables.petitionData.reporter.address.place[positionProvince].id)
+      province: new FormControl('' + provinceView),
+      district: new FormControl('' +
+        this.petition[0].processVariables.petitionData.reporter.address.place[1].id
+      ),
+      commue: new FormControl('' +
+        this.petition[0].processVariables.petitionData.reporter.address.place[0].id
+      )
     });
+    const idProvince = this.petition[0].processVariables.petitionData.reporter.address.place[2].id;
+    console.log(idProvince);
+    const idDistrict = this.petition[0].processVariables.petitionData.reporter.address.place[1].id;
+    console.log(idDistrict);
+    const idCommue = this.petition[0].processVariables.petitionData.reporter.address.place[0].id;
+    this.getDistrict(idProvince);
+    this.getCommue(idDistrict);
   }
 
   getDetailPetition() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       this.petition.push(data.list.entries[0].entry);
-      console.log(this.petition);
       this.setViewData();
-      this.processInstanceId = this.petition[0].processVariables.petitionData.processInstanceId;
     });
   }
 
   updateResult(requestBody) {
-    this.service.postVariable(this.processInstanceId, requestBody).subscribe(res => {
-      this.dialogRef.close(true);
-    }, err => {
-      this.dialogRef.close(false);
-      console.error(err);
+    this.service.getDetailPetition(this.petitionId).subscribe(data => {
+      console.log(data.list.entries[0].entry.processInstanceId);
+      this.service.postVariable(data.list.entries[0].entry.processInstanceId, requestBody).subscribe(res => {
+        this.dialogRef.close(true);
+      }, err => {
+        this.dialogRef.close(false);
+        console.error(err);
+      });
     });
   }
 
@@ -269,17 +288,52 @@ export class UpdatePetitionComponent implements OnInit {
     formObj.variables.petitionData.reporter.fullname = a.name;
     formObj.variables.petitionData.reporter.phone = a.phone;
     formObj.variables.petitionData.reporter.identityId = a.identityId;
-    formObj.variables.petitionData.reporter.type = a.type;
+    // tslint:disable-next-line: no-construct
+    const type = new Number(a.type);
+    formObj.variables.petitionData.reporter.type = type;
     formObj.variables.petitionData.reporter.address.address = a.address;
-    // formObj.variables.petitionData.reporter.address.place = a.address;
+
+    let province = {
+      id: 1,
+      typeId: 1,
+      name: ''
+    };
+    const selectedProvince = a.province;
+    a.province = this.listProvince.find(p => p.id == selectedProvince);
+    province = a.province;
+    province.typeId = 1;
+
+    let district = {
+      id: 1,
+      typeId: 2,
+      name: ''
+    };
+    const selectedDistrict = a.district;
+    a.district = this.listDistrict.find(p => p.id == selectedDistrict);
+    district = a.district;
+    district.typeId = 2;
+
+    let commue = {
+      id: 1,
+      typeId: 3,
+      name: ''
+    };
+    const selectedCommue = a.commue;
+    a.commue = this.listCommue.find(p => p.id == selectedCommue);
+    commue = a.commue;
+    commue.typeId = 3;
+    this.place.push(commue);
+    this.place.push(district);
+    this.place.push(province);
+
+    formObj.variables.petitionData.reporter.address.place = this.place;
 
     formObj.variables.petitionData.result = this.petition[0].processVariables.petitionData.result;
 
     formObj.payloadType = 'SetProcessVariablesPayload';
 
     const resultJSON = JSON.stringify(formObj, null, 2);
-    console.log(resultJSON);
-    // this.updateResult(resultJSON);
+    this.updateResult(resultJSON);
   }
 
   onSubmit() {

@@ -70,35 +70,42 @@
     <mat-form-field appearance="outline" class="short-input ml-2">
       <mat-label> Đối tượng </mat-label>
       <mat-select formControlName="type">
-        <mat-option value="1"> Cá nhân </mat-option>
-        <mat-option value="2"> Tổ chức </mat-option>
-        <mat-option value="3"> Khác </mat-option>
+        <mat-option *ngFor='let list of listTypeReporter'
+                    value="{{ list.id }}">
+          {{ list.name }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <!-- Phường xã -->
+    <!-- Tỉnh thành -->
     <mat-form-field appearance="outline" class="short-input">
-      <mat-label> Phường xã </mat-label>
-      <mat-select formControlName="commue">
-        <mat-option *ngFor='let com of listCommue' value="{{ com.id }}"> {{ com.name }} </mat-option>
+      <mat-label> Tỉnh thành </mat-label>
+      <mat-select formControlName="province">
+        <mat-option *ngFor='let pro of listProvince;'
+                    value="{{ pro.id }}"
+                    (click)="setValueDistrict()">
+          {{ pro.name }}
+        </mat-option>
       </mat-select>
-      <mat-hint *ngIf="selectDistrict === false"> Vui lòng chọn quận huyện trước </mat-hint>
     </mat-form-field>
 
     <!-- Quận huyện -->
     <mat-form-field appearance="outline" class="short-input ml-2">
       <mat-label> Quận huyện </mat-label>
-      <mat-select formControlName="district" (selectionChange)="getDistrictId($event.value)">
-        <mat-option *ngFor='let dis of listDistrict' value="{{ dis.id }}"> {{ dis.name }} </mat-option>
+      <mat-select formControlName="district">
+        <mat-option *ngFor='let dis of listDistrict'
+                    value="{{ dis.id }}"
+                    (click)="setValueCommue()">
+          {{ dis.name }}
+        </mat-option>
       </mat-select>
-      <mat-hint *ngIf="selectProvince === false"> Vui lòng chọn tỉnh thành trước </mat-hint>
     </mat-form-field>
 
-    <!-- Tỉnh thành -->
+    <!-- Phường xã -->
     <mat-form-field appearance="outline" class="short-input ml-2">
-      <mat-label> Tỉnh thành </mat-label>
-      <mat-select formControlName="province" (selectionChange)="getProvinceId($event.value)">
-        <mat-option *ngFor='let pro of listProvince;' value="{{ pro.id }}"> {{ pro.name }} </mat-option>
+      <mat-label> Phường xã </mat-label>
+      <mat-select formControlName="commue">
+        <mat-option *ngFor='let com of listCommue' value="{{ com.id }}"> {{ com.name }} </mat-option>
       </mat-select>
     </mat-form-field>
   </form>

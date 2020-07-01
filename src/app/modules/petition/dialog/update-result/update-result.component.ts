@@ -7,6 +7,8 @@ import * as jwt_decode from 'jwt-decode';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { ImageInfo } from 'src/app/data/schema/image-info';
+import { DatePipe } from '@angular/common';
+import { NgxImageCompressService } from 'ngx-image-compress';
 
 function readBase64(file): Promise<any> {
   const reader  = new FileReader();
@@ -29,14 +31,15 @@ function readBase64(file): Promise<any> {
 @Component({
   selector: 'app-update-result',
   templateUrl: './update-result.component.html',
-  styleUrls: ['./update-result.component.scss']
+  styleUrls: ['./update-result.component.scss'],
+  providers: [
+    DatePipe
+  ]
 })
 export class UpdateResultComponent implements OnInit {
 
   roleUser = [];
   isApproved = false;
-
-  Result = { content: '....', publicized: 'true' };
 
   checkedIsPublic = false;
   checkedIsApproved = false;
@@ -93,16 +96,33 @@ export class UpdateResultComponent implements OnInit {
     ]
   };
 
+  popupTitle: string;
+  uploaded: boolean;
+  blankVal: any;
+  notificationId: string;
+  accountId: string;
+
+  uploadedImage = [];
+  countDefaultImage;
+  listTags = [];
+  itemsListTags = [];
   files = [];
   filesInfo: ImageInfo[] = [];
-  blankVal: any;
-  uploadedImage = [];
+  imgResultAfterCompress: string;
+  localCompressedURl: any;
+  fileImport: File;
+  urlPreview: any;
+  itemsListUsers = [];
+  response = [];
+  keyword: '';
 
   constructor(private keycloak: KeycloakService,
               private service: PetitionService,
               public dialogRef: MatDialogRef<UpdateResultComponent>,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateResultDialogModel,
-              private snackbar: SnackbarService) {
+              private snackbar: SnackbarService,
+              public datepipe: DatePipe,
+              private imageCompress: NgxImageCompressService) {
     this.petitionId = data.id;
   }
 
@@ -139,64 +159,97 @@ export class UpdateResultComponent implements OnInit {
     // });
     let i = 0;
     if (event.target.files && event.target.files[0]) {
-        for (const file of event.target.files) {
-            // =============================================
-            let urlResult: any;
-            let fileName = '';
-            let fileNamesFull = '';
+      for (const file of event.target.files) {
+        // =============================================
+        let urlNone: any;
+        let urlResult: any;
+        let fileName = '';
+        let fileNamesFull = '';
+        // this.uploadedFile.push(file);
+        // console.log(this.uploadedFile);
+        // =============================================
+        const reader = new FileReader();
+        reader.onload = (eventLoad) => {
+          this.uploaded = true;
+          urlNone = eventLoad.target.result;
+          this.files.push(urlNone);
+          // this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
+          //   this.urlPreview = result;
+          //   urlResult = result.split(',')[1];
+          //   this.fileImport = this.convertBase64toFile(result, file.name);
+          //   if (this.filesInfo.length < 10) {
+          //     this.files.push(this.fileImport);
 
-            // =============================================
-            this.files.push(file);
-            const reader = new FileReader();
-            reader.onload = (eventLoad) => {
-                // this.uploaded = true;
-                urlResult = eventLoad.target.result;
-                if (file.name.length > 20) {
-                    // Tên file quá dài
-                    const startText = event.target.files[i].name.substr(0, 5);
-                    // tslint:disable-next-line:max-line-length
-                    const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
-                    fileName = startText + '...' + shortText;
-                    // Tên file gốc - hiển thị tooltip
-                    fileNamesFull = event.target.files[i].name;
-                } else {
-                    fileName = file.name;
-                    fileNamesFull = file.name ;
-                }
-                this.filesInfo.push( {
-                    id: i,
-                    url: urlResult,
-                    name: fileName,
-                    fullName: fileNamesFull
-                });
-            };
-            // if (this.splitBase64(event.target.files[i]) ===) {
+          //     if (this.fileImport.name.length > 20) {
+          //       // Tên file quá dài
+          //       const startText = event.target.files[i].name.substr(0, 5);
+          //       // tslint:disable-next-line:max-line-length
+          //       const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
+          //                                                               event.target.files[i].name.length);
+          //       fileName = startText + '...' + shortText;
+          //       // Tên file gốc - hiển thị tooltip
+          //       fileNamesFull = event.target.files[i].name;
+          //     } else {
+          //       fileName = this.fileImport.name;
+          //       fileNamesFull = this.fileImport.name ;
+          //     }
 
-            // }
-            // console.log(this.splitBase64(event.target.files[i]));
-            console.log(event.target.files[i]);
-            reader.readAsDataURL(event.target.files[i]);
-            i++;
-        }
+          //     this.filesInfo.push({
+          //       id: i,
+          //       url: this.urlPreview,
+          //       name: fileName,
+          //       fullName: fileNamesFull
+          //     });
+          //   } else {
+          //     this.snackbar.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
+          //   }
+          // });
+        };
+        console.log('List files: ');
+        console.log(this.files);
+        console.log('Result file: ');
+        console.log(event.target.files[i]);
+        reader.readAsDataURL(event.target.files[i]);
+        i++;
+      }
     }
   }
 
+  dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const int8Array = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      int8Array[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([int8Array], { type: 'image/jpg' });
+    return blob;
+  }
+
+  convertBase64toFile(base64, filename) {
+    const date = new Date().valueOf();
+    const imageName = date + '.jpg';
+    const imageBlob = this.dataURItoBlob(base64);
+    const imageFile = new File([imageBlob], filename, { type: 'image/jpg' });
+    return imageFile;
+  }
+
+  // Xoá file
   removeItem(id: string) {
     let counter = 0;
     let index = 0;
     this.filesInfo.forEach(file => {
-        if(file.id === id) {
-            index = counter;
-        }
-        counter++;
+      if (file.id === id) {
+        index = counter;
+      }
+      counter++;
     });
     this.uploadedImage = this.uploadedImage.filter(item => item != id);
-
     this.filesInfo.splice(index, 1);
     this.files.splice(index, 1);
 
     this.blankVal = '';
-}
+  }
 
   getRoleUser() {
     this.roleUser = this.keycloak.getUserRoles(true);
@@ -293,11 +346,19 @@ export class UpdateResultComponent implements OnInit {
     formObj.variables.petitionData.result.approved = this.checkedIsApproved;
     formObj.variables.petitionData.result.agency = this.agency;
 
+    let newPublishedDate: string;
+    if (this.checkedIsApproved === true) {
+      newPublishedDate = new Date().toString();
+      formObj.variables.petitionData.result.date = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
+    } else {
+      formObj.variables.petitionData.result.date = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
+    }
+
     formObj.payloadType = 'SetProcessVariablesPayload';
 
     const resultJSON = JSON.stringify(formObj, null, 2);
     // console.log(resultJSON);
-    this.updateResult(resultJSON);
+    // this.updateResult(resultJSON);
   }
 
   onSubmit() {
@@ -305,7 +366,7 @@ export class UpdateResultComponent implements OnInit {
       this.token = this.keycloak.getKeycloakInstance().token;
       this.decodeToken(this.token);
       this.petition.push(data.list.entries[0].entry);
-      // this.formToJson();
+      this.formToJson();
     }, err => {
       if (err.status === 401) {
         this.keycloak.login();
