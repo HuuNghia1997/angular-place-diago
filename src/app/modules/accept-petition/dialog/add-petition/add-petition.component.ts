@@ -18,6 +18,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { DatePipe } from '@angular/common';
 import { User } from 'src/app/data/schema/user';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { MatTreeFlatDataSource } from '@angular/material/tree';
 
 @Component({
   selector: 'app-add-petition',
@@ -249,6 +250,9 @@ export class AddPetitionComponent implements OnInit {
         // Close dialog
         this.dialogRef.close(false);
         // Call api delete file
+        // this.uploadedImage.forEach((item) => {
+        //   this.service.deleteImage(item.id).subscribe();
+        // });
       }
     );
   }
@@ -398,6 +402,12 @@ export class AddPetitionComponent implements OnInit {
   onDismiss(): void {
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
+
+    // this.uploadedImage.forEach((item) => {
+    //   this.service.deleteImage(item.id).subscribe((res) => console.log(res));
+    // });
+
+    // this.uploadedImage = [];
   }
 
   getErrorMessage(id) {
@@ -532,7 +542,7 @@ export class AddPetitionComponent implements OnInit {
   }
 
   openMapDialog(address, long, lat) {
-    this.service.openMapDialog(address, {longitude: long, latitude: lat});
+    this.service.openMapDialog(address, { longitude: long, latitude: lat });
   }
 }
 

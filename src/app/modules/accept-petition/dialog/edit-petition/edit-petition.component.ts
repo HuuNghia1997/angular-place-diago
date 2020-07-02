@@ -319,10 +319,7 @@ export class EditPetitionComponent implements OnInit {
   }
 
   setViewData() {
-    let selectedTag = this.response[0].tag;
-
     let oldReporter = this.response[0].reporter;
-    let oldReporterLocation = this.response[0].reporterLocation;
 
     let publicDescription: string;
 
@@ -330,24 +327,29 @@ export class EditPetitionComponent implements OnInit {
       publicDescription = 'Công khai phản ánh';
     }
 
+    let address = {
+      address: '',
+      place: [{ id: '' }, { id: '' }, { id: '' }],
+    };
+
+    if (this.response[0].reporter.address != undefined) {
+      address = this.response[0].reporter.address;
+      this.getTown(this.response[0].reporter.address.place[2].id);
+      this.getVillage(this.response[0].reporter.address.place[1].id);
+    }
+
+    this.response[0].reporter.address;
+
     this.updateForm = new FormGroup({
       // Temporary variable
       reporterFullName: new FormControl(oldReporter.fullname),
       reporterPhone: new FormControl(oldReporter.phone),
       reporterIdentityId: new FormControl(oldReporter.identityId),
       reporterType: new FormControl(oldReporter.type),
-      reporterFullAddress: new FormControl(
-        this.response[0].reporter.address.address
-      ),
-      reporterPlaceVillage: new FormControl(
-        this.response[0].reporter.address.place[0].id
-      ),
-      reporterPlaceTown: new FormControl(
-        this.response[0].reporter.address.place[1].id
-      ),
-      reporterPlaceProvince: new FormControl(
-        this.response[0].reporter.address.place[2].id
-      ),
+      reporterFullAddress: new FormControl(address.address),
+      reporterPlaceVillage: new FormControl(address.place[0].id),
+      reporterPlaceTown: new FormControl(address.place[1].id),
+      reporterPlaceProvince: new FormControl(address.place[2].id),
       petitionFullAddress: new FormControl(
         this.response[0].takePlaceAt.fullAddress
       ),
@@ -371,9 +373,6 @@ export class EditPetitionComponent implements OnInit {
       isAnonymous: new FormControl(this.response[0].isAnonymous),
       receptionMethod: new FormControl(this.response[0].receptionMethod),
     });
-
-    this.getTown(this.response[0].reporter.address.place[2].id);
-    this.getVillage(this.response[0].reporter.address.place[1].id);
 
     this.response[0].file.forEach((item) => {
       let temp = {
@@ -611,7 +610,7 @@ export class EditPetitionComponent implements OnInit {
   }
 
   openMapDialog(address, long, lat) {
-    this.service.openMapDialog(address, {longitude: long, latitude: lat});
+    this.service.openMapDialog(address, { longitude: long, latitude: lat });
   }
 
   public fileOverBase(e: any): void {

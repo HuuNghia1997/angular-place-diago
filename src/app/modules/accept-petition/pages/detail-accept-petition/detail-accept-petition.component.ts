@@ -173,7 +173,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
   }
 
   setViewData() {
-
     console.log(this.response[0]);
     this.agencyName = this.response[0].agency.name;
     this.createdDate = this.response[0].createdDate;
@@ -184,10 +183,16 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.receptionMethod = this.response[0].receptionMethod;
     this.receptionMethodDescription = this.receptionMethodDescription;
 
-    this.reporterAddress = this.response[0].reporter.address.address;
-    this.response[0].reporter.address.place.forEach((item) => {
-      this.reporterAddress = this.reporterAddress + ', ' + item.name;
-    });
+    if (this.response[0].reporter.address != undefined) {
+      this.reporterAddress = this.response[0].reporter.address.address;
+    }
+
+    if (this.response[0].reporter.address != undefined) {
+      this.response[0].reporter.address.place.forEach((item) => {
+        this.reporterAddress = this.reporterAddress + ', ' + item.name;
+      });
+    }
+
     this.reporterFullname = this.response[0].reporter.fullname;
     this.reporterIdentityId = this.response[0].reporter.identityId;
     this.reporterPhone = this.response[0].reporter.phone;
@@ -342,7 +347,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   }
 
   openMapDialog(address, long, lat) {
-    this.service.openMapDialog(address, {longitude: long, latitude: lat});
+    this.service.openMapDialog(address, { longitude: long, latitude: lat });
   }
 
   public fileOverBase(e: any): void {
@@ -367,8 +372,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
       }
     });
   }
-
-
 
   getState(status: string): number {
     if (status === 'Chờ tiếp nhận') {
@@ -397,4 +400,3 @@ export class DetailAcceptPetitionComponent implements OnInit {
 
   checkFiles: boolean = false;
 }
-

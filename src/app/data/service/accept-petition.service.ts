@@ -74,6 +74,8 @@ export class AcceptPetitionService {
   public uploadFilesURL =
     this.apiProviderService.getUrl('digo-microservice', 'fileman') +
     '/file/--multiple';
+  public deleteFilesURL =
+    this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
   public getDetailURL =
     this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
     '/petition/';
@@ -155,6 +157,14 @@ export class AcceptPetitionService {
         observe: 'events',
       })
       .pipe(catchError(this.handleError));
+  }
+
+  deleteImage(id): Observable<any> {
+    let headers = new HttpHeaders();
+    headers = headers.append('Accept', 'application/json');
+    return this.http.delete(this.deleteFilesURL + id, {
+      headers,
+    });
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -344,31 +354,33 @@ export class AcceptPetitionService {
     const reason = '';
     dialogRef.afterClosed().subscribe((dialogResult) => {
       const data = dialogResult;
-      if (data.data.id != null) {
-        const body = JSON.parse(data.body);
-        this.main.openSnackBar(
-          message,
-          body.title,
-          result,
-          reason,
-          'success_notification'
-        );
-        // tslint:disable-next-line:only-arrow-functions
-
-        setTimeout(() => {
-          window.location.replace(
-            '/tiep-nhan-phan-anh/chi-tiet/' + data.data.id
+      if (data !== undefined) {
+        if (data.data.id != null) {
+          const body = JSON.parse(data.body);
+          this.main.openSnackBar(
+            message,
+            body.title,
+            result,
+            reason,
+            'success_notification'
           );
-        }, 1500);
-      }
-      if (data.data.id === null) {
-        this.main.openSnackBar(
-          'Thêm thông báo',
-          content,
-          'thất bại',
-          reason,
-          'error_notification'
-        );
+          // tslint:disable-next-line:only-arrow-functions
+
+          setTimeout(() => {
+            window.location.replace(
+              '/tiep-nhan-phan-anh/chi-tiet/' + data.data.id
+            );
+          }, 1500);
+        }
+        if (data.data.id === null) {
+          this.main.openSnackBar(
+            'Thêm thông báo',
+            content,
+            'thất bại',
+            reason,
+            'error_notification'
+          );
+        }
       }
     });
   }
@@ -428,6 +440,7 @@ export class AcceptPetitionService {
     const reason = '';
     dialogRef.afterClosed().subscribe((dialogResult) => {
       this.result = dialogResult;
+      console.log(dialogResult);
       if (this.result === true) {
         this.main.openSnackBar(
           message,
