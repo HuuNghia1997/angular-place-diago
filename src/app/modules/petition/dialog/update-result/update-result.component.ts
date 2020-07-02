@@ -102,9 +102,7 @@ export class UpdateResultComponent implements OnInit {
               private service: PetitionService,
               public dialogRef: MatDialogRef<UpdateResultComponent>,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateResultDialogModel,
-              private snackbar: SnackbarService,
-              public datepipe: DatePipe,
-              private imageCompress: NgxImageCompressService) {
+              public datepipe: DatePipe) {
     this.petitionId = data.id;
   }
 
@@ -151,25 +149,6 @@ export class UpdateResultComponent implements OnInit {
             i++;
         }
     }
-  }
-
-  dataURItoBlob(dataURI) {
-    const byteString = atob(dataURI.split(',')[1]);
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const int8Array = new Uint8Array(arrayBuffer);
-    for (let i = 0; i < byteString.length; i++) {
-      int8Array[i] = byteString.charCodeAt(i);
-    }
-    const blob = new Blob([int8Array], { type: 'image/jpg' });
-    return blob;
-  }
-
-  convertBase64toFile(base64, filename) {
-    const date = new Date().valueOf();
-    const imageName = date + '.jpg';
-    const imageBlob = this.dataURItoBlob(base64);
-    const imageFile = new File([imageBlob], filename, { type: 'image/jpg' });
-    return imageFile;
   }
 
   // Xoá file

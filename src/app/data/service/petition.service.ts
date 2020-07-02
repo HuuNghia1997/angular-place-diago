@@ -14,6 +14,7 @@ import { ConfirmationCompletedPetitionDialogModel, ConfirmationCompletedComponen
 import { ConfirmUpdateResultDialogModel, UpdateResultComponent } from 'src/app/modules/petition/dialog/update-result/update-result.component';
 import { title } from 'process';
 import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
+import { CommentDialogModel, CommentComponent } from 'src/app/modules/petition/dialog/comment/comment.component';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,7 @@ export class PetitionService {
   public taskUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/tasks/';
   public nextFlowUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/task/';
   public getPlaceUrl = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/place?nation-id=';
+  public commentUrl = this.apiProviderService.getUrl('digo-microservice', 'message') + '/comment';
 
   constructor(private apiProviderService: ApiProviderService,
               private http: HttpClient,
@@ -166,6 +168,16 @@ export class PetitionService {
     return this.http.post(this.uploadFilesURL, formData, { headers });
   }
 
+  postComment(requestBody) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.post<any>(this.commentUrl, requestBody, { headers });
+  }
+
+  getComment(groupId, itemId) {
+    return this.http.get<any>(this.commentUrl + '?group-id=' + groupId + '&item-id=' + itemId);
+  }
+
   showProcess(id, name): void {
     const dialogData = new ShowProcessDialogModel(name, id);
     const dialogRef = this.dialog.open(ShowProcessComponent, {
@@ -173,6 +185,34 @@ export class PetitionService {
       maxHeight: '600px',
       data: dialogData,
       disableClose: true
+    });
+  }
+
+  comment(id): void {
+    const dialogData = new CommentDialogModel('Bình luận', id);
+    const dialogRef = this.dialog.open(CommentComponent, {
+      width: '80%',
+      maxHeight: '600px',
+      data: dialogData,
+      disableClose: true
+    });
+
+    const message = 'Bình luận';
+    const content = '';
+    const result = 'thành công';
+    const reason = '';
+    dialogRef.afterClosed().subscribe(dialogResult => {
+      this.result = dialogResult;
+      if (this.result === true) {
+        this.snackbar.openSnackBar(message, content, result, reason, 'success_notification');
+        // tslint:disable-next-line:only-arrow-functions
+        setTimeout(function() {
+          window.location.reload();
+        }, reloadTimeout);
+      }
+      if (this.result === false) {
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+      }
     });
   }
 

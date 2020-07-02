@@ -7,7 +7,6 @@ import { AcceptPetitionComponent } from 'src/app/modules/accept-petition/dialog/
 import { EditPetitionComponent } from 'src/app/modules/accept-petition/dialog/edit-petition/edit-petition.component';
 import { DeletePetitionComponent } from 'src/app/modules/accept-petition/dialog/delete-petition/delete-petition.component';
 import { CommentPetitionComponent } from 'src/app/modules/accept-petition/dialog/comment-petition/comment-petition.component';
-import { FileUploader } from 'ng2-file-upload';
 import {
   AcceptPetitionElement,
   PETITION_DATA,
@@ -50,13 +49,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
   treeControl = new NestedTreeControl<Comments>((node) => node.children);
   commentDataSource = new MatTreeNestedDataSource<Comments>();
 
-  public uploader: FileUploader = new FileUploader({
-    disableMultipart: true,
-    autoUpload: true,
-    method: 'post',
-    itemAlias: 'attachment',
-    allowedFileType: ['image', 'pdf', 'doc', 'xls', 'ppt'],
-  });
   public hasBaseDropZoneOver = false;
 
   petitionId: string;

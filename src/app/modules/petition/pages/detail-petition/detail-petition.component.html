@@ -117,87 +117,48 @@
 
           <!-- File đính kèm -->
           <h4 class="mt-2"> Đính kèm </h4>
-          <div class="frame-upload-file well my-drop-zone card-container" ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-              (fileOver)="fileOverBase($event)" [uploader]="uploader" (onFileDrop)="onFileSelected($event)">
-            <table>
-              <tr>
-                <span class="hidden-file" aria-hidden="true">
-                  <input type="file" #fileInput ng2FileSelect [uploader]="uploader"
-                  (onFileSelected)="onFileSelected($event)" multiple/>
-                </span>
-                <p (click)="fileInput.click()">
-                  <span class="span-cloud-upload">
-                    <mat-icon fontSet="material-icons-outlined" class="icon-cloud"> cloud_upload </mat-icon>
-                    <button disabled class="btn-drop-drag"> Kéo thả tập tin hoặc </button>
-                    <button class="btn-upload"> Tải lên </button>
-                  </span>
-                </p>
-              </tr>
-            </table>
 
-            <!-- Upload file -->
-            <div class="card-container">
-              <mat-card class="mat-card-file short">
-                <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-                <mat-card-subtitle class="name-file"> image.png </mat-card-subtitle>
-                <div class="mat-icon-delete">
-                  <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-                </div>
-              </mat-card>
-
-              <mat-card class="mat-card-file short">
-                <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-                <mat-card-subtitle class="name-file"> file_file_file.docx </mat-card-subtitle>
-                <div class="mat-icon-delete">
-                  <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-                </div>
-              </mat-card>
-
-              <mat-card class="mat-card-file short">
-                <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-                <mat-card-subtitle class="name-file"> ketqua_ketqua.pdf </mat-card-subtitle>
-                <div class="mat-icon-delete">
-                  <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-                </div>
-              </mat-card>
-
-              <div class="col-sm9 div-file-selected" *ngFor="let item of uploader.queue">
-                <mat-card class="mat-card-file short">
-                  <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-                  <mat-card-subtitle class="name-file"> {{ item?.file?.name }} </mat-card-subtitle>
-                  <div class="mat-icon-delete" (click)="item.remove()">
-                    <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-                  </div>
-                </mat-card>
-              </div> <!-- show file upload -->
-            </div> <!-- Upload file -->
-          </div> <!-- File đính kèm -->
+           <!-- File đính kèm -->
 
           <!-- Lịch sử - hoạt động -->
           <h4 class="mt-2"> Hoạt động </h4>
           <mat-tab-group>
             <!-- Bình luận -->
             <mat-tab label="Bình luận">
-              <mat-tree [dataSource]="commentDataSource" [treeControl]="treeControl" class="tree">
-                <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle> {{ node.name }} </mat-tree-node>
+              <!-- <mat-tree [dataSource]="commentDataSource" [treeControl]="treeControl" class="tree"> -->
+              <!-- <mat-tree *ngFor='let cmt of TREE_DATA' [treeControl]="treeControl" class="tree">
+                <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle> {{ node.user.fullname }} </mat-tree-node>
                 <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
                   <div class="mat-tree-node">
-                    <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name" style="border: none">
+                    <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.content" style="border: none">
                       <mat-icon class="mat-icon-rtl-mirror">
                         {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
                       </mat-icon>
                     </button>
-                    <span class="name-user"> {{ node.name }} </span>
-                    <span class="action"> &nbsp;đã bình luận - {{ node.time }} </span>
+                    <span class="name-user"> {{ node.user.fullname }} </span>
+                    <span class="action"> &nbsp;đã bình luận - {{ node.crearedDate }} </span>
                   </div>
                   <ul [class.tree-invisible]="treeControl.isExpanded(node)">
                     <ng-container matTreeNodeOutlet></ng-container>
                   </ul>
                   <mat-divider></mat-divider>
                 </mat-nested-tree-node>
-              </mat-tree>
+              </mat-tree> -->
+              <div *ngFor='let cmt of TREE_DATA'>
+                <div style="margin-top: 1em; margin-bottom: 0.5em">
+                  <span>
+                    <mat-icon style="vertical-align: middle;"> keyboard_arrow_down </mat-icon>
+                    <span class="name-user"> {{ cmt.user.fullname }} </span>
+                    <span class="action"> &nbsp;đã bình luận - {{ cmt.createdDate | date : 'dd/MM/yyyy HH:mm:ss' }} </span>
+                  </span>
+                </div>
+                <div style="margin-bottom: 0.5em; margin-left: 2em;">
+                  <span> {{ cmt.content }} </span>
+                </div>
+                <mat-divider></mat-divider>
+              </div>
 
-              <button mat-button class="mt-10">
+              <button mat-button class="mt-10" (click)="comment(petitionId)">
                 <mat-icon fontSet="material-icons-outlined"> insert_comment </mat-icon>
                 Bình luận
               </button>
@@ -332,24 +293,20 @@
           </table> <!-- Kết quả xử lý -->
 
           <!-- File đính kèm kết quả xử lý -->
-          <div [ngClass]="resultPetition === undefined ? 'd-none' : 'frame-upload-file'">
-            <div class="card-container">
-              <mat-card class="mat-card-file short">
-                <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-                <mat-card-subtitle class="name-file"> image.png </mat-card-subtitle>
-              </mat-card>
-
-              <mat-card class="mat-card-file short">
-                <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-                <mat-card-subtitle class="name-file"> file_file_file.docx </mat-card-subtitle>
-              </mat-card>
-
-              <mat-card class="mat-card-file short">
-                <img mat-card-image src="../../../assets/img/imgFile.png" alt="">
-                <mat-card-subtitle class="name-file"> ketqua_ketqua.pdf </mat-card-subtitle>
-              </mat-card>
+          <div [ngClass]="resultPetition === undefined ? 'd-none' : 'img_uploaded'">
+            <div class="image_drag_upload_preview">
+              <div class="list_uploaded" *ngFor="let file of filesInfo">
+                <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                <div class="img_control">
+                  <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'"> {{ file.name }} </span>
+                  <a mat-icon-button class="delete_img" download="{{ file.name }}" href="{{ file.url }}">
+                    <mat-icon class="icon"> save_alt </mat-icon>
+                  </a>
+                </div>
+              </div>
             </div>
-          </div> <!-- File đính kèm kết quả xử lý -->
+          </div>
+          <!-- File đính kèm kết quả xử lý -->
         </td> <!-- col-3-content -->
       </tr>
     </table> <!-- table content -->

@@ -5,7 +5,10 @@
     <h4 class="fw-500"> Thông tin phản ánh </h4>
     <mat-form-field appearance="outline" class="full-input">
       <mat-label> Nội dung </mat-label>
-      <textarea matInput formControlName="content"></textarea>
+      <textarea matInput formControlName="content"
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="6"></textarea>
     </mat-form-field>
 
     <mat-checkbox formControlName="isPublic" (change)="checkPublic($event)">

@@ -73,13 +73,12 @@ export class ConfirmationCompletedComponent implements OnInit {
 
   getChildren = (node: TodoItemNode): TodoItemNode[] => node.children;
 
+  // tslint:disable-next-line: variable-name
   hasChild = (_: number, _nodeData: TodoItemFlatNode) => _nodeData.expandable;
 
+  // tslint:disable-next-line: variable-name
   hasNoContent = (_: number, _nodeData: TodoItemFlatNode) => _nodeData.name === '';
 
-  /**
-   * Transformer to convert nested node to flat node. Record the nodes in maps for later use.
-   */
   transformer = (node: TodoItemNode, level: number) => {
     const existingNode = this.nestedNodeMap.get(node);
     const flatNode = existingNode && existingNode.name === node.name
@@ -99,7 +98,6 @@ export class ConfirmationCompletedComponent implements OnInit {
     return flatNode;
   }
 
-  /** Whether all the descendants of the node are selected. */
   descendantsAllSelected(node: TodoItemFlatNode): boolean {
     const descendants = this.treeControl.getDescendants(node);
     const descAllSelected = descendants.every(child =>
@@ -108,7 +106,6 @@ export class ConfirmationCompletedComponent implements OnInit {
     return descAllSelected;
   }
 
-  /** Whether part of the descendants are selected */
   descendantsPartiallySelected(node: TodoItemFlatNode): boolean {
     const descendants = this.treeControl.getDescendants(node);
     const result = descendants.some(child => this.checklistSelection.isSelected(child));
@@ -133,9 +130,10 @@ export class ConfirmationCompletedComponent implements OnInit {
     }
     if (currentState) {
       const descendants = this.treeControl.getDescendants(node);
-        for (let j = 0; j < descendants.length; j++){
-          this.checklistSelection.deselect(descendants[j]);
-        }
+      const size = descendants.length;
+      for (let j = 0; j < size; j++) {
+        this.checklistSelection.deselect(descendants[j]);
+      }
       this.checklistSelection.deselect(node);
     } else{
       this.checklistSelection.select(node);
@@ -146,20 +144,22 @@ export class ConfirmationCompletedComponent implements OnInit {
   checkAllParentsSelectionWithState(node: TodoItemFlatNode, state: boolean): void {
     let parent: TodoItemFlatNode | null = this.getParentNode(node);
     while (parent) {
-      if(parent.gatewayType == 1){
-        var parallel = this.getParallelNode(parent);
-        for (let i = 0; i < parallel.length; i++){
-          if(!state){
+      if (parent.gatewayType === 1) {
+        const parallel = this.getParallelNode(parent);
+        const size = parallel.length;
+        for (let i = 0; i < size; i++) {
+          if (!state) {
             this.checklistSelection.deselect(parallel[i]);
           }
           const descendants = this.treeControl.getDescendants(parallel[i]);
-          for (let j = 0; j < descendants.length; j++){
-            if(!state){
+          const sizeJ = descendants.length;
+          for (let j = 0; j < sizeJ; j++) {
+            if (!state) {
               this.checklistSelection.deselect(descendants[j]);
             }
           }
         }
-      }else{
+      } else {
         this.checklistSelection.toggle(parent);
       }
       this.checkRootNodeSelection(parent);
@@ -167,7 +167,6 @@ export class ConfirmationCompletedComponent implements OnInit {
     }
   }
 
-  /** Check root node checked state and change it accordingly */
   checkRootNodeSelection(node: TodoItemFlatNode): void {
     const nodeSelected = this.checklistSelection.isSelected(node);
     const descendants = this.treeControl.getDescendants(node);
@@ -181,7 +180,6 @@ export class ConfirmationCompletedComponent implements OnInit {
     }
   }
 
-  /* Get the parent node of a node */
   getParentNode(node: TodoItemFlatNode): TodoItemFlatNode | null {
     const currentLevel = this.getLevel(node);
 
@@ -201,35 +199,42 @@ export class ConfirmationCompletedComponent implements OnInit {
     return null;
   }
 
-  getParallelNode(node: TodoItemFlatNode) : TodoItemFlatNode[]{
-    var ret: TodoItemFlatNode[] = [];
+  getParallelNode(node: TodoItemFlatNode): TodoItemFlatNode[]{
+    const ret: TodoItemFlatNode[] = [];
     const currentLevel = this.getLevel(node);
-    var startIndex = 0;
-    if(currentLevel != 0) {
-      var parent = this.getParentNode(node);
-      if (parent!= null) startIndex = this.treeControl.dataNodes.indexOf(parent) + 1;
+    let startIndex = 0;
+    if (currentLevel !== 0) {
+      const parent = this.getParentNode(node);
+      if (parent != null) {
+        startIndex = this.treeControl.dataNodes.indexOf(parent) + 1;
+      }
     }
     let i = startIndex;
-    var currentNode = this.treeControl.dataNodes[i]
-    while(currentNode.level >= currentLevel){
-      if (currentNode.level == node.level && currentNode != node) ret.push(currentNode);
+    let currentNode = this.treeControl.dataNodes[i];
+    while (currentNode.level >= currentLevel) {
+      if (currentNode.level === node.level && currentNode !== node) {
+        ret.push(currentNode);
+      }
       i++;
-      if (i >= this.treeControl.dataNodes.length) break;
+      if (i >= this.treeControl.dataNodes.length) {
+        break;
+      }
       currentNode = this.treeControl.dataNodes[i];
     }
     return ret;
   }
 
   itemClick(){
-    var condition = [];
-    var selectedItem = this.checklistSelection.selected;
-    for (let i = 0; i < selectedItem.length; i++) {
+    const condition = [];
+    const selectedItem = this.checklistSelection.selected;
+    const size = selectedItem.length;
+    for (let i = 0; i < size; i++) {
       if (!(condition.indexOf(selectedItem[i]) > -1 )){
         condition.push(selectedItem[i]);
       }
       let parent: TodoItemFlatNode | null = this.getParentNode(selectedItem[i]);
       while (parent) {
-        if (!(condition.indexOf(parent) > -1 )){
+        if (!(condition.indexOf(parent) > -1 )) {
           condition.push(parent);
         }
         parent = this.getParentNode(parent);
@@ -287,17 +292,6 @@ export class ConfirmationCompletedComponent implements OnInit {
     this.getNextFlow();
   }
 
-  // createForm(fields: string[]) {
-  //   let variables: any = {};
-  //   fields.forEach(x => {
-  //     if (x !== undefined ) {
-  //       variables[this.splitString(x)] = new FormControl(this.splitValue(x));
-  //     }
-  //   });
-  //   console.log(variables);
-  //   return new FormGroup(variables);
-  // }
-
   getNextFlow() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       const taskId = data.list.entries[0].entry.id;
@@ -337,13 +331,16 @@ export class ConfirmationCompletedComponent implements OnInit {
   completeJSON() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       this.keycloak.loadUserProfile().then(user => {
+        // tslint:disable-next-line: no-string-literal
         this.userService.getUserInfo(user['attributes'].user_id).subscribe(info => {
+          // tslint:disable-next-line: no-string-literal
           this.fullname = info['fullname'];
 
-          let complete = new FormGroup({
+          const complete = new FormGroup({
             payloadType: new FormControl('CompleteTaskPayload'),
             taskId: new FormControl(data.list.entries[0].entry.id),
             variables: new FormGroup({
+              // tslint:disable-next-line: no-string-literal
               userId: new FormControl(user['attributes'].user_id[0]),
               fullname: new FormControl(this.fullname)
             })
@@ -351,8 +348,6 @@ export class ConfirmationCompletedComponent implements OnInit {
 
           const formObj = complete.getRawValue();
           const resultJson = JSON.stringify(formObj, null, 2);
-          console.log(resultJson);
-          console.log(data.list.entries[0].entry.id);
           this.completeTask(data.list.entries[0].entry.id, resultJson);
         });
       }, error => {
@@ -374,27 +369,10 @@ export class ConfirmationCompletedComponent implements OnInit {
     });
   }
 
-  // getCheckboxes(event, value) {
-  //   if (event.checked) {
-  //     this.commonArray.push(value);
-  //   }
-  //   if (!event.checked) {
-  //     const index = this.commonArray.indexOf(value);
-  //     if (index > -1) {
-  //       this.commonArray.splice(index, 1);
-  //     }
-  //   }
-  //   console.log(this.commonArray);
-  // }
-
   onDismiss(): void {
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
   }
-
-
-
-
 
 }
 

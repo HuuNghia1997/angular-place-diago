@@ -232,7 +232,10 @@ input, textarea, mat-select {
   height: 200px;
   width: 24%;
   margin: 0 0.5% 5em 0.5%;
-  background-color: #44444450;
+  background-image: url(../../../../../assets/img/bg.png);
+  background-repeat: no-repeat;
+  background-size: 50% 50%;
+  background-position: center;
 }
 
 .img_items {
@@ -263,18 +266,4 @@ input, textarea, mat-select {
 
 .icon {
   font-size: 20px;
-}
-
-.primary-blue-btn {
-  background-color: #1976D2;
-  color: #fff;
-}
-
-.btn-cancel {
-  border: 1px solid #333333;
-}
-
-.btn-cancel:focus {
-  background-color: #ffffff;
-  display: none;
 }

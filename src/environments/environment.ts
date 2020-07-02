@@ -57,6 +57,10 @@ export const environment = {
         {
           name: 'rb-petition',
           path: 'rb-petition'
+        },
+        {
+          name: 'message',
+          path: 'me'
         }
       ],
     },

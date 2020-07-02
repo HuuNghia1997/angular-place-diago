@@ -31,7 +31,6 @@
     "keycloak-angular": "^7.2.0",
     "keycloak-js": "^9.0.3",
     "mapbox-gl": "^1.11.0",
-    "ng2-file-upload": "^1.4.0",
     "ngx-image-compress": "^8.0.4",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",

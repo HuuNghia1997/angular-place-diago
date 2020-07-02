@@ -3,30 +3,11 @@ import { ActivatedRoute } from '@angular/router';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatDialog } from '@angular/material/dialog';
-import { FileUploader } from 'ng2-file-upload';
-import { Comments, TREE_DATA } from 'src/app/data/schema/petition-element';
+// import { Comments, TREE_DATA } from 'src/app/data/schema/petition-element';
 import { PetitionService } from 'src/app/data/service/petition.service';
-import { ImageInfo } from 'src/app/data/schema/image-info';
+import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { reloadTimeout } from 'src/app/data/service/config.service';
 import { KeycloakService } from 'keycloak-angular';
-
-function readBase64(file): Promise<any> {
-  const reader  = new FileReader();
-  const future = new Promise((resolve, reject) => {
-    // tslint:disable-next-line:only-arrow-functions
-    reader.addEventListener('load', function() {
-      resolve(reader.result);
-    }, false);
-
-    // tslint:disable-next-line:only-arrow-functions
-    reader.addEventListener('error', function(event) {
-      reject(event);
-    }, false);
-
-    reader.readAsDataURL(file);
-  });
-  return future;
-}
 
 @Component({
   selector: 'app-detail-petition',
@@ -35,17 +16,8 @@ function readBase64(file): Promise<any> {
 })
 export class DetailPetitionComponent implements OnInit {
 
-  treeControl = new NestedTreeControl<Comments>(node => node.children);
-  commentDataSource = new MatTreeNestedDataSource<Comments>();
-
-  public uploader: FileUploader = new FileUploader({
-    disableMultipart: true,
-    autoUpload: true,
-    method: 'post',
-    itemAlias: 'attachment',
-    allowedFileType: ['image', 'pdf', 'doc', 'xls', 'ppt']
-  });
-  public hasBaseDropZoneOver = false;
+  treeControl = new NestedTreeControl<any>(node => node.children);
+  commentDataSource = new MatTreeNestedDataSource<any>();
 
   petitionId: string;
   isExpand = true;
@@ -81,30 +53,44 @@ export class DetailPetitionComponent implements OnInit {
   sizePerPageHistory = 15;
   history = [];
 
+  uploadedImage: UpdateFile[] = [];
+  uploaded: boolean;
+  countDefaultImage;
+  TREE_DATA = [];
+
   constructor(private actRoute: ActivatedRoute,
               private dialog: MatDialog,
               private service: PetitionService,
               private keycloak: KeycloakService) {
     this.petitionId = this.actRoute.snapshot.params.id;
-    this.commentDataSource.data = TREE_DATA;
+    this.commentDataSource.data = this.TREE_DATA;
   }
 
   ngOnInit(): void {
-    // console.log(this.petitionId);
     this.getDetail();
+    this.getComment();
   }
 
-  public fileOverBase(e: any): void {
-    this.hasBaseDropZoneOver = e;
+  getComment() {
+    const groupId = 1;
+    this.service.getComment(groupId, this.petitionId).subscribe(cmt => {
+      this.TREE_DATA = cmt.content;
+    });
   }
+
+  isExpandToggle() {
+    this.isExpand = !this.isExpand;
+  }
+
+  hasChild = (_: number, node: any) => !!node.content && node.content.length > 0;
 
   onFileSelected(event: any) {
     const file: File = event[0];
     // console.log(file);
     // tslint:disable-next-line:only-arrow-functions
-    readBase64(file).then(function(data) {
-      // console.log(data);
-    });
+    // readBase64(file).then(function(data) {
+    //   // console.log(data);
+    // });
   }
 
   getDetail() {
@@ -147,6 +133,53 @@ export class DetailPetitionComponent implements OnInit {
       // resultDatePublic: string;
       // resultContent: string;
     }
+
+    this.uploadedImage = this.petition[0].processVariables.petitionData.file;
+
+    this.countDefaultImage = this.uploadedImage.length;
+
+    if (this.petition[0].processVariables.petitionData.file.length > 0) {
+      this.petition[0].processVariables.petitionData.file.forEach(e => {
+        if (e.group[0] === 3) {
+          let urlResult: any;
+          let fileName = '';
+          let fileNamesFull = '';
+
+          this.service.getFile(e.id).subscribe(file => {
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+              urlResult = reader.result;
+              this.service.getFileName_Size(e.id).subscribe((data: any ) => {
+                if (data.filename.length > 20) {
+                  // Tên file quá dài
+                  const startText = data.filename.substr(0, 5);
+                  const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                  fileName = startText + '...' + shortText;
+                  // Tên file gốc - hiển thị tooltip
+                  fileNamesFull = data.filename;
+                } else {
+                  fileName = data.filename;
+                  fileNamesFull = data.filename;
+                }
+                this.filesInfo.push({
+                  id: e,
+                  url: urlResult,
+                  name: fileName,
+                  fullName: fileNamesFull
+                });
+              }, err => {
+                console.error(err);
+              });
+            }, false);
+            reader.readAsDataURL(file);
+          }, err => {
+            console.error(err);
+          });
+        }
+
+      });
+    }
+    this.uploaded = true;
   }
 
   getHistory() {
@@ -202,12 +235,6 @@ export class DetailPetitionComponent implements OnInit {
     });
   }
 
-  isExpandToggle() {
-    this.isExpand = !this.isExpand;
-  }
-
-  hasChild = (_: number, node: Comments) => !!node.children && node.children.length > 0;
-
   updatePetition(id, name) {
     this.service.updatePetition(id, name);
   }
@@ -222,6 +249,10 @@ export class DetailPetitionComponent implements OnInit {
 
   completePetition(id, name) {
     this.service.completePetition(id, name);
+  }
+
+  comment(id) {
+    this.service.comment(id);
   }
 
   getStatus(status: string) {

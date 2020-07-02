@@ -13,7 +13,6 @@ import {
   NgxMatDateAdapter,
   NGX_MAT_DATE_FORMATS,
 } from '@angular-material-components/datetime-picker';
-import { FileUploader } from 'ng2-file-upload';
 import { MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
 import { MapboxService } from 'src/app/data/service/mapbox.service';
 
@@ -134,13 +133,6 @@ export class EditPetitionComponent implements OnInit {
   agency = new FormControl(this.acceptPetition.petition.agency);
   options = new FormControl(this.acceptPetition.petition.option);
 
-  public uploader: FileUploader = new FileUploader({
-    disableMultipart: true,
-    autoUpload: true,
-    method: 'post',
-    itemAlias: 'attachment',
-    allowedFileType: ['image', 'pdf', 'doc', 'xls', 'ppt'],
-  });
   public hasBaseDropZoneOver = false;
 
   constructor(
