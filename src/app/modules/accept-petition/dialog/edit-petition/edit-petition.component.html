@@ -138,11 +138,10 @@
   <!-- Đơn vị phản ánh -->
   <mat-form-field appearance="outline" class="input-1-3-width float-right">
     <mat-label> Đơn vị phản ánh </mat-label>
-    <mat-select formControlName="agency" required>
+    <mat-select formControlName="agency">
       <mat-option *ngFor="let agen of agencyList" value="{{ agen.id }}">
         {{ agen.name }}
       </mat-option>
-      <mat-error *ngIf="agency.invalid"> {{ getErrorMessage(3) }}</mat-error>
     </mat-select>
   </mat-form-field>
 

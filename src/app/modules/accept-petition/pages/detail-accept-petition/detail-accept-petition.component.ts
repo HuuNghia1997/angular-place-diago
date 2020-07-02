@@ -3,13 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatDialog } from '@angular/material/dialog';
-import { AcceptPetitionComponent } from 'src/app/modules/accept-petition/dialog/accept-petition/accept-petition.component';
-import { EditPetitionComponent } from 'src/app/modules/accept-petition/dialog/edit-petition/edit-petition.component';
-import { DeletePetitionComponent } from 'src/app/modules/accept-petition/dialog/delete-petition/delete-petition.component';
-import { CommentPetitionComponent } from 'src/app/modules/accept-petition/dialog/comment-petition/comment-petition.component';
 import { FileUploader } from 'ng2-file-upload';
 import { ImageInfo } from 'src/app/data/schema/image-info';
-import { ApiProviderService } from 'src/app/core/service/api-provider.service';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -18,13 +13,8 @@ import {
 } from 'src/app/data/service/config.service';
 import {
   AcceptPetitionElement,
-  PETITION_DATA,
   Comments,
-  TREE_DATA,
 } from 'src/app/data/schema/accept-petition-element';
-import { BehaviorSubject } from 'rxjs';
-import { MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
-import { MapboxService } from 'src/app/data/service/mapbox.service';
 
 function readBase64(file): Promise<any> {
   const reader = new FileReader();
@@ -85,7 +75,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
       name: 'tìm kiếm',
     },
   ];
-
   checkAccept: boolean = true;
   checkDeny: boolean = true;
 
@@ -124,7 +113,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
 
   // Bình luận
   comments = [];
-
   treeControl = new NestedTreeControl<Comments>((node) => node.children);
   commentDataSource = new MatTreeNestedDataSource<Comments>();
 
@@ -149,8 +137,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
     private route: ActivatedRoute,
     public dialog: MatDialog,
     private service: AcceptPetitionService,
-    public snackBar: MatSnackBar,
-    private map: MapboxService
+    public snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -174,7 +161,10 @@ export class DetailAcceptPetitionComponent implements OnInit {
 
   setViewData() {
     console.log(this.response[0]);
-    this.agencyName = this.response[0].agency.name;
+    if (this.response[0].agency != undefined) {
+      this.agencyName = this.response[0].agency.name;
+    }
+
     this.createdDate = this.response[0].createdDate;
     this.description = this.response[0].description;
     this.file = this.response[0].file;
@@ -360,16 +350,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
     // tslint:disable-next-line:only-arrow-functions
     readBase64(file).then(function (data) {
       // console.log(data);
-    });
-  }
-
-  // remove it when have api
-  getPetition(id): void {
-    PETITION_DATA.forEach((element) => {
-      if (element.id === id) {
-        // console.log(element);
-        this.petition = element;
-      }
     });
   }
 

@@ -16,13 +16,11 @@ import {
   NGX_MAT_DATE_FORMATS,
 } from '@angular-material-components/datetime-picker';
 import { FileUploader } from 'ng2-file-upload';
-import { MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
 import { MapboxService } from 'src/app/data/service/mapbox.service';
 import { petitionCategoryId } from 'src/app/data/service/config.service';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { KeycloakService } from 'keycloak-angular';
-import { query } from '@angular/animations';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 function readBase64(file): Promise<any> {
@@ -338,6 +336,11 @@ export class EditPetitionComponent implements OnInit {
       this.getVillage(this.response[0].reporter.address.place[1].id);
     }
 
+    let agencyId = '';
+    if (this.response[0].agency != undefined) {
+      agencyId = this.response[0].agency.id;
+    }
+
     this.response[0].reporter.address;
 
     this.updateForm = new FormGroup({
@@ -364,7 +367,7 @@ export class EditPetitionComponent implements OnInit {
       reporter: new FormControl(''),
       reporterLocation: new FormControl(''),
       takePlaceOn: new FormControl(new Date(this.response[0].takePlaceOn)),
-      agency: new FormControl('' + this.response[0].agency.id),
+      agency: new FormControl('' + agencyId),
       description: new FormControl(this.response[0].description),
       takePlaceAt: new FormControl(this.response[0].takePlaceAt.fullAddress),
       isPublic: new FormControl(publicDescription),

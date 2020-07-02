@@ -12,13 +12,10 @@ import {
   NGX_MAT_DATE_FORMATS,
 } from '@angular-material-components/datetime-picker';
 import { petitionCategoryId } from 'src/app/data/service/config.service';
-import { MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
 import { MapboxService } from 'src/app/data/service/mapbox.service';
 import { KeycloakService } from 'keycloak-angular';
 import { DatePipe } from '@angular/common';
-import { User } from 'src/app/data/schema/user';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-import { MatTreeFlatDataSource } from '@angular/material/tree';
 
 @Component({
   selector: 'app-add-petition',

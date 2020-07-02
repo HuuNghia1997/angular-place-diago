@@ -6,7 +6,6 @@ import {
 } from '@angular/material/dialog';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
 import { FormControl, FormGroup, NgForm, Validators } from '@angular/forms';
-import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-comment-petition',

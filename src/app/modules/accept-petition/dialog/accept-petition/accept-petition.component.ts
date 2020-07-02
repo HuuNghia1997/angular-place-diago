@@ -6,7 +6,6 @@ import {
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
-import { WorkflowDiagramComponent } from 'src/app/modules/accept-petition/dialog/workflow-diagram/workflow-diagram.component';
 
 @Component({
   selector: 'app-accept-petition',
