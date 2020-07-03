@@ -8,8 +8,6 @@ export interface ImageInfo {
 export interface UpdateFile {
   id: string;
   name: string;
-  filename: string;
-  size: number;
   group: number[];
 }
 

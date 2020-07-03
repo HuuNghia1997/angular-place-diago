@@ -139,17 +139,15 @@ export class DetailPetitionComponent implements OnInit {
         if (this.countDefaultImage > 0) {
           if (this.files.length > 0) {
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-              const size = file.length;
-              for (let j = 0; j < size; j++) {
-                console.log(file[j].id);
-                const id = file[j].id;
-                console.log(id);
-                this.uploadedImage[this.countDefaultImage + j].id = id;
+              file.forEach(e => {
                 this.type.push(2);
-                this.uploadedImage[this.countDefaultImage + j].group = this.type;
-                this.uploadedImage[this.countDefaultImage + j].name = file[j].filename;
+                this.uploadedImage.push({
+                  id: e.id,
+                  name: e.filename,
+                  group: this.type
+                });
                 this.type = [];
-              }
+              });
               this.formToJson();
             });
           } else {
@@ -158,17 +156,15 @@ export class DetailPetitionComponent implements OnInit {
         } else {
           if (this.files.length > 0) {
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-              const size = file.length;
-              for (let j = 0; j < size; j++) {
-                console.log(file[j].id);
-                const id = file[j].id;
-                console.log(id);
-                this.uploadedImage[this.countDefaultImage + j].id = id;
+              file.forEach(e => {
                 this.type.push(2);
-                this.uploadedImage[this.countDefaultImage + j].group = this.type;
-                this.uploadedImage[this.countDefaultImage + j].name = file[j].filename;
+                this.uploadedImage.push({
+                  id: e.id,
+                  name: e.filename,
+                  group: this.type
+                });
                 this.type = [];
-              }
+              });
               this.formToJson();
             });
           } else {

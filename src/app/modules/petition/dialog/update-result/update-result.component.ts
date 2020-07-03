@@ -8,6 +8,7 @@ import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { DatePipe } from '@angular/common';
 import { NgxImageCompressService } from 'ngx-image-compress';
+import { group } from 'console';
 
 @Component({
   selector: 'app-update-result',
@@ -323,8 +324,8 @@ export class UpdateResultComponent implements OnInit {
     formObj.payloadType = 'SetProcessVariablesPayload';
 
     const resultJSON = JSON.stringify(formObj, null, 2);
-    console.log(resultJSON);
-    // this.updateResult(resultJSON);
+    // console.log(resultJSON);
+    this.updateResult(resultJSON);
   }
 
   onSubmit() {
@@ -340,23 +341,15 @@ export class UpdateResultComponent implements OnInit {
         if (this.countDefaultImage > 0) {
           if (this.files.length > 0) {
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-              const size = file.length;
-              const length = this.uploadedImage.length;
-              console.log(length);
-
-              console.log(this.uploadedImage);
-              for (let i = 0; i < size; i++) {
-                // this.uploadedImage[length + i] = {
-                // console.log(file[i].id);
-                // const id = file[i].id;
-                // console.log(id);
-                // this.uploadedImage[length + i].id = id;
-                this.uploadedImage.push(file[i]);
+              file.forEach(e => {
                 this.type.push(3);
-                this.uploadedImage[length + i].group = this.type;
-                this.uploadedImage[length + i].name = file[i].filename;
+                this.uploadedImage.push({
+                  id: e.id,
+                  name: e.filename,
+                  group: this.type
+                });
                 this.type = [];
-              }
+              });
               this.formToJson();
             });
           } else {
@@ -365,19 +358,15 @@ export class UpdateResultComponent implements OnInit {
         } else {
           if (this.files.length > 0) {
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-              const size = file.length;
-              for (let i = 0; i < size; i++) {
-                // console.log(file[i].id);
-                // const id = file[i].id;
-                // console.log(id);
-                // this.uploadedImage[length + i].id = id;
-                this.uploadedImage.push(file[i]);
+              file.forEach(e => {
                 this.type.push(3);
-                this.uploadedImage[length + i].group = [];
-                this.uploadedImage[length + i].group = this.type;
-                this.uploadedImage[length + i].name = file[i].filename;
+                this.uploadedImage.push({
+                  id: e.id,
+                  name: e.filename,
+                  group: this.type
+                });
                 this.type = [];
-              }
+              });
               this.formToJson();
             });
           } else {
