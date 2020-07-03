@@ -165,7 +165,7 @@ export class PetitionService {
         formData.append('files', file, file.name);
     });
     formData.append('accountId', accountId);
-    return this.http.post(this.uploadFilesURL, formData, { headers });
+    return this.http.post<any>(this.uploadFilesURL, formData, { headers });
   }
 
   postComment(requestBody) {

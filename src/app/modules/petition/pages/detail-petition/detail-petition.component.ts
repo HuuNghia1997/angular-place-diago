@@ -8,6 +8,7 @@ import { PetitionService } from 'src/app/data/service/petition.service';
 import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { reloadTimeout } from 'src/app/data/service/config.service';
 import { KeycloakService } from 'keycloak-angular';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-detail-petition',
@@ -47,6 +48,7 @@ export class DetailPetitionComponent implements OnInit {
   resultContent: string;
 
   filesInfo: ImageInfo[] = [];
+  fileUpload: ImageInfo[] = [];
 
   groupId = 2;
   pageToGetHistory = 0;
@@ -55,8 +57,50 @@ export class DetailPetitionComponent implements OnInit {
 
   uploadedImage: UpdateFile[] = [];
   uploaded: boolean;
+  upload: boolean;
   countDefaultImage;
   TREE_DATA = [];
+  blankVal: any;
+  files = [];
+  imgResultAfterCompress: string;
+  localCompressedURl: any;
+  fileImport: File;
+  urlPreview: any;
+  itemsListUsers = [];
+  response = [];
+  keyword: '';
+  updateForm = new FormGroup({
+    variables: new FormGroup({
+      title: new FormControl(''),
+      petitionData: new FormGroup({
+        id: new FormControl(''),
+        title: new FormControl(''),
+        description: new FormControl(''),
+        takePlaceAt: new FormControl(''),
+        reporterLocation: new FormControl(''),
+        takePlaceOn: new FormControl(''),
+        status: new FormControl(''),
+        confirm: new FormControl(''),
+        workflow: new FormControl(''),
+        tag: new FormControl(''),
+        file: new FormControl(''),
+        reporter: new FormControl(''),
+        thumbnailId: new FormControl(''),
+        createdDate: new FormControl(''),
+        isPublic: new FormControl(''),
+        isAnonymous: new FormControl(''),
+        result: new FormControl(''),
+        processInstanceId: new FormControl(''),
+        deploymentId: new FormControl(''),
+        agency: new FormControl(''),
+        receptionMethod: new FormControl('')
+      }),
+    }),
+    payloadType: new FormControl('')
+  });
+  token: any;
+  type: number[] = [];
+  accountId: string;
 
   constructor(private actRoute: ActivatedRoute,
               private dialog: MatDialog,
@@ -84,13 +128,118 @@ export class DetailPetitionComponent implements OnInit {
 
   hasChild = (_: number, node: any) => !!node.content && node.content.length > 0;
 
+  uploadFile() {
+    this.service.getDetailPetition(this.petitionId).subscribe(data => {
+      this.token = this.keycloak.getKeycloakInstance().token;
+
+      this.keycloak.loadUserProfile().then(user => {
+        // tslint:disable-next-line: no-string-literal
+        this.accountId = user['attributes'].user_id;
+        this.countDefaultImage = this.uploadedImage.length;
+        if (this.countDefaultImage > 0) {
+          if (this.files.length > 0) {
+            this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+              const size = file.length;
+              for (let j = 0; j < size; j++) {
+                console.log(file[j].id);
+                const id = file[j].id;
+                console.log(id);
+                this.uploadedImage[this.countDefaultImage + j].id = id;
+                this.type.push(2);
+                this.uploadedImage[this.countDefaultImage + j].group = this.type;
+                this.uploadedImage[this.countDefaultImage + j].name = file[j].filename;
+                this.type = [];
+              }
+              this.formToJson();
+            });
+          } else {
+            this.formToJson();
+          }
+        } else {
+          if (this.files.length > 0) {
+            this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+              const size = file.length;
+              for (let j = 0; j < size; j++) {
+                console.log(file[j].id);
+                const id = file[j].id;
+                console.log(id);
+                this.uploadedImage[this.countDefaultImage + j].id = id;
+                this.type.push(2);
+                this.uploadedImage[this.countDefaultImage + j].group = this.type;
+                this.uploadedImage[this.countDefaultImage + j].name = file[j].filename;
+                this.type = [];
+              }
+              this.formToJson();
+            });
+          } else {
+            this.formToJson();
+          }
+        }
+      });
+    }, err => {
+      if (err.status === 401) {
+        this.keycloak.login();
+      }
+    });
+  }
+
   onFileSelected(event: any) {
-    const file: File = event[0];
-    // console.log(file);
-    // tslint:disable-next-line:only-arrow-functions
-    // readBase64(file).then(function(data) {
-    //   // console.log(data);
-    // });
+    let i = 0;
+    if (event.target.files && event.target.files[0]) {
+      for (const file of event.target.files) {
+        // =============================================
+        let urlResult: any;
+        let fileName = '';
+        let fileNamesFull = '';
+
+        // =============================================
+        this.files.push(file);
+        const reader = new FileReader();
+        reader.onload = (eventLoad) => {
+          this.upload = true;
+          urlResult = eventLoad.target.result;
+          if (file.name.length > 20) {
+            // Tên file quá dài
+            const startText = event.target.files[i].name.substr(0, 5);
+            // tslint:disable-next-line:max-line-length
+            const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
+            fileName = startText + '...' + shortText;
+            // Tên file gốc - hiển thị tooltip
+            fileNamesFull = event.target.files[i].name;
+          } else {
+            fileName = file.name;
+            fileNamesFull = file.name ;
+          }
+          this.fileUpload.push( {
+            id: i,
+            url: urlResult,
+            name: fileName,
+            fullName: fileNamesFull
+          });
+        };
+        reader.readAsDataURL(event.target.files[i]);
+        i++;
+      }
+    }
+    this.uploadFile();
+  }
+
+  removeItem(id: string) {
+    let counter = 0;
+    let index = 0;
+    this.fileUpload.forEach(file => {
+      if (file.id === id) {
+        index = counter;
+      }
+      counter++;
+    });
+    this.uploadedImage = this.uploadedImage.filter(item => item.id != id);
+    this.filesInfo.splice(index, 1);
+    this.files.splice(index, 1);
+
+    this.blankVal = '';
+    console.log('List file còn lại: ');
+    console.log(this.files);
   }
 
   getDetail() {
@@ -103,6 +252,54 @@ export class DetailPetitionComponent implements OnInit {
         this.keycloak.login();
       }
     });
+  }
+
+  updateImage(requestBody) {
+    this.service.getDetailPetition(this.petitionId).subscribe(data => {
+      this.service.postVariable(data.list.entries[0].entry.processInstanceId, requestBody).subscribe(res => {
+        // this.dialogRef.close(true);
+        // tslint:disable-next-line: only-arrow-functions
+        setTimeout(function() {
+          window.location.reload();
+        }, reloadTimeout);
+      }, err => {
+        // this.dialogRef.close(false);
+        console.error(err);
+      });
+    });
+  }
+
+  formToJson() {
+    const formObj = this.updateForm.getRawValue();
+    formObj.variables.title = this.petition[0].processVariables.title;
+    formObj.variables.petitionData.id = this.petition[0].processVariables.petitionData.id;
+    formObj.variables.petitionData.title = this.petition[0].processVariables.title;
+    formObj.variables.petitionData.description = this.petition[0].processVariables.petitionData.description;
+    formObj.variables.petitionData.takePlaceAt = this.petition[0].processVariables.petitionData.takePlaceAt;
+    formObj.variables.petitionData.reporterLocation = this.petition[0].processVariables.petitionData.reporterLocation;
+    formObj.variables.petitionData.takePlaceOn = this.petition[0].processVariables.petitionData.takePlaceOn;
+    formObj.variables.petitionData.status = this.petition[0].processVariables.status;
+    formObj.variables.petitionData.confirm = this.petition[0].processVariables.confirm;
+    formObj.variables.petitionData.workflow = this.petition[0].processVariables.petitionData.workflow;
+    formObj.variables.petitionData.tag = this.petition[0].processVariables.petitionData.tag;
+    formObj.variables.petitionData.reporter  = this.petition[0].processVariables.petitionData.reporter;
+    formObj.variables.petitionData.thumbnailId = this.petition[0].processVariables.petitionData.thumbnailId;
+    formObj.variables.petitionData.createdDate = this.petition[0].processVariables.petitionData.createdDate;
+    formObj.variables.petitionData.isPublic = this.petition[0].processVariables.petitionData.isPublic;
+    formObj.variables.petitionData.isAnonymous = this.petition[0].processVariables.petitionData.isAnonymous;
+    formObj.variables.petitionData.processInstanceId = this.petition[0].processVariables.petitionData.processInstanceId;
+    formObj.variables.petitionData.deploymentId = this.petition[0].processVariables.petitionData.deploymentId;
+    formObj.variables.petitionData.agency = this.petition[0].processVariables.petitionData.agency;
+    formObj.variables.petitionData.receptionMethod = this.petition[0].processVariables.petitionData.receptionMethod;
+    formObj.variables.petitionData.result = this.petition[0].processVariables.petitionData.result;
+
+    formObj.variables.petitionData.file = this.uploadedImage;
+
+    formObj.payloadType = 'SetProcessVariablesPayload';
+
+    const resultJSON = JSON.stringify(formObj, null, 2);
+    console.log(resultJSON);
+    this.updateImage(resultJSON);
   }
 
   setViewData() {
@@ -129,14 +326,51 @@ export class DetailPetitionComponent implements OnInit {
       this.resultIsPublic = this.petition[0].processVariables.petitionData.result.isPublic;
       this.resultDatePublic = this.petition[0].processVariables.petitionData.result.date;
       this.resultContent = this.petition[0].processVariables.petitionData.result.content;
-      // resultIsPublic: boolean;
-      // resultDatePublic: string;
-      // resultContent: string;
     }
 
     this.uploadedImage = this.petition[0].processVariables.petitionData.file;
 
-    this.countDefaultImage = this.uploadedImage.length;
+    if (this.petition[0].processVariables.petitionData.file.length > 0) {
+      this.petition[0].processVariables.petitionData.file.forEach(e => {
+        if (e.group[0] === 2 || e.group[0] === 1) {
+          let urlResult: any;
+          let fileName = '';
+          let fileNamesFull = '';
+
+          this.service.getFile(e.id).subscribe(file => {
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+              urlResult = reader.result;
+              this.service.getFileName_Size(e.id).subscribe((data: any ) => {
+                if (data.filename.length > 20) {
+                  // Tên file quá dài
+                  const startText = data.filename.substr(0, 5);
+                  const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                  fileName = startText + '...' + shortText;
+                  // Tên file gốc - hiển thị tooltip
+                  fileNamesFull = data.filename;
+                } else {
+                  fileName = data.filename;
+                  fileNamesFull = data.filename;
+                }
+                this.fileUpload.push({
+                  id: e,
+                  url: urlResult,
+                  name: fileName,
+                  fullName: fileNamesFull
+                });
+              }, err => {
+                console.error(err);
+              });
+            }, false);
+            reader.readAsDataURL(file);
+          }, err => {
+            console.error(err);
+          });
+        }
+
+      });
+    }
 
     if (this.petition[0].processVariables.petitionData.file.length > 0) {
       this.petition[0].processVariables.petitionData.file.forEach(e => {
@@ -180,6 +414,7 @@ export class DetailPetitionComponent implements OnInit {
       });
     }
     this.uploaded = true;
+    this.upload = true;
   }
 
   getHistory() {

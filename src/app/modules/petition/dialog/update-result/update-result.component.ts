@@ -114,40 +114,40 @@ export class UpdateResultComponent implements OnInit {
   onFileSelected(event: any) {
     let i = 0;
     if (event.target.files && event.target.files[0]) {
-        for (const file of event.target.files) {
-            // =============================================
-            let urlResult: any;
-            let fileName = '';
-            let fileNamesFull = '';
+      for (const file of event.target.files) {
+        // =============================================
+        let urlResult: any;
+        let fileName = '';
+        let fileNamesFull = '';
 
-            // =============================================
-            this.files.push(file);
-            const reader = new FileReader();
-            reader.onload = (eventLoad) => {
-                this.uploaded = true;
-                urlResult = eventLoad.target.result;
-                if (file.name.length > 20) {
-                    // Tên file quá dài
-                    const startText = event.target.files[i].name.substr(0, 5);
-                    // tslint:disable-next-line:max-line-length
-                    const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
-                    fileName = startText + '...' + shortText;
-                    // Tên file gốc - hiển thị tooltip
-                    fileNamesFull = event.target.files[i].name;
-                } else {
-                    fileName = file.name;
-                    fileNamesFull = file.name ;
-                }
-                this.filesInfo.push( {
-                    id: i,
-                    url: urlResult,
-                    name: fileName,
-                    fullName: fileNamesFull
-                });
-            };
-            reader.readAsDataURL(event.target.files[i]);
-            i++;
-        }
+        // =============================================
+        this.files.push(file);
+        const reader = new FileReader();
+        reader.onload = (eventLoad) => {
+          this.uploaded = true;
+          urlResult = eventLoad.target.result;
+          if (file.name.length > 20) {
+            // Tên file quá dài
+            const startText = event.target.files[i].name.substr(0, 5);
+            // tslint:disable-next-line:max-line-length
+            const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
+            fileName = startText + '...' + shortText;
+            // Tên file gốc - hiển thị tooltip
+            fileNamesFull = event.target.files[i].name;
+          } else {
+            fileName = file.name;
+            fileNamesFull = file.name ;
+          }
+          this.filesInfo.push( {
+            id: i,
+            url: urlResult,
+            name: fileName,
+            fullName: fileNamesFull
+          });
+        };
+        reader.readAsDataURL(event.target.files[i]);
+        i++;
+      }
     }
   }
 
@@ -166,8 +166,6 @@ export class UpdateResultComponent implements OnInit {
     this.files.splice(index, 1);
 
     this.blankVal = '';
-    console.log('List file còn lại: ');
-    console.log(this.files);
   }
 
   getRoleUser() {
@@ -221,42 +219,45 @@ export class UpdateResultComponent implements OnInit {
     this.countDefaultImage = this.uploadedImage.length;
 
     if (this.petition[0].processVariables.petitionData.file.length > 0) {
-      for (const i of this.petition[0].processVariables.petitionData.file) {
-        let urlResult: any;
-        let fileName = '';
-        let fileNamesFull = '';
+      this.petition[0].processVariables.petitionData.file.forEach(e => {
+        if (e.group[0] === 3) {
+          let urlResult: any;
+          let fileName = '';
+          let fileNamesFull = '';
 
-        this.service.getFile(i.id).subscribe(data => {
-          const reader = new FileReader();
-          reader.addEventListener('load', () => {
-            urlResult = reader.result;
-            this.service.getFileName_Size(i.id).subscribe((data: any ) => {
-              if (data.filename.length > 20) {
-                // Tên file quá dài
-                const startText = data.filename.substr(0, 5);
-                const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
-                fileName = startText + '...' + shortText;
-                // Tên file gốc - hiển thị tooltip
-                fileNamesFull = data.filename;
-              } else {
-                fileName = data.filename;
-                fileNamesFull = data.filename;
-              }
-              this.filesInfo.push({
-                id: i,
-                url: urlResult,
-                name: fileName,
-                fullName: fileNamesFull
+          this.service.getFile(e.id).subscribe(file => {
+            const reader = new FileReader();
+            reader.addEventListener('load', () => {
+              urlResult = reader.result;
+              this.service.getFileName_Size(e.id).subscribe((data: any ) => {
+                if (data.filename.length > 20) {
+                  // Tên file quá dài
+                  const startText = data.filename.substr(0, 5);
+                  const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                  fileName = startText + '...' + shortText;
+                  // Tên file gốc - hiển thị tooltip
+                  fileNamesFull = data.filename;
+                } else {
+                  fileName = data.filename;
+                  fileNamesFull = data.filename;
+                }
+                this.filesInfo.push({
+                  id: e,
+                  url: urlResult,
+                  name: fileName,
+                  fullName: fileNamesFull
+                });
+              }, err => {
+                console.error(err);
               });
-            }, err => {
-              console.error(err);
-            });
-          }, false);
-          reader.readAsDataURL(data);
-        }, err => {
-          console.error(err);
-        });
-      }
+            }, false);
+            reader.readAsDataURL(file);
+          }, err => {
+            console.error(err);
+          });
+        }
+
+      });
     }
     this.uploaded = true;
   }
@@ -322,8 +323,8 @@ export class UpdateResultComponent implements OnInit {
     formObj.payloadType = 'SetProcessVariablesPayload';
 
     const resultJSON = JSON.stringify(formObj, null, 2);
-    // console.log(resultJSON);
-    this.updateResult(resultJSON);
+    console.log(resultJSON);
+    // this.updateResult(resultJSON);
   }
 
   onSubmit() {
@@ -339,12 +340,21 @@ export class UpdateResultComponent implements OnInit {
         if (this.countDefaultImage > 0) {
           if (this.files.length > 0) {
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-              this.uploadedImage = file;
               const size = file.length;
+              const length = this.uploadedImage.length;
+              console.log(length);
+
+              console.log(this.uploadedImage);
               for (let i = 0; i < size; i++) {
+                // this.uploadedImage[length + i] = {
+                // console.log(file[i].id);
+                // const id = file[i].id;
+                // console.log(id);
+                // this.uploadedImage[length + i].id = id;
+                this.uploadedImage.push(file[i]);
                 this.type.push(3);
-                this.uploadedImage[i].group = this.type;
-                this.uploadedImage[i].name = file[i].filename;
+                this.uploadedImage[length + i].group = this.type;
+                this.uploadedImage[length + i].name = file[i].filename;
                 this.type = [];
               }
               this.formToJson();
@@ -355,12 +365,17 @@ export class UpdateResultComponent implements OnInit {
         } else {
           if (this.files.length > 0) {
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-              this.uploadedImage = file;
               const size = file.length;
               for (let i = 0; i < size; i++) {
+                // console.log(file[i].id);
+                // const id = file[i].id;
+                // console.log(id);
+                // this.uploadedImage[length + i].id = id;
+                this.uploadedImage.push(file[i]);
                 this.type.push(3);
-                this.uploadedImage[i].group = this.type;
-                this.uploadedImage[i].name = file[i].filename;
+                this.uploadedImage[length + i].group = [];
+                this.uploadedImage[length + i].group = this.type;
+                this.uploadedImage[length + i].name = file[i].filename;
                 this.type = [];
               }
               this.formToJson();
