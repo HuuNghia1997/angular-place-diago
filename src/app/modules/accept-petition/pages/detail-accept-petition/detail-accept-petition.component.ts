@@ -114,6 +114,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   // File
   filesInfo: ImageInfo[] = [];
   uploaded = true;
+  checkFiles: boolean = false;
 
   // Lịch sử
   history = [];
@@ -240,6 +241,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
               'load',
               () => {
                 urlResult = reader.result;
+
                 this.service.getImageName_Size(image.id).subscribe(
                   (data: any) => {
                     if (data.filename.length > 20) {
@@ -365,6 +367,10 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.service.openMapDialog(address, { longitude: long, latitude: lat });
   }
 
+  openPreviewImageDialog(images) {
+    this.service.openPreviewImageDialog(images);
+  }
+
   public fileOverBase(e: any): void {
     this.hasBaseDropZoneOver = e;
   }
@@ -402,6 +408,4 @@ export class DetailAcceptPetitionComponent implements OnInit {
         break;
     }
   }
-
-  checkFiles: boolean = false;
 }

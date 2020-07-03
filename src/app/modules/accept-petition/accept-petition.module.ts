@@ -18,6 +18,9 @@ import { AcceptPetitionComponent } from './dialog/accept-petition/accept-petitio
 import { CommentPetitionComponent } from './dialog/comment-petition/comment-petition.component';
 import { MapComponent } from './dialog/map/map.component';
 import { WorkflowDiagramComponent } from './dialog/workflow-diagram/workflow-diagram.component';
+import { NgxGalleryModule } from 'ngx-gallery-9';
+import { PreviewImageComponent } from './dialog/preview-image/preview-image.component';
+
 
 @NgModule({
   declarations: [
@@ -30,6 +33,7 @@ import { WorkflowDiagramComponent } from './dialog/workflow-diagram/workflow-dia
     CommentPetitionComponent,
     MapComponent,
     WorkflowDiagramComponent,
+    PreviewImageComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +43,7 @@ import { WorkflowDiagramComponent } from './dialog/workflow-diagram/workflow-dia
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,
     NgxMatTimepickerModule,
+    NgxGalleryModule
   ],
 })
 export class AcceptPetitionModule {}

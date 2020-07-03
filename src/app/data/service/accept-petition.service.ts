@@ -39,6 +39,10 @@ import {
   ConfirmMapDialogModel,
   MapComponent,
 } from 'src/app/modules/accept-petition/dialog/map/map.component';
+import {
+  ConfirmPreviewImageDialogModel,
+  PreviewImageComponent,
+} from 'src/app/modules/accept-petition/dialog/preview-image/preview-image.component';
 import { SnackbarService } from './snackbar.service';
 import { query } from '@angular/animations';
 import { catchError, map } from 'rxjs/operators';
@@ -569,6 +573,19 @@ export class AcceptPetitionService {
     );
     const dialogRef = this.dialog.open(MapComponent, {
       minWidth: '80%',
+      data: dialogData,
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('This dialog was closed');
+    });
+  }
+
+  openPreviewImageDialog(images) {
+    const dialogData = new ConfirmPreviewImageDialogModel(images);
+    const dialogRef = this.dialog.open(PreviewImageComponent, {
+      maxWidth: '80%',
       data: dialogData,
       disableClose: false,
     });
