@@ -629,76 +629,92 @@ export class EditPetitionComponent implements OnInit {
     });
   }
 
+  isFileImage(file) {
+    const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+
+    return file && acceptedImageTypes.includes(file['type']);
+  }
+
   // File uploads
   onSelectFile(event) {
     let i = 0;
     let files = [];
     let fileImport;
 
-    if (event.target.files && event.target.files[0]) {
-      for (const file of event.target.files) {
-        // =============================================
-        let urlNone: any;
-        let urlResult: any;
-        let fileName = '';
-        let fileNamesFull = '';
+    if (this.isFileImage(event.target.files[0])) {
+      if (event.target.files && event.target.files[0]) {
+        for (const file of event.target.files) {
+          // =============================================
+          let urlNone: any;
+          let urlResult: any;
+          let fileName = '';
+          let fileNamesFull = '';
 
-        // =============================================
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.uploaded = true;
-          urlNone = eventLoad.target.result;
-          this.imageCompress
-            .compressFile(urlNone, -1, 75, 50)
-            .then((result) => {
-              this.urlPreview = result;
-              urlResult = result.split(',')[1];
-              this.fileImport = this.convertBase64toFile(result, file.name);
-              fileImport = this.convertBase64toFile(result, file.name);
-              if (this.filesInfo.length < 5) {
-                this.files.push(this.fileImport);
-                files.push(fileImport);
-                if (this.fileImport.name.length > 20) {
-                  // Tên file quá dài
-                  const startText = event.target.files[i].name.substr(0, 5);
-                  // tslint:disable-next-line:max-line-length
-                  const shortText = event.target.files[i].name.substring(
-                    event.target.files[i].name.length - 7,
-                    event.target.files[i].name.length
-                  );
-                  fileName = startText + '...' + shortText;
-                  // Tên file gốc - hiển thị tooltip
-                  fileNamesFull = event.target.files[i].name;
+          // =============================================
+          const reader = new FileReader();
+          reader.onload = (eventLoad) => {
+            this.uploaded = true;
+            urlNone = eventLoad.target.result;
+            this.imageCompress
+              .compressFile(urlNone, -1, 75, 50)
+              .then((result) => {
+                this.urlPreview = result;
+                urlResult = result.split(',')[1];
+                this.fileImport = this.convertBase64toFile(result, file.name);
+                fileImport = this.convertBase64toFile(result, file.name);
+                if (this.filesInfo.length < 5) {
+                  this.files.push(this.fileImport);
+                  files.push(fileImport);
+                  if (this.fileImport.name.length > 20) {
+                    // Tên file quá dài
+                    const startText = event.target.files[i].name.substr(0, 5);
+                    // tslint:disable-next-line:max-line-length
+                    const shortText = event.target.files[i].name.substring(
+                      event.target.files[i].name.length - 7,
+                      event.target.files[i].name.length
+                    );
+                    fileName = startText + '...' + shortText;
+                    // Tên file gốc - hiển thị tooltip
+                    fileNamesFull = event.target.files[i].name;
+                  } else {
+                    fileName = this.fileImport.name;
+                    fileNamesFull = this.fileImport.name;
+                  }
+
+                  this.filesInfo.push({
+                    id: i,
+                    url: this.urlPreview,
+                    name: fileName,
+                    fullName: fileNamesFull,
+                  });
                 } else {
-                  fileName = this.fileImport.name;
-                  fileNamesFull = this.fileImport.name;
+                  this.main.openSnackBar(
+                    'Số lượng ',
+                    'hình ảnh ',
+                    'không được vượt quá ',
+                    '5',
+                    'error_notification'
+                  );
                 }
-
-                this.filesInfo.push({
-                  id: i,
-                  url: this.urlPreview,
-                  name: fileName,
-                  fullName: fileNamesFull,
-                });
-              } else {
-                this.main.openSnackBar(
-                  'Số lượng ',
-                  'hình ảnh ',
-                  'không được vượt quá ',
-                  '5',
-                  'error_notification'
-                );
-              }
-            });
-        };
-        reader.readAsDataURL(event.target.files[i]);
-        i++;
+              });
+          };
+          reader.readAsDataURL(event.target.files[i]);
+          i++;
+        }
       }
-    }
 
-    setTimeout(() => {
-      this.uploadImages(files);
-    }, 1500);
+      setTimeout(() => {
+        this.uploadImages(files);
+      }, 1500);
+    } else {
+      this.main.openSnackBar(
+        'File không phải ảnh, ',
+        '',
+        'vui lòng thêm lại',
+        '',
+        'error_notification'
+      );
+    }
   }
 
   uploadImages(files) {

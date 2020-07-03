@@ -87,7 +87,6 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.search(0, pageSizeOptions[1]);
     this.getListTag();
-
   }
 
   ngAfterViewInit() {
@@ -235,6 +234,16 @@ export class ListAcceptPetitionComponent implements OnInit, AfterViewInit {
     );
 
     searchString = '';
+  }
+
+  setString(str: string) {
+    if (str.length < 50) {
+      return str;
+    } else {
+      let newTitle;
+      newTitle = str.slice(0, 50) + '...';
+      return newTitle;
+    }
   }
 
   // Add dialog

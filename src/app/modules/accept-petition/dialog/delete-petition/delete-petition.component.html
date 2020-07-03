@@ -1,32 +1,34 @@
 <h3 class="dialog_title" mat-dialog-title>Hủy phản ánh</h3>
 
 <form [formGroup]="cancelForm" (submit)="onConfirm()">
-  <p>
-    Phản ánh <strong>{{ petitionTitle }}</strong> sẽ được hủy và không tiếp nhận
-    xử lý
-  </p>
+  <mat-dialog-content class="mat-typography">
+    <p>
+      Phản ánh <strong>{{ petitionTitle }}</strong> sẽ được hủy và không tiếp
+      nhận xử lý
+    </p>
 
-  <div class="mb-1">
-    <mat-checkbox color="primary" formControlName="sendSms">
-      Gửi tin nhắn SMS
-    </mat-checkbox>
-    <mat-checkbox color="primary" formControlName="isPublic" class="ml-2">
-      Công khai phản ánh
-    </mat-checkbox>
-  </div>
+    <div class="mb-1">
+      <mat-checkbox color="primary" formControlName="sendSms">
+        Gửi tin nhắn SMS
+      </mat-checkbox>
+      <mat-checkbox color="primary" formControlName="isPublic" class="ml-2">
+        Công khai phản ánh
+      </mat-checkbox>
+    </div>
 
-  <!-- Nội dung -->
-  <mat-form-field appearance="outline" class="input-full-width">
-    <mat-label> Nội dung </mat-label>
-    <label>
-      <textarea
-        matInput
-        formControlName="content"
-        cdkTextareaAutosize
-        rows="5"
-      ></textarea>
-    </label>
-  </mat-form-field>
+    <!-- Nội dung -->
+    <mat-form-field appearance="outline" class="input-full-width">
+      <mat-label> Nội dung </mat-label>
+      <label>
+        <textarea
+          matInput
+          formControlName="content"
+          cdkTextareaAutosize
+          rows="5"
+        ></textarea>
+      </label>
+    </mat-form-field>
+  </mat-dialog-content>
 
   <mat-dialog-actions align="center">
     <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>

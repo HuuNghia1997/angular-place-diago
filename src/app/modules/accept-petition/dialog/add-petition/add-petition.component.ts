@@ -418,6 +418,12 @@ export class AddPetitionComponent implements OnInit {
     this.uploaded = false;
   }
 
+  isFileImage(file) {
+    const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+
+    return file && acceptedImageTypes.includes(file['type'])
+}
+
   // File upload
   onSelectFile(event) {
     let i = 0;
@@ -425,61 +431,72 @@ export class AddPetitionComponent implements OnInit {
     let fileImport;
     let files = [];
 
-    if (event.target.files && event.target.files[0]) {
-      for (const file of event.target.files) {
-        let urlNone: any;
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.uploaded = true;
-          urlNone = eventLoad.target.result;
-          this.imageCompress
-            .compressFile(urlNone, -1, 75, 50)
-            .then((result) => {
-              this.urlPreview = result;
-              urlPreview = result;
-              this.fileImport = this.convertBase64toFile(
-                this.urlPreview,
-                file.name
-              );
-              fileImport = this.convertBase64toFile(urlPreview, file.name);
-              if (this.urls.length + 1 <= 5) {
-                this.urls.push(this.urlPreview);
-                this.files.push(this.fileImport);
-                files.push(fileImport);
-                if (this.fileImport.name.length > 20) {
-                  // Tên file quá dài
-                  const startText = event.target.files[i].name.substr(0, 5);
-                  // tslint:disable-next-line:max-line-length
-                  const shortText = event.target.files[i].name.substring(
-                    event.target.files[i].name.length - 7,
-                    event.target.files[i].name.length
-                  );
-                  this.fileNames.push(startText + '...' + shortText);
-                  // Tên file gốc - hiển thị tooltip
-                  this.fileNamesFull.push(event.target.files[i].name);
-                } else {
-                  this.fileNames.push(this.fileImport.name);
-                  this.fileNamesFull.push(this.fileImport.name);
-                }
-              } else {
-                this.main.openSnackBar(
-                  'Số lượng ',
-                  'hình ảnh ',
-                  'không được vượt quá ',
-                  '5',
-                  'error_notification'
+    if(this.isFileImage(event.target.files[0])) {
+      if (event.target.files && event.target.files[0]) {
+        for (const file of event.target.files) {
+          let urlNone: any;
+          const reader = new FileReader();
+          reader.onload = (eventLoad) => {
+            this.uploaded = true;
+            urlNone = eventLoad.target.result;
+            this.imageCompress
+              .compressFile(urlNone, -1, 75, 50)
+              .then((result) => {
+                this.urlPreview = result;
+                urlPreview = result;
+                this.fileImport = this.convertBase64toFile(
+                  this.urlPreview,
+                  file.name
                 );
-              }
-            });
-        };
-        reader.readAsDataURL(event.target.files[i]);
-        i++;
+                fileImport = this.convertBase64toFile(urlPreview, file.name);
+                if (this.urls.length + 1 <= 5) {
+                  this.urls.push(this.urlPreview);
+                  this.files.push(this.fileImport);
+                  files.push(fileImport);
+                  if (this.fileImport.name.length > 20) {
+                    // Tên file quá dài
+                    const startText = event.target.files[i].name.substr(0, 5);
+                    // tslint:disable-next-line:max-line-length
+                    const shortText = event.target.files[i].name.substring(
+                      event.target.files[i].name.length - 7,
+                      event.target.files[i].name.length
+                    );
+                    this.fileNames.push(startText + '...' + shortText);
+                    // Tên file gốc - hiển thị tooltip
+                    this.fileNamesFull.push(event.target.files[i].name);
+                  } else {
+                    this.fileNames.push(this.fileImport.name);
+                    this.fileNamesFull.push(this.fileImport.name);
+                  }
+                } else {
+                  this.main.openSnackBar(
+                    'Số lượng ',
+                    'hình ảnh ',
+                    'không được vượt quá ',
+                    '5',
+                    'error_notification'
+                  );
+                }
+              });
+          };
+          reader.readAsDataURL(event.target.files[i]);
+          i++;
+        }
       }
+
+      setTimeout(() => {
+        this.uploadImages(files);
+      }, 1500);
+    } else {
+      this.main.openSnackBar(
+        'File không phải ảnh, ',
+        '',
+        'vui lòng thêm lại',
+        '',
+        'error_notification'
+      );
     }
 
-    setTimeout(() => {
-      this.uploadImages(files);
-    }, 1500);
   }
 
   uploadImages(files) {

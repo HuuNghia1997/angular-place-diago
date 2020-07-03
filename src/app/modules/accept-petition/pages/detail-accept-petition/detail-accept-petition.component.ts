@@ -75,6 +75,11 @@ export class DetailAcceptPetitionComponent implements OnInit {
       name: 'tìm kiếm',
     },
   ];
+  reporterTypeList: any = [
+    { id: 1, name: 'Cá nhân' },
+    { id: 2, name: 'Tổ chức' },
+    { id: 3, name: 'Khác' },
+  ];
   checkAccept: boolean = true;
   checkDeny: boolean = true;
 
@@ -88,12 +93,14 @@ export class DetailAcceptPetitionComponent implements OnInit {
   file: [];
   isAnonymous: boolean;
   isPublic: boolean;
+  public: string;
   receptionMethod: number;
   receptionMethodDescription: string;
   reporterAddress: string;
   reporterFullname: string;
   reporterIdentityId: string;
   reporterPhone: string;
+  reporterType: number;
   reporterLocationFullAddress: string;
   result: string;
   status: number;
@@ -159,8 +166,19 @@ export class DetailAcceptPetitionComponent implements OnInit {
     );
   }
 
+  setReporterType(type: number) {
+    let typeString: string;
+    this.reporterTypeList.forEach((item) => {
+      if (item.id === type) {
+        typeString = item.name;
+      }
+    });
+
+    return typeString;
+  }
+
   setViewData() {
-    console.log(this.response[0]);
+    // console.log(this.response[0]);
     if (this.response[0].agency != undefined) {
       this.agencyName = this.response[0].agency.name;
     }
@@ -170,6 +188,11 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.file = this.response[0].file;
     this.isAnonymous = this.response[0].isAnonymous;
     this.isPublic = this.response[0].isPublic;
+    if (this.isPublic) {
+      this.public = 'Công khai';
+    } else {
+      this.public = 'Không công khai';
+    }
     this.receptionMethod = this.response[0].receptionMethod;
     this.receptionMethodDescription = this.receptionMethodDescription;
 
@@ -186,6 +209,8 @@ export class DetailAcceptPetitionComponent implements OnInit {
     this.reporterFullname = this.response[0].reporter.fullname;
     this.reporterIdentityId = this.response[0].reporter.identityId;
     this.reporterPhone = this.response[0].reporter.phone;
+    this.reporterType = this.response[0].reporter.type;
+    this.setReporterType(this.reporterType);
     this.reporterLocationFullAddress = this.response[0].reporterLocation.fullAddress;
     this.result = this.response[0].result;
     this.status = this.response[0].status;

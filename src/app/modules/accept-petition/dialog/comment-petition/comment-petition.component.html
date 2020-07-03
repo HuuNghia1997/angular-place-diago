@@ -1,19 +1,21 @@
 <h3 class="dialog_title" mat-dialog-title>Bình luận</h3>
 
 <form [formGroup]="commentForm" (submit)="onConfirm()">
-  <!-- Nội dung -->
-  <mat-form-field appearance="outline" class="input-full-width">
-    <mat-label> Nội dung </mat-label>
-    <label>
-      <textarea
-        matInput
-        cdkTextareaAutosize
-        rows="10"
-        formControlName="content"
-        required
-      ></textarea>
-    </label>
-  </mat-form-field>
+  <mat-dialog-content class="mat-typography">
+    <!-- Nội dung -->
+    <mat-form-field appearance="outline" class="input-full-width">
+      <mat-label> Nội dung </mat-label>
+      <label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          rows="10"
+          formControlName="content"
+          required
+        ></textarea>
+      </label>
+    </mat-form-field>
+  </mat-dialog-content>
 
   <mat-dialog-actions align="center">
     <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>

@@ -343,7 +343,6 @@ export class AcceptPetitionService {
     const dialogData = new ConfirmAddDialogModel('Thêm mới phản ánh');
     const dialogRef = this.dialog.open(AddPetitionComponent, {
       width: '80%',
-      height: '600px',
       data: dialogData,
       disableClose: true,
     });
@@ -389,7 +388,7 @@ export class AcceptPetitionService {
     const dialogData = new ConfirmUpdateDialogModel('Cập nhật thông báo', id);
     const dialogRef = this.dialog.open(EditPetitionComponent, {
       maxWidth: '80%',
-      height: '600px',
+      maxHeight: '80%',
       data: dialogData,
       disableClose: true,
     });
@@ -440,7 +439,6 @@ export class AcceptPetitionService {
     const reason = '';
     dialogRef.afterClosed().subscribe((dialogResult) => {
       this.result = dialogResult;
-      console.log(dialogResult);
       if (this.result === true) {
         this.main.openSnackBar(
           message,
@@ -470,7 +468,9 @@ export class AcceptPetitionService {
       id
     );
     const dialogRef = this.dialog.open(AcceptPetitionComponent, {
-      minWidth: '80%',
+      minWidth: '70%',
+      maxWidth: '80%',
+      maxHeight: '80%',
       data: dialogData,
       disableClose: true,
     });
