@@ -13,6 +13,10 @@
   margin-top: 4% !important;
 }
 
+.mb-2 {
+  margin-bottom: 2% !important;
+}
+
 .input-full-width {
   width: 100%;
 }
@@ -79,7 +83,7 @@ a:visited {
 
 a:hover {
   color: #1976d2;
-  text-decoration: underline;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -118,7 +122,6 @@ a:active {
   font-weight: bold;
   position: relative;
   top: 3px;
-  vertical-align: center;
 }
 
 .drag_upload_btn {
@@ -191,6 +194,10 @@ a:active {
   width: 24%;
   margin: 0 0.5% 5em 0.5%;
   background-color: #44444450;
+}
+
+.progress {
+  margin: 0 0.5% 1em 0.5%;
 }
 
 .img_items {

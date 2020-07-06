@@ -5,6 +5,12 @@
   color: #000000;
 }
 
+.main-wrapper {
+  background-color: #fff;
+  width: 98%;
+  padding: 1em;
+}
+
 .mt-1 {
   margin-top: 1% !important;
 }
@@ -98,7 +104,7 @@ a:visited {
 
 a:hover {
   color: #1976D2;
-  text-decoration: underline;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -356,4 +362,8 @@ a:active {
 
 table {
   width: 100%;
+}
+
+.progress {
+  margin: 0 0.5% 1em 0.5%;
 }

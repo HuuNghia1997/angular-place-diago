@@ -5,24 +5,22 @@
   </mat-toolbar-row>
 </mat-toolbar>
 
-<div class="container">
+<div class="main-wrapper mat-elevation-z4">
   <mat-card>
     <mat-card-title>
-      <button
-        [ngClass]="
-          status === 0
-            ? 'btn-wait-process'
-            : 'btn-processed'
-        "
-      >
-        {{ petition.status }}
+      <button [ngClass]="selectStyleStatus(status)">
+        {{ statusDescription }}
       </button>
-      Phản ánh về trật tự đô thị
+      {{ title }}
     </mat-card-title>
 
     <div class="button-action">
       <!-- Btn cập nhật -->
-      <button mat-button class="fs-13" (click)="openDialogUpdatePetition()">
+      <button
+        mat-button
+        class="fs-13"
+        (click)="updatePetition(petitionId, title)"
+      >
         <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
         Cập nhật
       </button>
@@ -31,7 +29,8 @@
       <button
         mat-button
         class="ml-1 fs-13"
-        (click)="openDialogAcceptPetition()"
+        (click)="openAcceptDialog(petitionId, title)"
+        [disabled]="checkAccept"
       >
         <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
         Tiếp nhận
@@ -41,7 +40,8 @@
       <button
         mat-button
         class="ml-1 fs-13"
-        (click)="openDialogDelelePetition()"
+        (click)="openCancelDialog(petitionId, title)"
+        [disabled]="checkDeny"
       >
         <mat-icon fontSet="material-icons-outlined"> highlight_off </mat-icon>
         Hủy
@@ -57,37 +57,44 @@
           <table class="table-info-petition">
             <tr>
               <td class="td-1">Chuyên mục:</td>
-              <td class="td-2">Giao thông, Y tế</td>
+              <td class="td-2">{{ tagName }}</td>
             </tr>
             <tr>
               <td class="td-1">Thời gian xảy ra:</td>
-              <td class="td-2">11/12/2019 14:00:00</td>
+              <td class="td-2">
+                {{ takePlaceOn | date: "dd/MM/yyyy HH:mm:ss" }}
+              </td>
             </tr>
             <tr>
               <td class="td-1">Ngày phản ánh:</td>
-              <td class="td-2">11/12/2019 15:00:00</td>
+              <td class="td-2">
+                {{ createdDate | date: "dd/MM/yyyy HH:mm:ss" }}
+              </td>
             </tr>
             <tr>
               <td class="td-1">Người gửi:</td>
-              <td class="td-2">La Văn Tam</td>
+              <td class="td-2">{{ reporterFullname }}</td>
             </tr>
             <tr>
               <td class="td-1">Nơi tạo phản ánh:</td>
               <td class="td-2">
-                Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang (
-                <button class="btn-map">
-                  <mat-icon fontSet="material-icons-outlined" class="icon-map">
-                    place
-                  </mat-icon>
-                  Xem bản đồ</button
-                >)
+                {{ reporterAddress }}
               </td>
             </tr>
             <tr>
               <td class="td-1">Địa điểm phản ánh:</td>
               <td>
-                Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang (
-                <button class="btn-map">
+                {{ takePlaceAtFullAddress }} (
+                <button
+                  class="btn-map"
+                  (click)="
+                    openMapDialog(
+                      takePlaceAtFullAddress,
+                      takePlaceAt.latitude,
+                      takePlaceAt.longitude
+                    )
+                  "
+                >
                   <mat-icon fontSet="material-icons-outlined" class="icon-map">
                     place
                   </mat-icon>
@@ -102,127 +109,65 @@
           <h4 class="mt-2">Nội dung</h4>
           <table class="table-content-petition">
             <tr>
-              Vào 6h20 phút ngày 12/12 trước cổng trường tiểu học Lê Lợi tình
-              trạng đổ xe gây mất an toàn giao thông tắc đường mong quý cơ quan
-              vào cuộc xử lý.
+              {{
+                description
+              }}
             </tr>
           </table>
           <!-- Nội dung phản ánh -->
 
           <!-- File đính kèm -->
-          <h4 class="mt-2">Đính kèm</h4>
-          <div
-            class="frame-upload-file well my-drop-zone card-container"
-            ng2FileDrop
-            [ngClass]="{ 'nv-file-over': hasBaseDropZoneOver }"
-            (fileOver)="fileOverBase($event)"
-            [uploader]="uploader"
-            (onFileDrop)="onFileSelected($event)"
-          >
-            <table>
-              <tr>
-                <span class="hidden-file" aria-hidden="true">
-                  <input
-                    type="file"
-                    #fileInput
-                    ng2FileSelect
-                    [uploader]="uploader"
-                    (onFileSelected)="onFileSelected($event)"
-                    multiple
-                  />
-                </span>
-                <p (click)="fileInput.click()">
-                  <span class="span-cloud-upload">
-                    <mat-icon
-                      fontSet="material-icons-outlined"
-                      class="icon-cloud"
-                    >
-                      cloud_upload
-                    </mat-icon>
-                    <button disabled class="btn-drop-drag">
-                      Kéo thả tập tin hoặc
-                    </button>
-                    <button class="btn-upload">Tải lên</button>
-                  </span>
-                </p>
-              </tr>
-            </table>
+          <!-- Hình ảnh -->
+          <div class="mt-2">
+            <h4 id="title">Hình ảnh</h4>
 
-            <!-- Upload file -->
-            <div class="card-container">
-              <mat-card class="mat-card-file short">
-                <img
-                  mat-card-image
-                  src="../../../assets/img/imgFile.png"
-                  alt=""
-                />
-                <mat-card-subtitle class="name-file">
-                  image.png
-                </mat-card-subtitle>
-                <div class="mat-icon-delete">
-                  <mat-icon fontSet="material-icons-outlined">
-                    delete
-                  </mat-icon>
-                </div>
-              </mat-card>
-
-              <mat-card class="mat-card-file short">
-                <img
-                  mat-card-image
-                  src="../../../assets/img/imgFile.png"
-                  alt=""
-                />
-                <mat-card-subtitle class="name-file">
-                  file_file_file.docx
-                </mat-card-subtitle>
-                <div class="mat-icon-delete">
-                  <mat-icon fontSet="material-icons-outlined">
-                    delete
-                  </mat-icon>
-                </div>
-              </mat-card>
-
-              <mat-card class="mat-card-file short">
-                <img
-                  mat-card-image
-                  src="../../../assets/img/imgFile.png"
-                  alt=""
-                />
-                <mat-card-subtitle class="name-file">
-                  ketqua_ketqua.pdf
-                </mat-card-subtitle>
-                <div class="mat-icon-delete">
-                  <mat-icon fontSet="material-icons-outlined">
-                    delete
-                  </mat-icon>
-                </div>
-              </mat-card>
-
+            <div [ngClass]="{ img_uploaded: uploaded == true }">
               <div
-                class="col-sm9 div-file-selected"
-                *ngFor="let item of uploader.queue"
+                class="drag_upload_btn"
+                [ngClass]="{ no_boder: uploaded == true }"
               >
-                <mat-card class="mat-card-file short">
-                  <img
-                    mat-card-image
-                    src="../../../assets/img/imgFile.png"
-                    alt=""
-                  />
-                  <mat-card-subtitle class="name-file">
-                    {{ item?.file?.name }}
-                  </mat-card-subtitle>
-                  <div class="mat-icon-delete" (click)="item.remove()">
-                    <mat-icon fontSet="material-icons-outlined">
-                      delete
-                    </mat-icon>
-                  </div>
-                </mat-card>
+                <button
+                  mat-button
+                  class="btn-preview"
+                  [ngClass]="{
+                    btn_uploaded: uploaded == true,
+                    clear_img_queue: uploaded == false
+                  }"
+                  (click)="openPreviewImageDialog(filesInfo)"
+                >
+                  <mat-icon> zoom_in </mat-icon>
+                  <a href="">Chế độ xem ảnh</a>
+                </button>
               </div>
-              <!-- show file upload -->
+              <div *ngIf="checkFiles; then thenBlock; else elseBlock"></div>
+              <ng-template #thenBlock>
+                <div class="image_drag_upload_preview">
+                  <div class="list_uploaded" *ngFor="let file of filesInfo">
+                    <div
+                      class="img_items mat-elevation-z4"
+                      [ngStyle]="{
+                        'background-image': 'url(' + file.url + ')'
+                      }"
+                    ></div>
+                    <div class="img_control">
+                      <span
+                        class="file_name"
+                        matTooltip="{{ file.fullName }}"
+                        [matTooltipPosition]="'right'"
+                      >
+                        {{ file.name }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template #elseBlock>
+                <div class="center mb-3">
+                  Không có hình ảnh nào
+                </div>
+              </ng-template>
             </div>
-            <!-- Upload file -->
           </div>
-          <!-- File đính kèm -->
 
           <!-- Lịch sử - hoạt động -->
           <h4 class="mt-2">Hoạt động</h4>
@@ -257,7 +202,8 @@
                     </button>
                     <span class="name-user"> {{ node.name }} </span>
                     <span class="action">
-                      &nbsp;đã bình luận - {{ node.time }}
+                      &nbsp;đã bình luận -
+                      {{ node.time | date: "dd/MM/yyyy HH:mm:ss" }}
                     </span>
                   </div>
                   <ul [class.tree-invisible]="treeControl.isExpanded(node)">
@@ -267,7 +213,11 @@
                 </mat-nested-tree-node>
               </mat-tree>
 
-              <button mat-button class="mt-10" (click)="openDialogCommentPetition()">
+              <button
+                mat-button
+                class="mt-10"
+                (click)="openCommentDialog(petitionId, title)"
+              >
                 <mat-icon fontSet="material-icons-outlined">
                   insert_comment
                 </mat-icon>
@@ -278,40 +228,49 @@
 
             <!-- Lịch sử -->
             <mat-tab label="Lịch sử">
-              <mat-card class="card-history">
+              <mat-card class="card-history" *ngFor="let his of history">
                 <mat-card-subtitle>
-                  <span class="name-user"> Nguyễn Văn A </span>
+                  <span class="name-user"> {{ his.user.name }} </span>
                   <span class="action">
-                    &nbsp;đã bình luận - 13/12/2019 12:30:00
+                    &nbsp;đã
+                    <ng-container *ngFor="let item of historyTypeList">
+                      <ng-container *ngIf="item.id === his.type">
+                        {{ item.name }} -
+                      </ng-container>
+                    </ng-container>
+                    {{ his.affectedDate | date: "dd/MM/yyyy HH:mm:ss" }}
                   </span>
-                </mat-card-subtitle>
-              </mat-card>
-              <mat-card class="card-history">
-                <mat-card-subtitle>
-                  <span class="name-user"> Nguyễn Văn A </span>
-                  <span class="action">
-                    &nbsp;đã bình luận - 13/12/2019 13:30:00
-                  </span>
-                </mat-card-subtitle>
-              </mat-card>
-              <mat-card class="card-history">
-                <mat-card-subtitle>
-                  <span class="name-user"> Nguyễn Văn A </span>
-                  <span class="action">
-                    &nbsp;đã thay đổi - 14/12/2019 16:00:00
-                  </span>
-                  <table class="mt-05">
-                    <tr class="fw-500">
-                      <td class="width-19 action">Trường</td>
-                      <td class="width-39 action">Giá trị cũ</td>
-                      <td class="width-39 action">Giá trị mới</td>
-                    </tr>
-                    <tr>
-                      <td class="width-19 action">Trạng thái</td>
-                      <td class="width-39 action">Chờ tiếp nhận</td>
-                      <td class="width-39 action">Đã tiếp nhận</td>
-                    </tr>
-                  </table>
+                  <ng-container *ngIf="his.action.length > 0">
+                    <div
+                      class="history_content mt-1"
+                      [ngClass]="{ 'd-none': his.type === 4 }"
+                    >
+                      <div style="width: 20%;">
+                        <b> Trường </b>
+                      </div>
+                      <div style="width: 30%;">
+                        <b> Giá trị cũ </b>
+                      </div>
+                      <div style="width: 30%;">
+                        <b> Giá trị mới </b>
+                      </div>
+                    </div>
+                    <div
+                      class="history_content mt-1"
+                      *ngFor="let his_item of his.action"
+                      [ngClass]="{ 'd-none': his.type === 4 }"
+                    >
+                      <div style="width: 20%;">
+                        <p>{{ his_item.fieldName }}</p>
+                      </div>
+                      <div style="width: 30%;">
+                        <p>{{ his_item.originalValue }}</p>
+                      </div>
+                      <div style="width: 30%;">
+                        <p>{{ his_item.newValue }}</p>
+                      </div>
+                    </div>
+                  </ng-container>
                 </mat-card-subtitle>
               </mat-card>
             </mat-tab>
@@ -330,34 +289,27 @@
           <table class="table-info-process">
             <tr>
               <td class="td-1 width-40">Người gửi:</td>
-              <td class="td-2 width-60">La Văn Tam</td>
+              <td class="td-2 width-60">{{ reporterFullname }}</td>
             </tr>
             <tr>
               <td class="td-1 width-40">Số điện thoại:</td>
-              <td class="td-2 width-60">0941234567</td>
+              <td class="td-2 width-60">{{ reporterPhone }}</td>
             </tr>
             <tr>
               <td class="td-1 width-40">CMND</td>
-              <td class="td-2 width-60">331223344</td>
+              <td class="td-2 width-60">{{ reporterIdentityId }}</td>
             </tr>
             <tr>
               <td class="td-1 width-40">Đối tượng</td>
-              <td class="td-2 width-60">Cá nhân</td>
+              <td class="td-2 width-60">{{ setReporterType(reporterType) }}</td>
             </tr>
             <tr>
               <td class="td-1 width-40">Địa chỉ</td>
               <td class="td-2 width-60">
-                Số 122, Ấp Bắc, Thành phố Mỹ Tho, Tỉnh Tiền Giang (
-                <button class="btn-map">
-                  <mat-icon fontSet="material-icons-outlined" class="icon-map">
-                    place
-                  </mat-icon>
-                  Xem bản đồ</button
-                >)
+                {{ reporterAddress }}
               </td>
             </tr>
           </table>
-          <!-- Table thông tin xử lý -->
 
           <!-- Kết quả xử lý -->
           <h4 class="mt-2">Kết quả xử lý</h4>
@@ -371,7 +323,11 @@
             <tr>
               <td class="td-1 width-40">Công khai:</td>
               <td class="td-2 width-60">
-                <button class="btn-none-public">Chưa công khai</button>
+                <button
+                  [ngClass]="isPublic ? 'btn-receive' : 'btn-none-public'"
+                >
+                  {{ public }}
+                </button>
               </td>
             </tr>
           </table>

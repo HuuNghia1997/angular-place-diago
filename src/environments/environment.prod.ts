@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false,
+  production: true,
   debug: true,
   keycloakDebug: true,
   keycloakOptions: {
@@ -66,9 +66,35 @@ export const environment = {
         {
           name: 'rb-petition',
           path: 'rb-petition'
+        },
+        {
+          name: 'surfeed-rb-petition',
+          path: 'rb-petition',
+        },
+        {
+          name: 'messenger',
+          path: 'me',
+        },
+        {
+          name: 'basedata',
+          path: 'ba',
         }
       ]
-    }
+    },
+    {
+      name: 'digo-microservice-basedata',
+      rootUrl: 'https://digo-api.vnptigate.vn/',
+      services: [
+        {
+          name: 'basedata',
+          path: 'ba',
+        },
+        {
+          name: 'messenger',
+          path: 'me',
+        },
+      ],
+    },
   ],
   mapbox: {
     accessToken:

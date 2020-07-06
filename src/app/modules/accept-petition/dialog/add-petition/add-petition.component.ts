@@ -4,14 +4,18 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { PickDatetimeAdapter } from 'src/app/data/schema/pick-datetime-adapter';
 import { PICK_FORMATS } from 'src/app/data/service/config.service';
+import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import {
   NgxMatDateAdapter,
   NGX_MAT_DATE_FORMATS,
 } from '@angular-material-components/datetime-picker';
-import { MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
+import { petitionCategoryId } from 'src/app/data/service/config.service';
 import { MapboxService } from 'src/app/data/service/mapbox.service';
+import { KeycloakService } from 'keycloak-angular';
+import { DatePipe } from '@angular/common';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-petition',
@@ -23,56 +27,90 @@ import { MapboxService } from 'src/app/data/service/mapbox.service';
       provide: NGX_MAT_DATE_FORMATS,
       useValue: PICK_FORMATS,
     },
+    DatePipe,
   ],
 })
 export class AddPetitionComponent implements OnInit {
+  // Initialization
+  categoryId = petitionCategoryId;
+  tagList = [];
+  agencyList: AgencyInfo[] = [];
+  reporterTypeList: any = [
+    { id: 1, name: 'Cá nhân' },
+    { id: 2, name: 'Tổ chức' },
+    { id: 3, name: 'Khác' },
+  ];
+  place = [];
+  accountId: string;
+  username: string;
+
+  progress: number = 0;
+
+  // Form
+  public reg = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
   addForm = new FormGroup({
-    personName: new FormControl(''),
-    phone: new FormControl(''),
+    // Temporary variable
+    reporterFullName: new FormControl(''),
+    reporterPhone: new FormControl(''),
+    reporterIdentityId: new FormControl(''),
+    reporterType: new FormControl(1),
+    reporterFullAddress: new FormControl(''),
+    reporterPlaceVillage: new FormControl(''),
+    reporterPlaceTown: new FormControl(''),
+    reporterPlaceProvince: new FormControl(82),
+    reporterLocation: new FormControl(''),
+    petitionFullAddress: new FormControl(''),
+    petitionLatitude: new FormControl(''),
+    petitionLongitude: new FormControl(''),
+
+    // Body post request
     title: new FormControl(''),
-    tag: new FormControl(''),
-    occurredDate: new FormControl(''),
-    content: new FormControl(''),
-    placePetition: new FormControl(''),
+    tag: new FormControl(),
+    reporter: new FormControl(''),
+    takePlaceOn: new FormControl(''),
+    agency: new FormControl(''),
+    description: new FormControl(''),
+    takePlaceAt: new FormControl(''),
+    sendSms: new FormControl(''),
+    isPublic: new FormControl('Công khai phản ánh'),
+    file: new FormControl(),
+    thumbnailId: new FormControl(),
+    isAnonymous: new FormControl(),
+    receptionMethod: new FormControl(),
   });
-  personName = new FormControl('', [Validators.required]);
-  phone = new FormControl('', [Validators.required]);
-  title = new FormControl('', [Validators.required]);
+  reporterFullName = new FormControl('', [
+    Validators.required,
+    Validators.pattern(this.reg),
+  ]);
+  reporterPhone = new FormControl('', [Validators.required]);
+  title = new FormControl('', [
+    Validators.required,
+    Validators.pattern(this.reg),
+  ]);
   tag = new FormControl('', [Validators.required]);
-  occurredDate = new FormControl('', [Validators.required]);
-  content = new FormControl('', [Validators.required]);
-  placePetition = new FormControl('', [Validators.required]);
+  takePlaceOn = new FormControl('', [Validators.required]);
+  description = new FormControl('', [
+    Validators.required,
+    Validators.pattern(this.reg),
+  ]);
+  takePlaceAt = new FormControl('', [
+    Validators.required,
+    Validators.pattern(this.reg),
+  ]);
 
-  topicList: string[] = [
-    'Giao thông',
-    'Y tế',
-    'Giáo dục',
-    'Môi trường',
-    'Cơ sở hạ tầng',
-  ];
-  agencyList: string[] = [
-    'UBND tỉnh Tiền Giang',
-    'UBND tỉnh Đồng Tháp',
-    'UBND tỉnh Bến Tre',
-  ];
-  reporterList: string[] = ['Cá nhân', 'Tổ chức'];
-
+  // Upload file
   uploaded: boolean;
   blankVal: any;
   uploadedImage = [];
-  listTags = [];
-  itemsListTags = [];
   files = [];
   urls = [];
   fileNames = [];
   fileNamesFull = [];
-  imgResultAfterCompress: string;
-  localCompressedURl: any;
   fileImport: File;
   urlPreview: any;
 
+  // Pick Date
   @ViewChild('pickerOccurred') pickerOccurred: any;
-
   public showSpinners = true;
   public showSeconds = true;
   public touchUi = true;
@@ -81,7 +119,10 @@ export class AddPetitionComponent implements OnInit {
   public stepMinute = 1;
   public stepSecond = 1;
 
-  searchedPlace: string = '';
+  // Search address
+  provinces = [];
+  towns = [];
+  villages = [];
 
   constructor(
     private service: AcceptPetitionService,
@@ -89,18 +130,281 @@ export class AddPetitionComponent implements OnInit {
     private imageCompress: NgxImageCompressService,
     private main: SnackbarService,
     private dialog: MatDialog,
+    private keycloak: KeycloakService,
+    public datepipe: DatePipe,
     private map: MapboxService
   ) {}
 
   ngOnInit(): void {
-    this.map.currentPlace.subscribe(
-      (searchedPlace) => (this.searchedPlace = searchedPlace)
+    this.getUserProfile();
+    this.getListTag();
+    this.getAgency();
+    this.getProvince();
+    this.getTown(82);
+    this.map.currentPlace.subscribe((searchedPlace) =>
+      this.addForm.controls.petitionFullAddress.setValue(searchedPlace)
     );
+    this.map.currentLatitude.subscribe((latitude) =>
+      this.addForm.controls.petitionLatitude.setValue(latitude)
+    );
+    this.map.currentLongitude.subscribe((longitude) =>
+      this.addForm.controls.petitionLongitude.setValue(longitude)
+    );
+  }
+
+  // Lấy danh sách chuyên mục từ service
+  public getListTag() {
+    this.service.getListTag(this.categoryId).subscribe(
+      (data) => {
+        const size = data.numberOfElements;
+        for (let i = 0; i < size; i++) {
+          this.tagList.push(data.content[i]);
+        }
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+  }
+
+  public getProvince() {
+    const nationId = 1;
+    const parentTypeId = 1;
+    this.service.getPlace(nationId, parentTypeId).subscribe((data) => {
+      data.forEach((item) => {
+        this.provinces.push(item);
+      });
+      // this.place = data;
+    });
+  }
+
+  public getTown(parentId) {
+    this.resetTown();
+    this.resetVillage();
+    const nationId = 1;
+    const parentTypeId = 2;
+    this.service
+      .getPlaceTown(nationId, parentTypeId, parentId)
+      .subscribe((data) => {
+        data.forEach((item) => {
+          this.towns.push(item);
+        });
+        // this.place = data;
+      });
+  }
+
+  public getVillage(parentId) {
+    // this.villages = [];
+    this.resetVillage();
+    const nationId = 1;
+    const parentTypeId = 3;
+    this.service
+      .getPlaceTown(nationId, parentTypeId, parentId)
+      .subscribe((data) => {
+        data.forEach((item) => {
+          this.villages.push(item);
+        });
+        // this.place = data;
+      });
+  }
+
+  setValueTown() {
+    return this.getTown(this.addForm.controls.reporterPlaceProvince.value);
+  }
+
+  setValueVillage() {
+    let parentId = this.addForm.controls.reporterPlaceTown.value;
+    return this.getVillage(parentId);
+  }
+
+  resetTown() {
+    this.towns = [];
+  }
+
+  resetVillage() {
+    this.villages = [];
+  }
+
+  // Lấy danh sách đơn vị phản ánh
+  getAgency() {
+    this.service.getAgency().subscribe((data) => {
+      this.agencyList = data.content;
+    });
+  }
+
+  // Post petition
+  postPetition(requestBody) {
+    this.service.postPetition(requestBody).subscribe(
+      (data) => {
+        // Close dialog, return true
+        let result = {
+          body: requestBody,
+          data: data,
+        };
+        this.dialogRef.close(result);
+      },
+      (err) => {
+        // Close dialog
+        this.dialogRef.close(false);
+        // Call api delete file
+        // this.uploadedImage.forEach((item) => {
+        //   this.service.deleteImage(item.id).subscribe();
+        // });
+      }
+    );
+  }
+
+  getUserProfile(): void {
+    this.keycloak.loadUserProfile().then((user) => {
+      this.accountId = user['attributes'].user_id;
+      this.username = user.username;
+    });
+  }
+
+  onConfirm(): void {
+    this.formToJSON();
+  }
+
+  formToJSON() {
+    const formObject = this.addForm.getRawValue();
+
+    // if(formObject.reporterIdentityId === null) {
+    //   formObject.reporterIdentityId = "";
+    // }
+    // Set Tag
+    const selectedTag = formObject.tag;
+    console.log(formObject.tag);
+    formObject.tag = this.tagList.find((p) => p.id == selectedTag);
+    delete formObject.tag.parentId;
+    delete formObject.tag.orderNumber;
+    delete formObject.tag.status;
+    delete formObject.tag.createdDate;
+    delete formObject.tag.description;
+    delete formObject.tag.iconId;
+
+    // Set takePlaceOn
+    formObject.takePlaceOn = this.datepipe.transform(
+      formObject.takePlaceOn,
+      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    );
+
+    // Add agency
+    if (formObject.agency !== null) {
+      const selectedAgency = formObject.agency;
+      formObject.agency = this.agencyList.find((p) => p.id == selectedAgency);
+      delete formObject.agency.logoId;
+    }
+
+    // Set takePlaceAt
+    formObject.takePlaceAt = {
+      latitude: formObject.petitionLatitude,
+      longitude: formObject.petitionLongitude,
+      fullAddress: formObject.petitionFullAddress,
+    };
+
+    // Set reporter location
+    formObject.reporterLocation = {
+      latitude: '10.341645',
+      longitude: '106.458985',
+      fullAddress: formObject.reporterFullAddress,
+    };
+
+    // Set reporter
+    let province = this.provinces.find(
+      (p) => p.id == formObject.reporterPlaceProvince
+    );
+    let town = this.towns.find((p) => p.id == formObject.reporterPlaceTown);
+    let village = this.villages.find(
+      (p) => p.id == formObject.reporterPlaceVillage
+    );
+
+    // if (formObject.reporterPlaceTown == '') {
+
+    // }
+
+    formObject.reporter = {
+      id: this.accountId[0],
+      username: this.username,
+      fullname: formObject.reporterFullName,
+      phone: formObject.reporterPhone,
+      identityId: formObject.reporterIdentityId,
+      type: formObject.reporterType,
+      address: {
+        address: formObject.reporterFullAddress,
+        place: [
+          {
+            id: village.id,
+            typeId: 3,
+            name: village.name,
+          },
+          {
+            id: town.id,
+            typeId: 2,
+            name: town.name,
+          },
+          {
+            id: province.id,
+            typeId: 1,
+            name: province.name,
+          },
+        ],
+      },
+    };
+
+    // Set public
+    if (formObject.isPublic) {
+      formObject.isPublic = true;
+    } else {
+      formObject.isPublic = false;
+    }
+
+    // Set thumbnailId
+    formObject.thumbnailId = '5df0aa1579279af9f7ba1234';
+
+    // Set isAnonymous
+    formObject.isAnonymous = false;
+
+    // Format send sms
+    if (formObject.sendSms) {
+      formObject.sendSms = true;
+    } else {
+      formObject.sendSms = false;
+    }
+
+    // receptionMethod
+    formObject.receptionMethod = 3;
+
+    // Add Image
+    formObject.file = this.uploadedImage;
+
+    // // Temporary variable - Final result
+    delete formObject.reporterFullName;
+    delete formObject.reporterPhone;
+    delete formObject.reporterIdentityId;
+    delete formObject.reporterType;
+    delete formObject.reporterFullAddress;
+    delete formObject.reporterPlaceVillage;
+    delete formObject.reporterPlaceTown;
+    delete formObject.reporterPlaceProvince;
+    delete formObject.petitionFullAddress;
+    delete formObject.petitionLatitude;
+    delete formObject.petitionLongitude;
+
+    const resultJson = JSON.stringify(formObject, null, 2);
+
+    console.log(resultJson);
+    this.postPetition(resultJson);
   }
 
   onDismiss(): void {
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
+
+    // this.uploadedImage.forEach((item) => {
+    //   this.service.deleteImage(item.id).subscribe((res) => console.log(res));
+    // });
+
+    // this.uploadedImage = [];
   }
 
   getErrorMessage(id) {
@@ -114,57 +418,113 @@ export class AddPetitionComponent implements OnInit {
     this.uploaded = false;
   }
 
+  isFileImage(file) {
+    const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+
+    return file && acceptedImageTypes.includes(file['type'])
+}
+
   // File upload
   onSelectFile(event) {
     let i = 0;
-    if (event.target.files && event.target.files[0]) {
-      for (const file of event.target.files) {
-        let urlNone: any;
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.uploaded = true;
-          urlNone = eventLoad.target.result;
-          this.imageCompress
-            .compressFile(urlNone, -1, 75, 50)
-            .then((result) => {
-              this.urlPreview = result;
-              this.fileImport = this.convertBase64toFile(
-                this.urlPreview,
-                file.name
-              );
-              if (this.urls.length + 1 <= 5) {
-                this.urls.push(this.urlPreview);
-                this.files.push(this.fileImport);
-                if (this.fileImport.name.length > 20) {
-                  // Tên file quá dài
-                  const startText = event.target.files[i].name.substr(0, 5);
-                  // tslint:disable-next-line:max-line-length
-                  const shortText = event.target.files[i].name.substring(
-                    event.target.files[i].name.length - 7,
-                    event.target.files[i].name.length
-                  );
-                  this.fileNames.push(startText + '...' + shortText);
-                  // Tên file gốc - hiển thị tooltip
-                  this.fileNamesFull.push(event.target.files[i].name);
-                } else {
-                  this.fileNames.push(this.fileImport.name);
-                  this.fileNamesFull.push(this.fileImport.name);
-                }
-              } else {
-                this.main.openSnackBar(
-                  'Số lượng ',
-                  'hình ảnh ',
-                  'không được vượt quá ',
-                  '5',
-                  'error_notification'
+    let urlPreview;
+    let fileImport;
+    let files = [];
+
+    if(this.isFileImage(event.target.files[0])) {
+      if (event.target.files && event.target.files[0]) {
+        for (const file of event.target.files) {
+          let urlNone: any;
+          const reader = new FileReader();
+          reader.onload = (eventLoad) => {
+            this.uploaded = true;
+            urlNone = eventLoad.target.result;
+            this.imageCompress
+              .compressFile(urlNone, -1, 75, 50)
+              .then((result) => {
+                this.urlPreview = result;
+                urlPreview = result;
+                this.fileImport = this.convertBase64toFile(
+                  this.urlPreview,
+                  file.name
                 );
-              }
-            });
-        };
-        reader.readAsDataURL(event.target.files[i]);
-        i++;
+                fileImport = this.convertBase64toFile(urlPreview, file.name);
+                if (this.urls.length + 1 <= 5) {
+                  this.urls.push(this.urlPreview);
+                  this.files.push(this.fileImport);
+                  files.push(fileImport);
+                  if (this.fileImport.name.length > 20) {
+                    // Tên file quá dài
+                    const startText = event.target.files[i].name.substr(0, 5);
+                    // tslint:disable-next-line:max-line-length
+                    const shortText = event.target.files[i].name.substring(
+                      event.target.files[i].name.length - 7,
+                      event.target.files[i].name.length
+                    );
+                    this.fileNames.push(startText + '...' + shortText);
+                    // Tên file gốc - hiển thị tooltip
+                    this.fileNamesFull.push(event.target.files[i].name);
+                  } else {
+                    this.fileNames.push(this.fileImport.name);
+                    this.fileNamesFull.push(this.fileImport.name);
+                  }
+                } else {
+                  this.main.openSnackBar(
+                    'Số lượng ',
+                    'hình ảnh ',
+                    'không được vượt quá ',
+                    '5',
+                    'error_notification'
+                  );
+                }
+              });
+          };
+          reader.readAsDataURL(event.target.files[i]);
+          i++;
+        }
       }
+
+      setTimeout(() => {
+        this.uploadImages(files);
+      }, 1500);
+    } else {
+      this.main.openSnackBar(
+        'File không phải ảnh, ',
+        '',
+        'vui lòng thêm lại',
+        '',
+        'error_notification'
+      );
     }
+
+  }
+
+  uploadImages(files) {
+    this.service
+      .uploadMultiImages(files, this.accountId)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round((event.loaded / event.total) * 100);
+            break;
+          case HttpEventType.Response:
+            event.body.forEach((imgInfo) => {
+              let temp = {
+                id: imgInfo.id,
+                name: imgInfo.filename,
+                group: 1,
+                updateDate: this.datepipe.transform(
+                  new Date(),
+                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                ),
+              };
+              this.uploadedImage.push(temp);
+            });
+            setTimeout(() => {
+              this.progress = 0;
+            }, 1500);
+        }
+      });
   }
 
   dataURItoBlob(dataURI) {
@@ -195,16 +555,8 @@ export class AddPetitionComponent implements OnInit {
     this.blankVal = '';
   }
 
-  openDialogMap() {
-    const dialogRef = this.dialog.open(MapComponent, {
-      width: '80%',
-      height: '600px',
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('This dialog was closed');
-    });
+  openMapDialog(address, long, lat) {
+    this.service.openMapDialog(address, { longitude: long, latitude: lat });
   }
 }
 

@@ -32,3 +32,6 @@ export const reloadTimeout = 2500; // milisecond
 export const pageSizeOptions = [5, 10, 20, 50];
 export const notificationHistoryGroupId = 3;
 export const notificationCategoryId = '6';
+export const petitionHistoryGroupId = 2;
+export const petitionCommentGroupId = 1;
+export const petitionCategoryId = '3';
