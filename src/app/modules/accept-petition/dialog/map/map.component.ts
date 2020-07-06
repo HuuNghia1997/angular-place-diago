@@ -26,7 +26,7 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.map.buildMap({longitude: this.longitude, latitude: this.latitude});
+    this.map.buildMap({ longitude: this.longitude, latitude: this.latitude });
   }
 
   createMessagePlace(placeName) {
@@ -44,7 +44,9 @@ export class MapComponent implements OnInit {
   search() {
     this.createMessagePlace(document.getElementById('placeName').innerHTML);
     this.createMessageLatitude(document.getElementById('latitude').innerHTML);
-    this.createMessageLongtitude(document.getElementById('longitude').innerHTML);
+    this.createMessageLongtitude(
+      document.getElementById('longitude').innerHTML
+    );
   }
 
   onDismiss(): void {
