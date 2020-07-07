@@ -60,8 +60,7 @@ export const environment = {
         },
         {
           name: 'models',
-          path: 'v1',
-          rootUrl: 'https://digo-api-01.vnptigate.vn/modeling-service/'
+          path: 'modeling-service/v1'
         },
         {
           name: 'rb-petition',
@@ -74,32 +73,15 @@ export const environment = {
         {
           name: 'messenger',
           path: 'me',
-        },
-        {
-          name: 'basedata',
-          path: 'ba',
         }
       ]
-    },
-    {
-      name: 'digo-microservice-basedata',
-      rootUrl: 'https://digo-api.vnptigate.vn/',
-      services: [
-        {
-          name: 'basedata',
-          path: 'ba',
-        },
-        {
-          name: 'messenger',
-          path: 'me',
-        },
-      ],
-    },
+    }
   ],
   mapbox: {
     accessToken:
       'pk.eyJ1IjoibW5oYWktbWFwYm94IiwiYSI6ImNrYmlvZ3d5bjBmdzcyem5xcWhnaDFrYjIifQ.tdsFG-l6QwZeKXDtO_r99g',
   },
+  provinceDefaultId: 82
 };
 
 export const projectIdProcess = '3f9d9e1b-02cd-4e76-ad98-a67ab9830bf3';

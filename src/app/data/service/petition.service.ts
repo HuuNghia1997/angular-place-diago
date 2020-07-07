@@ -31,12 +31,14 @@ export class PetitionService {
   public taskUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/tasks/';
   public nextFlowUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/task/';
   public getPlaceUrl = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/place?nation-id=';
-  public commentUrl = this.apiProviderService.getUrl('digo-microservice', 'message') + '/comment';
+  public commentUrl = this.apiProviderService.getUrl('digo-microservice', 'messenger') + '/comment';
 
   constructor(private apiProviderService: ApiProviderService,
               private http: HttpClient,
               private dialog: MatDialog,
-              private snackbar: SnackbarService) { }
+              private snackbar: SnackbarService) { 
+                console.log('abc');
+              }
 
   getListTag(categoryId): Observable<any> {
     return this.http.get(this.getTagsUrl + categoryId);

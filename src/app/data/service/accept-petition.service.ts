@@ -98,7 +98,7 @@ export class AcceptPetitionService {
     this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
     '/workflow/--apply?tag=';
   public getPlaceURL =
-    this.apiProviderService.getUrl('digo-microservice-basedata', 'basedata') +
+    this.apiProviderService.getUrl('digo-microservice', 'basedata') +
     '/place?nation-id=';
   public postProcessInstancesURL =
     this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
@@ -107,10 +107,10 @@ export class AcceptPetitionService {
     this.apiProviderService.getUrl('digo-microservice', 'surfeed-rb-petition') +
     '/v1/process-definitions/';
   public getComment =
-    this.apiProviderService.getUrl('digo-microservice-basedata', 'messenger') +
+    this.apiProviderService.getUrl('digo-microservice', 'messenger') +
     '/comment?group-id=';
   public postCommentURL =
-    this.apiProviderService.getUrl('digo-microservice-basedata', 'messenger') +
+    this.apiProviderService.getUrl('digo-microservice', 'messenger') +
     '/comment';
 
   // Lấy danh sách chuyên mục phản ánh
