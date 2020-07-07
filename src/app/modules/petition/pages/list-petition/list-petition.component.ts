@@ -177,43 +177,43 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     const formObj = this.searchForm.getRawValue();
     let searchString = 'page=' + page;
     searchString = searchString + '&size=' + pageSize;
+    if (formObj.title === '' && formObj.place === '' && formObj.receptionMethod === '' &&
+        formObj.tag === '' && formObj.startDate === '' && formObj.endDate === '') {
+      this.service.getPetitionList(page, pageSize, true).subscribe(data => {
+        this.ELEMENT_DATA = [];
+        const size = data.list.entries.length;
+        for (let i = 0; i < size; i++) {
+          this.ELEMENT_DATA.push(data.list.entries[i].entry);
+        }
+        this.lengthPetition = this.ELEMENT_DATA.length;
+        this.dataSource.data = this.ELEMENT_DATA;
+        this.dataSource.paginator.pageSize = pageSize;
+        this.totalElements = data.list.pagination.totalItems;
+        const totalPage = data.list.pagination.totalItems / pageSize;
+        this.totalPages = Math.ceil(totalPage);
+        this.selectedPageSize = pageSize;
 
-    this.service.getPetitionList(page, pageSize, true).subscribe(data => {
-      this.ELEMENT_DATA = [];
-      const size = data.list.entries.length;
-      for (let i = 0; i < size; i++) {
-        this.ELEMENT_DATA.push(data.list.entries[i].entry);
-        console.log(data.list.entries[i].entry);
-      }
-      this.lengthPetition = this.ELEMENT_DATA.length;
-      console.log(this.ELEMENT_DATA);
-      this.dataSource.data = this.ELEMENT_DATA;
-      this.dataSource.paginator.pageSize = pageSize;
-      this.totalElements = data.list.pagination.totalItems;
-      const totalPage = data.list.pagination.totalItems / pageSize;
-      this.totalPages = Math.ceil(totalPage);
-      this.selectedPageSize = pageSize;
+        this.resetPageSize();
+      }, err => {
+        if (err.status === 401) {
+          this.keycloak.login();
+        }
+      });
+      searchString = '';
+    } else {
+      const title = formObj.title;
+      const place = formObj.place;
+      const receptionMethod = formObj.receptionMethod;
+      const category = formObj.tag;
+      const fromDate = formObj.startDate;
+      const toDate = formObj.endDate;
+      this.service.search(page, true, pageSize, title, place, category, receptionMethod, fromDate, toDate).subscribe(res => {
+        console.log(res);
+      });
+    }
 
-      this.resetPageSize();
-    }, err => {
-      if (err.status === 401) {
-        this.keycloak.login();
-      }
-    });
-    searchString = '';
-  }
 
-  searchTest() {
-    const title = 'test';
-    const place = '';
-    const receptionMethod = 1;
-    const category = 1;
-    const fromDate = '2020-06-26T06:39:13.079+0000';
-    const toDate = '2020-06-30T03:43:20.110+0000';
 
-    this.service.search(0, true, pageSizeOptions[1], title, place, category, receptionMethod, fromDate, toDate).subscribe(res => {
-      console.log(res);
-    });
   }
 
   getStatus(status: string) {

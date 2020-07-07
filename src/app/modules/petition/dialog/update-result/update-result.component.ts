@@ -4,11 +4,8 @@ import { KeycloakService } from 'keycloak-angular';
 import { PetitionService } from 'src/app/data/service/petition.service';
 import * as jwt_decode from 'jwt-decode';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { DatePipe } from '@angular/common';
-import { NgxImageCompressService } from 'ngx-image-compress';
-import { group } from 'console';
 
 @Component({
   selector: 'app-update-result',

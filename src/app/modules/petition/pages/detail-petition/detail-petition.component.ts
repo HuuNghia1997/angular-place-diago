@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatDialog } from '@angular/material/dialog';
-// import { Comments, TREE_DATA } from 'src/app/data/schema/petition-element';
 import { PetitionService } from 'src/app/data/service/petition.service';
 import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { reloadTimeout } from 'src/app/data/service/config.service';
@@ -57,7 +56,7 @@ export class DetailPetitionComponent implements OnInit {
 
   uploadedImage: UpdateFile[] = [];
   uploaded: boolean;
-  upload: boolean;
+  upload = true;
   countDefaultImage;
   TREE_DATA = [];
   blankVal: any;

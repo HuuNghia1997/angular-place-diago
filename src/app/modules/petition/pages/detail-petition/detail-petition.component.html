@@ -117,9 +117,9 @@
 
           <!-- File đính kèm -->
           <h4 class="mt-2"> Đính kèm </h4>
-          <div [ngClass]="{'img_uploaded': upload === true}">
-            <div class="drag_upload_btn" [ngClass]="{'no_border': upload === true}">
-              <button mat-button [ngClass]="{'btn_uploaded': upload === true, 'clear_img_queue': upload === false}">
+          <div [ngClass]="{'img_upload': upload === true}">
+            <div class="drag_upload_btn">
+              <button mat-button [ngClass]="{'btn_uploaded': uploaded === true, 'clear_img_queue': uploaded === false}">
               <mat-icon> cloud_upload </mat-icon>
               Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc <a href=""> Tải lên </a>
               </button>
