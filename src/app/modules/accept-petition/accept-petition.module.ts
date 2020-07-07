@@ -8,7 +8,6 @@ import { AddPetitionComponent } from './dialog/add-petition/add-petition.compone
 import { EditPetitionComponent } from './dialog/edit-petition/edit-petition.component';
 import { DeletePetitionComponent } from './dialog/delete-petition/delete-petition.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { FileUploadModule } from 'ng2-file-upload';
 import {
   NgxMatDatetimePickerModule,
   NgxMatTimepickerModule,
@@ -39,7 +38,6 @@ import { PreviewImageComponent } from './dialog/preview-image/preview-image.comp
     CommonModule,
     AcceptPetitionRoutingModule,
     SharedModule,
-    FileUploadModule,
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,
     NgxMatTimepickerModule,

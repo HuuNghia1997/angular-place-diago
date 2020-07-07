@@ -1,3 +1,10 @@
+.dialog_title {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+}
+
 .fs-14 {
   font-size: 14px;
 }
@@ -22,6 +29,10 @@ input, textarea, mat-select {
   width: 32%;
 }
 
+.input-2-3 {
+  width: 66%;
+}
+
 .medium-input {
   width: 66%;
 }
@@ -32,7 +43,7 @@ input, textarea, mat-select {
 
 .btn-choose {
   float: right;
-  height: 59px;
+  height: 50px;
   border: 1px solid #333333;
   display: flex;
   justify-content: center;
@@ -60,4 +71,26 @@ input, textarea, mat-select {
 
 .mt-1 {
   margin-top: -1em;
+}
+
+.mt-2 {
+  margin-top: 2em;
+}
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-background,
+::ng-deep .mat-checkbox-indeterminate .mat-checkbox-background {
+  background-color: #ffffff !important;
+  border: 2px solid #1976D2;
+}
+
+::ng-deep .mat-checkbox .mat-checkbox-frame {
+  border: 2px solid #333333;
+}
+
+::ng-deep .mat-checkbox-checkmark-path {
+  stroke: #1976D2 !important;
+}
+
+mat-hint {
+  color: red;
 }

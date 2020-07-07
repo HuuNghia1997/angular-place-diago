@@ -3,7 +3,6 @@ import { ActivatedRoute } from '@angular/router';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatDialog } from '@angular/material/dialog';
-import { FileUploader } from 'ng2-file-upload';
 import { ImageInfo } from 'src/app/data/schema/image-info';
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -124,13 +123,6 @@ export class DetailAcceptPetitionComponent implements OnInit {
   treeControl = new NestedTreeControl<Comments>((node) => node.children);
   commentDataSource = new MatTreeNestedDataSource<Comments>();
 
-  public uploader: FileUploader = new FileUploader({
-    disableMultipart: true,
-    autoUpload: true,
-    method: 'post',
-    itemAlias: 'attachment',
-    allowedFileType: ['image', 'pdf', 'doc', 'xls', 'ppt'],
-  });
   public hasBaseDropZoneOver = false;
 
   petitionId: string;
