@@ -36,9 +36,7 @@ export class PetitionService {
   constructor(private apiProviderService: ApiProviderService,
               private http: HttpClient,
               private dialog: MatDialog,
-              private snackbar: SnackbarService) { 
-                console.log('abc');
-              }
+              private snackbar: SnackbarService) {}
 
   getListTag(categoryId): Observable<any> {
     return this.http.get(this.getTagsUrl + categoryId);
@@ -61,34 +59,41 @@ export class PetitionService {
     headers = headers.append('Content-Type', 'application/json');
     headers = headers.append('Accept', '*/*');
     const query = {
-      processVariables:
-      {
-        title: {
-          $likeic: '%25' + name + '%25'
-        },
-        takePlaceAddress: {
-          $likeic: '%25' + place + '%25'
-        },
-        category: categoryId,
-        receptionMethod: receptionMethodId,
-        creatDate: {
-          $and: [
-            {
-              $gte: fromDate
-            },
-            {
-              $lte: toDate
-            }
-          ]
-        }
-      }
+      processVariables: { }
     };
-    console.log(JSON.stringify(query));
-    const body = new HttpParams().set('query', decodeURIComponent(JSON.stringify(query)))
-                                .set('page', page)
-                                .set('paged', paged)
-                                .set('size', size);
-    // console.log(this.getPetitionUrl, { params: body, headers });
+    if (name !== '') {
+      const titleObj = {$likeic: '%25' + name + '%25'};
+      Object.assign(query.processVariables, {title: titleObj});
+    }
+    if (place !== '') {
+      const placeObj = {$likeic: '%25' + place + '%25'};
+      Object.assign(query.processVariables, {takePlaceAddress: placeObj});
+    }
+    if (categoryId !== '') {
+      Object.assign(query.processVariables, {category: categoryId});
+    }
+    if (receptionMethodId !== '') {
+      Object.assign(query.processVariables, {receptionMethod: receptionMethodId});
+    }
+    if (fromDate !== null && toDate !== null) {
+      const creatDateObj = {
+        $and: [ { $gte: fromDate }, { $lte: toDate } ]
+      };
+      Object.assign(query.processVariables, {creatDate: creatDateObj});
+    }
+    if (fromDate !== null && toDate === null) {
+      const creatDateObj = { $gte: fromDate };
+      Object.assign(query.processVariables, {creatDate: creatDateObj});
+    }
+    if (fromDate === null && toDate !== null) {
+      const creatDateObj = { $gte: toDate };
+      Object.assign(query.processVariables, {creatDate: creatDateObj});
+    }
+    const body = new HttpParams()
+      .set('query', decodeURIComponent(JSON.stringify(query)))
+      .set('page', page)
+      .set('paged', paged)
+      .set('size', size);
     return this.http.get<any>(this.getPetitionUrl, { params: body, headers });
   }
 
@@ -193,7 +198,7 @@ export class PetitionService {
   comment(id): void {
     const dialogData = new CommentDialogModel('Bình luận', id);
     const dialogRef = this.dialog.open(CommentComponent, {
-      width: '80%',
+      width: '50%',
       maxHeight: '600px',
       data: dialogData,
       disableClose: true
@@ -277,11 +282,10 @@ export class PetitionService {
   completePetition(id, name): void {
     const dialogData = new ConfirmationCompletedPetitionDialogModel('Xác nhận hoàn thành', id);
     const dialogRef = this.dialog.open(ConfirmationCompletedComponent, {
-      width: '80%',
+      width: '40%',
       data: dialogData,
       disableClose: true
     });
-
     // const message = 'Xác nhận hoàn thành';
     // const content = name;
     // const result = 'thành công';

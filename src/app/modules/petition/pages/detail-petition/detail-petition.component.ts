@@ -228,7 +228,7 @@ export class DetailPetitionComponent implements OnInit {
       }
       counter++;
     });
-    this.uploadedImage = this.uploadedImage.filter(item => item.id != id);
+    this.uploadedImage = this.uploadedImage.filter(item => item.id !== id);
     this.filesInfo.splice(index, 1);
     this.files.splice(index, 1);
 

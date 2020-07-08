@@ -295,10 +295,11 @@ export class ConfirmationCompletedComponent implements OnInit {
   getNextFlow() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       const taskId = data.list.entries[0].entry.id;
-      console.log(data.list.entries[0].entry.id);
       this.service.getNextFlow(taskId).subscribe(res => {
         this.TREE_DATA = res;
-        this.database.initialize(this.TREE_DATA);
+        if (this.TREE_DATA !== null) {
+          this.database.initialize(this.TREE_DATA);
+        }
       }, err => {
         if (err.status === 401) {
           this.keycloak.login();
@@ -373,6 +374,8 @@ export class ConfirmationCompletedComponent implements OnInit {
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
   }
+
+
 
 }
 

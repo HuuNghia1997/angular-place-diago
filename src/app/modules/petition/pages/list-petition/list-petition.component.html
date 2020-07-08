@@ -58,7 +58,7 @@
       </mat-form-field>
 
       <button mat-button class="btn-search"> Tìm kiếm </button>
-      <button mat-button class="btn-clr" (click)="searchForm.reset()"> Làm mới </button>
+      <button mat-button class="btn-clr" (click)="searchFormreset();"> Làm mới </button>
     </form>
   </mat-expansion-panel>
 
@@ -67,11 +67,11 @@
 <!-- Table-data -->
 <div class="padding-table">
   <div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource" matSort matSortActive="status" matSortDirection="asc" matSortDisableClear>
+    <table mat-table [dataSource]="dataSource" matSort>
       <!-- STT -->
       <ng-container matColumnDef="STT">
         <th mat-header-cell *matHeaderCellDef> STT </th>
-        <td mat-cell *matCellDef="let element"></td>
+        <td mat-cell *matCellDef="let element">{{element.stt}}</td>
       </ng-container>
 
       <!-- Tiêu đề -->
@@ -101,7 +101,7 @@
       <!-- Địa điểm phản ánh -->
       <ng-container matColumnDef="place">
         <th mat-header-cell *matHeaderCellDef> Địa điểm phản ánh </th>
-        <td mat-cell *matCellDef="let element"> {{ element.processVariables.petitionData.takePlaceAt.fullAddress }} </td>
+        <td mat-cell *matCellDef="let element" class="tbl_wraptext_col"> {{ element.processVariables.petitionData.takePlaceAt.fullAddress }} </td>
       </ng-container>
 
       <!-- Trạng thái -->
@@ -132,7 +132,7 @@
             </ng-template>
             <ng-template #elseBlock>
               <span *ngIf="element.status === 'ASSIGNED'">
-                <button mat-menu-item class="btn-action" (click)="openDialogConfirmationCompleted()" >
+                <button mat-menu-item class="btn-action" (click)="completePetition(element.processVariables.petitionData.id, element.processVariables.title)" >
                   <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
                   <span> Xác nhận hoàn thành </span>
                 </button>
@@ -152,6 +152,6 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table> <!-- table data -->
-    <mat-paginator [pageSizeOptions]="pageSizes" [pageSize]="10" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSizeOptions]="pageSizes" [pageSize]="10" (page)="onPaginateChange($event)" showFirstLastButtons></mat-paginator>
   </div> <!-- div mat-elavation-z8 -->
 </div> <!-- div padding-table -->
