@@ -8,6 +8,7 @@ import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { reloadTimeout } from 'src/app/data/service/config.service';
 import { KeycloakService } from 'keycloak-angular';
 import { FormGroup, FormControl } from '@angular/forms';
+import { SnackbarService } from 'src/app/data/service/snackbar.service';
 
 @Component({
   selector: 'app-detail-petition',
@@ -45,6 +46,7 @@ export class DetailPetitionComponent implements OnInit {
   resultIsPublic: boolean;
   resultDatePublic: string;
   resultContent: string;
+  countResultContent: number;
 
   filesInfo: ImageInfo[] = [];
   fileUpload: ImageInfo[] = [];
@@ -104,7 +106,8 @@ export class DetailPetitionComponent implements OnInit {
   constructor(private actRoute: ActivatedRoute,
               private dialog: MatDialog,
               private service: PetitionService,
-              private keycloak: KeycloakService) {
+              private keycloak: KeycloakService,
+              private snackbar: SnackbarService) {
     this.petitionId = this.actRoute.snapshot.params.id;
     this.commentDataSource.data = this.TREE_DATA;
   }
@@ -112,6 +115,7 @@ export class DetailPetitionComponent implements OnInit {
   ngOnInit(): void {
     this.getDetail();
     this.getComment();
+    this.getHistory();
   }
 
   getComment() {
@@ -239,7 +243,7 @@ export class DetailPetitionComponent implements OnInit {
 
   getDetail() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      console.log(data.list.entries);
+      console.log(JSON.stringify(data));
       this.petition.push(data.list.entries[0].entry);
       this.setViewData();
     }, err => {
@@ -321,6 +325,7 @@ export class DetailPetitionComponent implements OnInit {
       this.resultIsPublic = this.petition[0].processVariables.petitionData.result.isPublic;
       this.resultDatePublic = this.petition[0].processVariables.petitionData.result.date;
       this.resultContent = this.petition[0].processVariables.petitionData.result.content;
+      this.countResultContent = this.resultContent.split(' ').length;
     }
 
     this.uploadedImage = this.petition[0].processVariables.petitionData.file;
@@ -414,8 +419,9 @@ export class DetailPetitionComponent implements OnInit {
 
   getHistory() {
     this.service.getHistory(this.groupId, this.petitionId, this.pageToGetHistory, this.sizePerPageHistory).subscribe(data => {
+      console.log(data);
       const size = data.numberOfElements;
-      for (let i = 0; i < size; i++) {
+      for (let i = size - 1; i >= 0; i--) {
         this.history.push(data.content[i]);
       }
     }, err => {
@@ -425,15 +431,20 @@ export class DetailPetitionComponent implements OnInit {
     });
   }
 
-  claimTask() {
+  claimTask(name) {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       const taskId = data.list.entries[0].entry.id;
+      const message = 'Nhận xử lý';
+      const content = name;
+      const reason = '';
       this.service.claimTask(taskId).subscribe(res => {
+        this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
         // tslint:disable-next-line: only-arrow-functions
         setTimeout(function() {
           window.location.reload();
         }, reloadTimeout);
       }, err => {
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
         if (err.status === 401) {
           this.keycloak.login();
         }
@@ -445,16 +456,21 @@ export class DetailPetitionComponent implements OnInit {
     });
   }
 
-  releaseTask() {
+  releaseTask(name) {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       const taskId = data.list.entries[0].entry.id;
+      const message = 'Bỏ nhận xử lý';
+      const content = name;
+      const reason = '';
       this.service.releaseTask(taskId).subscribe(res => {
+        this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
         // tslint:disable-next-line: only-arrow-functions
         setTimeout(function() {
           window.location.reload();
         }, reloadTimeout);
       }, err => {
         if (err.status === 401) {
+          this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
           this.keycloak.login();
         }
       });
@@ -526,5 +542,4 @@ export class DetailPetitionComponent implements OnInit {
         return 'Đã công khai';
     }
   }
-
 }

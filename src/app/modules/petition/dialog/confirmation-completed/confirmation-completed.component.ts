@@ -4,7 +4,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { KeycloakService } from 'keycloak-angular';
 import { FormGroup, FormControl } from '@angular/forms';
 import { UserService } from 'src/app/data/service/user.service';
-import { reloadTimeout } from 'src/app/data/service/config.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material/tree';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -35,6 +34,7 @@ export class ConfirmationCompletedComponent implements OnInit {
   variables = new FormGroup({});
 
   select: string;
+  taskId: string;
   commonArray = [];
   fullname: string;
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
@@ -254,7 +254,6 @@ export class ConfirmationCompletedComponent implements OnInit {
     formBody.variables = formObj;
     formBody.payloadType = 'SetProcessVariablesPayload';
     const resultJson = JSON.stringify(formBody, null, 2);
-    console.log(resultJson);
     this.postVariable(resultJson);
     this.completeJSON();
   }
@@ -294,8 +293,8 @@ export class ConfirmationCompletedComponent implements OnInit {
 
   getNextFlow() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      const taskId = data.list.entries[0].entry.id;
-      this.service.getNextFlow(taskId).subscribe(res => {
+      this.taskId = data.list.entries[0].entry.id;
+      this.service.getNextFlow(this.taskId).subscribe(res => {
         this.TREE_DATA = res;
         if (this.TREE_DATA !== null) {
           this.database.initialize(this.TREE_DATA);
@@ -339,17 +338,17 @@ export class ConfirmationCompletedComponent implements OnInit {
 
           const complete = new FormGroup({
             payloadType: new FormControl('CompleteTaskPayload'),
-            taskId: new FormControl(data.list.entries[0].entry.id),
+            taskId: new FormControl(this.taskId),
             variables: new FormGroup({
               // tslint:disable-next-line: no-string-literal
               userId: new FormControl(user['attributes'].user_id[0]),
-              fullname: new FormControl(this.fullname)
+              userFullname: new FormControl(this.fullname)
             })
           });
 
           const formObj = complete.getRawValue();
           const resultJson = JSON.stringify(formObj, null, 2);
-          this.completeTask(data.list.entries[0].entry.id, resultJson);
+          this.completeTask(this.taskId, resultJson);
         });
       }, error => {
         console.error(error);
@@ -359,24 +358,20 @@ export class ConfirmationCompletedComponent implements OnInit {
 
   completeTask(id, requestBody) {
     this.service.completeTask(id, requestBody).subscribe(res => {
+      this.database.destroy();
       this.dialogRef.close(true);
-      // tslint:disable-next-line: only-arrow-functions
-      setTimeout(function() {
-        window.location.reload();
-      }, reloadTimeout);
     }, err => {
+      this.database.destroy();
       this.dialogRef.close(false);
       console.error(err);
     });
   }
 
   onDismiss(): void {
+    this.database.destroy();
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
   }
-
-
-
 }
 
 export class ConfirmationCompletedPetitionDialogModel {

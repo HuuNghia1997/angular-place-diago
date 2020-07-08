@@ -125,7 +125,7 @@
           <mat-menu #menu="matMenu" xPosition="before">
             <div *ngIf="element.status === 'CREATED'; then receivedBlock else elseBlock"></div>
             <ng-template #receivedBlock>
-              <button mat-menu-item class="btn-action" (click)="claimTask(element.processVariables.petitionData.id)">
+              <button mat-menu-item class="btn-action" (click)="claimTask(element.processVariables.petitionData.id, element.processVariables.title)">
                 <mat-icon fontSet="material-icons-outlined"> dns </mat-icon>
                 <span> Nhận xử lý </span>
               </button>
@@ -136,16 +136,12 @@
                   <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
                   <span> Xác nhận hoàn thành </span>
                 </button>
-                <button mat-menu-item class="btn-action" (click)="releaseTask(element.processVariables.petitionData.id)">
+                <button mat-menu-item class="btn-action" (click)="releaseTask(element.processVariables.petitionData.id, element.processVariables.title)">
                   <mat-icon fontSet="material-icons-outlined"> reply </mat-icon>
                   <span> Bỏ nhận xử lý </span>
                 </button>
               </span>
             </ng-template>
-            <button mat-menu-item>
-              <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-              <span> Xóa </span>
-            </button>
           </mat-menu>
         </td>
       </ng-container>

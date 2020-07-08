@@ -9,10 +9,11 @@ import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationCompletedComponent } from '../../dialog/confirmation-completed/confirmation-completed.component';
 import { PetitionService } from 'src/app/data/service/petition.service';
 import { PaginatorService } from 'src/app/data/service/paginator.service';
 import { KeycloakService } from 'keycloak-angular';
+import { SnackbarService } from 'src/app/data/service/snackbar.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-petition',
@@ -56,7 +57,9 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
               private translator: PaginatorService,
               public datepipe: DatePipe,
               private cdRef: ChangeDetectorRef,
-              private keycloak: KeycloakService) {
+              private keycloak: KeycloakService,
+              private snackbar: SnackbarService,
+              private router: Router) {
     this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   }
 
@@ -86,7 +89,7 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
       startDate: new FormControl(null),
       endDate: new FormControl(null)
     });
-  };
+  }
 
   getListTag() {
     this.service.getListTag(this.categoryId).subscribe(data => {
@@ -101,15 +104,20 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     });
   }
 
-  claimTask(id) {
+  claimTask(id, name) {
     this.service.getDetailPetition(id).subscribe(data => {
       const taskId = data.list.entries[0].entry.id;
+      const message = 'Nhận xử lý';
+      const content = name;
+      const reason = '';
       this.service.claimTask(taskId).subscribe(res => {
+        this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
         // tslint:disable-next-line: only-arrow-functions
         setTimeout(function() {
           window.location.reload();
         }, reloadTimeout);
       }, err => {
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
         if (err.status === 401) {
           this.keycloak.login();
         }
@@ -117,15 +125,20 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     });
   }
 
-  releaseTask(id) {
+  releaseTask(id, name) {
     this.service.getDetailPetition(id).subscribe(data => {
       const taskId = data.list.entries[0].entry.id;
+      const message = 'Bỏ nhận xử lý';
+      const content = name;
+      const reason = '';
       this.service.releaseTask(taskId).subscribe(res => {
+        this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
         // tslint:disable-next-line: only-arrow-functions
         setTimeout(function() {
           window.location.reload();
         }, reloadTimeout);
       }, err => {
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
         if (err.status === 401) {
           this.keycloak.login();
         }
@@ -183,6 +196,7 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     if (formObj.title === '' && formObj.place === '' && formObj.receptionMethod === '' &&
       formObj.tag === '' && formObj.startDate === null && formObj.endDate === null) {
       this.service.getPetitionList(page, pageSize, true).subscribe(data => {
+        console.log(data);
         this.fetchData(data, page, pageSize);
       }, err => {
         if (err.status === 401) {

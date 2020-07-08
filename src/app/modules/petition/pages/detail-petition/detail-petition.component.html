@@ -16,7 +16,7 @@
 
     <div class="button-action">
       <!-- Btn chỉnh sửa -->
-      <button mat-button class="fs-13" (click)="updatePetition(petitionId, petitionTitle)">
+      <button mat-button class="fs-13" (click)="updatePetition(taskId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
         <span> Chỉnh sửa </span>
       </button>
@@ -24,7 +24,7 @@
       <!-- Btn nhận xử lý -->
       <div *ngIf="petitionStatus === 'CREATED'; then receivedBlock else elseBlock"></div>
       <ng-template #receivedBlock>
-        <button mat-button class="ml-1 fs-13" (click)="claimTask()">
+        <button mat-button class="ml-1 fs-13" (click)="claimTask(petitionTitle)">
           <mat-icon fontSet="material-icons-outlined"> dns </mat-icon>
           <span> Nhận xử lý </span>
         </button>
@@ -35,7 +35,7 @@
             <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
             <span> Xác nhận hoàn thành </span>
           </button>
-          <button mat-button class="ml-1 fs-13" (click)="releaseTask()">
+          <button mat-button class="ml-1 fs-13" (click)="releaseTask(petitionTitle)">
             <mat-icon fontSet="material-icons-outlined"> reply </mat-icon>
             <span> Bỏ nhận xử lý </span>
           </button>
@@ -52,12 +52,6 @@
       <button mat-button class="ml-1 fs-13" (click)="updateResult(petitionId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> assignment </mat-icon>
         <span> Cập nhật kết quả </span>
-      </button>
-
-      <!-- Btn xóa -->
-      <button mat-button class="ml-1 fs-13">
-        <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-        <span> Xóa </span>
       </button>
     </div> <!-- div button-action -->
 
@@ -205,7 +199,7 @@
                       <span *ngIf="his.type === 5"> đã xoá </span>
                       - {{ his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}
                     </span>
-                    <table class="mt-05" *ngIf='his.type === 1 || his.type === 4'>
+                    <table class="mt-05">
                       <tr class="fw-500">
                         <td class="width-19 action" i18n> Trường </td>
                         <td class="width-39 action" i18n> Giá trị cũ </td>
@@ -301,7 +295,9 @@
               <span [class.overflow]="isExpand" [ngClass]="(isExpand === true ? 'overflow' : 'show-content')">
                 {{ resultContent }}
               </span>
-              <a [ngClass]="(isExpand === true ? 'see-more' : 'hidden-see-more')" (click)="isExpandToggle()"> Xem thêm
+              <a [ngClass]="{'see-more': isExpand === true, 'hidden-see-more':  isExpand === false, 'd-none': countResultContent < 45}" (click)="isExpandToggle()"> Xem thêm
+              </a>
+              <a [ngClass]="{'see-more': isExpand === false, 'hidden-see-more':  isExpand === true, 'd-none': countResultContent < 45}" (click)="isExpandToggle()"> Thu gọn
               </a>
             </tr>
           </table> <!-- Kết quả xử lý -->
