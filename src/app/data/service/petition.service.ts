@@ -15,6 +15,7 @@ import { ConfirmUpdateResultDialogModel, UpdateResultComponent } from 'src/app/m
 import { title } from 'process';
 import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 import { CommentDialogModel, CommentComponent } from 'src/app/modules/petition/dialog/comment/comment.component';
+import { ConfirmLightboxDialogModel, PreviewLightboxComponent } from 'src/app/modules/petition/dialog/preview-lightbox/preview-lightbox.component';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -33,6 +34,7 @@ export class PetitionService {
   public nextFlowUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/task/';
   public getPlaceUrl = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/place?nation-id=';
   public commentUrl = this.apiProviderService.getUrl('digo-microservice', 'messenger') + '/comment';
+  public taskVariableUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/tasks/';
 
   constructor(private apiProviderService: ApiProviderService,
               private http: HttpClient,
@@ -141,10 +143,10 @@ export class PetitionService {
   }
 
   // Cập nhật phản ánh & cập nhật kết quả
-  postVariable(processInstancesId, requestBody) {
+  postVariable(taskId, requestBody) {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
-    return this.http.post<any>(this.processInstanceUrl + processInstancesId + '/variables', requestBody, { headers });
+    return this.http.put<any>(this.taskVariableUrl + taskId + '/variables/petitionData', requestBody, { headers });
   }
 
   completeTask(taskId, requestBody) {
@@ -309,6 +311,18 @@ export class PetitionService {
       if (this.result === false) {
         this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
       }
+    });
+  }
+
+  openLightbox(taskId, imageURL, listFileUpload): void {
+    const dialogData = new ConfirmLightboxDialogModel(taskId, imageURL, listFileUpload);
+    const dialogRef = this.dialog.open(PreviewLightboxComponent, {
+      maxWidth: '100vw',
+      width: '100vw',
+      height: '100vh',
+      data: dialogData,
+      disableClose: false,
+      panelClass: 'lightbox_dialog'
     });
   }
 }

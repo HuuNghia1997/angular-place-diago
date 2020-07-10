@@ -15,6 +15,7 @@ import {
   NgxMatNativeDateModule
 } from '@angular-material-components/datetime-picker';
 import { CommentComponent } from './dialog/comment/comment.component';
+import { PreviewLightboxComponent } from './dialog/preview-lightbox/preview-lightbox.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { CommentComponent } from './dialog/comment/comment.component';
     ShowProcessComponent,
     UpdatePetitionComponent,
     UpdateResultComponent,
-    CommentComponent
+    CommentComponent,
+    PreviewLightboxComponent
   ],
   imports: [
     CommonModule,

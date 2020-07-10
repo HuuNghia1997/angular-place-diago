@@ -1,0 +1,17 @@
+<button mat-icon-button class="close_btn" (click)="onDismiss()">
+    <mat-icon>close</mat-icon>
+</button>
+<div class="preview_zone">
+    <div class="img_preview" [ngStyle]="{'background-image': 'url('+ selectedURL +')'}"></div>
+</div>
+<div class="bottom_carousel">
+    <owl-carousel-o [options]="customOptions">
+        <ng-container *ngFor="let file of fileUpload">
+            <ng-template carouselSlide>
+                <a href="javascript:void(0)" (click)="openImage(file.url)">
+                    <div class="slide_img" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                </a>
+            </ng-template>
+        </ng-container>
+    </owl-carousel-o>
+</div>

@@ -16,7 +16,7 @@
 
     <div class="button-action">
       <!-- Btn chỉnh sửa -->
-      <button mat-button class="fs-13" (click)="updatePetition(taskId, petitionTitle)">
+      <button mat-button class="fs-13" (click)="updatePetition(petitionId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
         <span> Chỉnh sửa </span>
       </button>
@@ -123,7 +123,7 @@
 
             <div class="image_drag_upload_preview">
               <div class="list_upload" *ngFor="let file of fileUpload">
-                <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                <a href="javascript:void(0)" (click)="openLightbox(taskId, file.url)"><div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div></a>
                 <div class="img_control">
                   <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'">
                     {{ file.name }} </span>
@@ -199,7 +199,7 @@
                       <span *ngIf="his.type === 5"> đã xoá </span>
                       - {{ his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}
                     </span>
-                    <table class="mt-05">
+                    <table class="mt-05" *ngIf="his.type !== 4">
                       <tr class="fw-500">
                         <td class="width-19 action" i18n> Trường </td>
                         <td class="width-39 action" i18n> Giá trị cũ </td>

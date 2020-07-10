@@ -419,7 +419,7 @@ export class AddPetitionComponent implements OnInit {
   }
 
   isFileImage(file) {
-    const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+    const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png', 'video/mp4'];
 
     return file && acceptedImageTypes.includes(file['type'])
 }

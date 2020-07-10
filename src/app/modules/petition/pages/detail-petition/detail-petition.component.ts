@@ -9,6 +9,7 @@ import { reloadTimeout } from 'src/app/data/service/config.service';
 import { KeycloakService } from 'keycloak-angular';
 import { FormGroup, FormControl } from '@angular/forms';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-detail-petition',
@@ -21,6 +22,7 @@ export class DetailPetitionComponent implements OnInit {
   commentDataSource = new MatTreeNestedDataSource<any>();
 
   petitionId: string;
+  taskId: string;
   isExpand = true;
   status: string;
 
@@ -70,35 +72,35 @@ export class DetailPetitionComponent implements OnInit {
   itemsListUsers = [];
   response = [];
   keyword: '';
-  updateForm = new FormGroup({
-    variables: new FormGroup({
+
+  updateFormTask = new FormGroup({
+    value: new FormGroup({
+      id: new FormControl(''),
       title: new FormControl(''),
-      petitionData: new FormGroup({
-        id: new FormControl(''),
-        title: new FormControl(''),
-        description: new FormControl(''),
-        takePlaceAt: new FormControl(''),
-        reporterLocation: new FormControl(''),
-        takePlaceOn: new FormControl(''),
-        status: new FormControl(''),
-        confirm: new FormControl(''),
-        workflow: new FormControl(''),
-        tag: new FormControl(''),
-        file: new FormControl(''),
-        reporter: new FormControl(''),
-        thumbnailId: new FormControl(''),
-        createdDate: new FormControl(''),
-        isPublic: new FormControl(''),
-        isAnonymous: new FormControl(''),
-        result: new FormControl(''),
-        processInstanceId: new FormControl(''),
-        deploymentId: new FormControl(''),
-        agency: new FormControl(''),
-        receptionMethod: new FormControl('')
-      }),
+      description: new FormControl(''),
+      takePlaceAt: new FormControl(''),
+      reporterLocation: new FormControl(''),
+      takePlaceOn: new FormControl(''),
+      status: new FormControl(''),
+      confirm: new FormControl(''),
+      workflow: new FormControl(''),
+      tag: new FormControl(''),
+      file: new FormControl(''),
+      reporter: new FormControl(''),
+      thumbnailId: new FormControl(''),
+      createdDate: new FormControl(''),
+      isPublic: new FormControl(''),
+      isAnonymous: new FormControl(''),
+      result: new FormControl(''),
+      processInstanceId: new FormControl(''),
+      deploymentId: new FormControl(''),
+      agency: new FormControl(''),
+      receptionMethod: new FormControl('')
     }),
-    payloadType: new FormControl('')
-  });
+  payloadType: new FormControl(''),
+  taskId: new FormControl('')
+});
+
   token: any;
   type: number[] = [];
   accountId: string;
@@ -142,6 +144,15 @@ export class DetailPetitionComponent implements OnInit {
         if (this.countDefaultImage > 0) {
           if (this.files.length > 0) {
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+
+              // if (file.type === HttpEventType.Response) {
+              //   console.log('Upload complete');
+              // }
+              // if (file.type === HttpEventType.UploadProgress) {
+              //   const percentDone = Math.round(100 * file.loaded / file.total);
+              //   console.log('Progress ' + percentDone + '%');
+              // }
+
               file.forEach(e => {
                 this.type.push(2);
                 this.uploadedImage.push({
@@ -159,6 +170,15 @@ export class DetailPetitionComponent implements OnInit {
         } else {
           if (this.files.length > 0) {
             this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+
+              // if (file.type === HttpEventType.Response) {
+              //   console.log('Upload complete');
+              // }
+              // if (file.type === HttpEventType.UploadProgress) {
+              //   const percentDone = Math.round(100 * file.loaded / file.total);
+              //   console.log('Progress ' + percentDone + '%');
+              // }
+
               file.forEach(e => {
                 this.type.push(2);
                 this.uploadedImage.push({
@@ -207,9 +227,9 @@ export class DetailPetitionComponent implements OnInit {
             fileNamesFull = event.target.files[i].name;
           } else {
             fileName = file.name;
-            fileNamesFull = file.name ;
+            fileNamesFull = file.name;
           }
-          this.fileUpload.push( {
+          this.fileUpload.push({
             id: i,
             url: urlResult,
             name: fileName,
@@ -255,11 +275,11 @@ export class DetailPetitionComponent implements OnInit {
 
   updateImage(requestBody) {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.service.postVariable(data.list.entries[0].entry.processInstanceId, requestBody).subscribe(res => {
+      this.service.postVariable(data.list.entries[0].entry.id, requestBody).subscribe(res => {
         // this.dialogRef.close(true);
         // tslint:disable-next-line: only-arrow-functions
         setTimeout(function() {
-          window.location.reload();
+          // window.location.reload();
         }, reloadTimeout);
       }, err => {
         // this.dialogRef.close(false);
@@ -269,32 +289,31 @@ export class DetailPetitionComponent implements OnInit {
   }
 
   formToJson() {
-    const formObj = this.updateForm.getRawValue();
-    formObj.variables.title = this.petition[0].processVariables.title;
-    formObj.variables.petitionData.id = this.petition[0].processVariables.petitionData.id;
-    formObj.variables.petitionData.title = this.petition[0].processVariables.title;
-    formObj.variables.petitionData.description = this.petition[0].processVariables.petitionData.description;
-    formObj.variables.petitionData.takePlaceAt = this.petition[0].processVariables.petitionData.takePlaceAt;
-    formObj.variables.petitionData.reporterLocation = this.petition[0].processVariables.petitionData.reporterLocation;
-    formObj.variables.petitionData.takePlaceOn = this.petition[0].processVariables.petitionData.takePlaceOn;
-    formObj.variables.petitionData.status = this.petition[0].processVariables.status;
-    formObj.variables.petitionData.confirm = this.petition[0].processVariables.confirm;
-    formObj.variables.petitionData.workflow = this.petition[0].processVariables.petitionData.workflow;
-    formObj.variables.petitionData.tag = this.petition[0].processVariables.petitionData.tag;
-    formObj.variables.petitionData.reporter  = this.petition[0].processVariables.petitionData.reporter;
-    formObj.variables.petitionData.thumbnailId = this.petition[0].processVariables.petitionData.thumbnailId;
-    formObj.variables.petitionData.createdDate = this.petition[0].processVariables.petitionData.createdDate;
-    formObj.variables.petitionData.isPublic = this.petition[0].processVariables.petitionData.isPublic;
-    formObj.variables.petitionData.isAnonymous = this.petition[0].processVariables.petitionData.isAnonymous;
-    formObj.variables.petitionData.processInstanceId = this.petition[0].processVariables.petitionData.processInstanceId;
-    formObj.variables.petitionData.deploymentId = this.petition[0].processVariables.petitionData.deploymentId;
-    formObj.variables.petitionData.agency = this.petition[0].processVariables.petitionData.agency;
-    formObj.variables.petitionData.receptionMethod = this.petition[0].processVariables.petitionData.receptionMethod;
-    formObj.variables.petitionData.result = this.petition[0].processVariables.petitionData.result;
+    const formObj = this.updateFormTask.getRawValue();
+    formObj.value.id = this.petition[0].processVariables.petitionData.id;
+    formObj.value.title = this.petition[0].processVariables.title;
+    formObj.value.description = this.petition[0].processVariables.petitionData.description;
+    formObj.value.takePlaceAt = this.petition[0].processVariables.petitionData.takePlaceAt;
+    formObj.value.reporterLocation = this.petition[0].processVariables.petitionData.reporterLocation;
+    formObj.value.takePlaceOn = this.petition[0].processVariables.petitionData.takePlaceOn;
+    formObj.value.status = this.petition[0].processVariables.status;
+    formObj.value.confirm = this.petition[0].processVariables.confirm;
+    formObj.value.workflow = this.petition[0].processVariables.petitionData.workflow;
+    formObj.value.tag = this.petition[0].processVariables.petitionData.tag;
+    formObj.value.reporter  = this.petition[0].processVariables.petitionData.reporter;
+    formObj.value.thumbnailId = this.petition[0].processVariables.petitionData.thumbnailId;
+    formObj.value.createdDate = this.petition[0].processVariables.petitionData.createdDate;
+    formObj.value.isPublic = this.petition[0].processVariables.petitionData.isPublic;
+    formObj.value.isAnonymous = this.petition[0].processVariables.petitionData.isAnonymous;
+    formObj.value.processInstanceId = this.petition[0].processVariables.petitionData.processInstanceId;
+    formObj.value.deploymentId = this.petition[0].processVariables.petitionData.deploymentId;
+    formObj.value.agency = this.petition[0].processVariables.petitionData.agency;
+    formObj.value.receptionMethod = this.petition[0].processVariables.petitionData.receptionMethod;
+    formObj.value.result = this.petition[0].processVariables.petitionData.result;
 
-    formObj.variables.petitionData.file = this.uploadedImage;
-
-    formObj.payloadType = 'SetProcessVariablesPayload';
+    formObj.value.file = this.uploadedImage;
+    formObj.taskId = this.taskId;
+    formObj.payloadType = 'UpdateTaskVariablePayload';
 
     const resultJSON = JSON.stringify(formObj, null, 2);
     console.log(resultJSON);
@@ -319,6 +338,7 @@ export class DetailPetitionComponent implements OnInit {
     this.reporterPlace = this.petition[0].processVariables.petitionData.reporter.address.place;
     this.processPublic = this.petition[0].processVariables.petitionData.isPublic;
     this.taskName = this.petition[0].name;
+    this.taskId = this.petition[0].id;
 
     this.resultPetition = this.petition[0].processVariables.petitionData.result;
     if (this.resultPetition !== undefined) {
@@ -341,7 +361,7 @@ export class DetailPetitionComponent implements OnInit {
             const reader = new FileReader();
             reader.addEventListener('load', () => {
               urlResult = reader.result;
-              this.service.getFileName_Size(e.id).subscribe((data: any ) => {
+              this.service.getFileName_Size(e.id).subscribe((data: any) => {
                 if (data.filename.length > 20) {
                   // Tên file quá dài
                   const startText = data.filename.substr(0, 5);
@@ -383,7 +403,7 @@ export class DetailPetitionComponent implements OnInit {
             const reader = new FileReader();
             reader.addEventListener('load', () => {
               urlResult = reader.result;
-              this.service.getFileName_Size(e.id).subscribe((data: any ) => {
+              this.service.getFileName_Size(e.id).subscribe((data: any) => {
                 if (data.filename.length > 20) {
                   // Tên file quá dài
                   const startText = data.filename.substr(0, 5);
@@ -419,7 +439,7 @@ export class DetailPetitionComponent implements OnInit {
 
   getHistory() {
     this.service.getHistory(this.groupId, this.petitionId, this.pageToGetHistory, this.sizePerPageHistory).subscribe(data => {
-      console.log(data);
+      // console.log(data);
       const size = data.numberOfElements;
       for (let i = size - 1; i >= 0; i--) {
         this.history.push(data.content[i]);
@@ -440,7 +460,7 @@ export class DetailPetitionComponent implements OnInit {
       this.service.claimTask(taskId).subscribe(res => {
         this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
         // tslint:disable-next-line: only-arrow-functions
-        setTimeout(function() {
+        setTimeout(function () {
           window.location.reload();
         }, reloadTimeout);
       }, err => {
@@ -465,7 +485,7 @@ export class DetailPetitionComponent implements OnInit {
       this.service.releaseTask(taskId).subscribe(res => {
         this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
         // tslint:disable-next-line: only-arrow-functions
-        setTimeout(function() {
+        setTimeout(function () {
           window.location.reload();
         }, reloadTimeout);
       }, err => {
@@ -541,5 +561,9 @@ export class DetailPetitionComponent implements OnInit {
       case true:
         return 'Đã công khai';
     }
+  }
+
+  openLightbox(taskId, imageURL) {
+    this.service.openLightbox(taskId, imageURL, this.fileUpload);
   }
 }
