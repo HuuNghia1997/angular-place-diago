@@ -27,7 +27,7 @@
     left: 50%;
     width: 80vw;
     height: 70vh;
-    margin-top: -40vh;
+    margin-top: -42vh;
     margin-left: -40vw;
 }
 
@@ -61,6 +61,25 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
+    outline: none;
+}
+
+.video_preview {
+    width: 100%;
+    height: 100%;
+    outline: none;
+}
+
+.audio_preview {
+    height: 100%;
+    outline: none;
+    position: absolute;
+    bottom: 0;
+    width: 70%;
+    margin-bottom: 37.5vh;
+    text-align: center;
+    left: 50%;
+    margin-left: -35%;
 }
 
 ::ng-deep .owl-carousel .owl-nav {

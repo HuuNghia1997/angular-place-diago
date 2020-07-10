@@ -314,8 +314,8 @@ export class PetitionService {
     });
   }
 
-  openLightbox(taskId, imageURL, listFileUpload): void {
-    const dialogData = new ConfirmLightboxDialogModel(taskId, imageURL, listFileUpload);
+  openLightbox(fileURL, fileId, listFileUpload): void {
+    const dialogData = new ConfirmLightboxDialogModel(fileURL, fileId, listFileUpload);
     const dialogRef = this.dialog.open(PreviewLightboxComponent, {
       maxWidth: '100vw',
       width: '100vw',

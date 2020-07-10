@@ -123,7 +123,7 @@
 
             <div class="image_drag_upload_preview">
               <div class="list_upload" *ngFor="let file of fileUpload">
-                <a href="javascript:void(0)" (click)="openLightbox(taskId, file.url)"><div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div></a>
+                <a href="javascript:void(0)" (click)="openLightbox(file.url ,file.id.id)"><div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div></a>
                 <div class="img_control">
                   <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'">
                     {{ file.name }} </span>
