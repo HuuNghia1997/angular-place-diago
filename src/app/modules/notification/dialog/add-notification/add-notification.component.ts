@@ -11,6 +11,8 @@ import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { KeycloakService } from 'keycloak-angular';
 import { User } from 'src/app/data/schema/user';
+import { environment } from 'src/environments/environment';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-add-notification',
@@ -28,6 +30,7 @@ export class AddNotificationComponent implements OnInit {
   blankVal: any;
   categoryId = notificationCategoryId;
   accountId: string;
+  username: string;
 
   uploadedImage = [];
   listTags = [];
@@ -45,6 +48,7 @@ export class AddNotificationComponent implements OnInit {
   itemsListUser = [];
   keyword: '';
   userSearch: User[] = [];
+  progress: number = 0;
 
   // Form
   public reg = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -72,9 +76,17 @@ export class AddNotificationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getUserProfile();
     this.getListTags();
     this.getAgency();
     this.initUserSearch();
+  }
+
+  getUserProfile(): void {
+    this.keycloak.loadUserProfile().then((user) => {
+      this.accountId = user['attributes'].user_id;
+      this.username = user.username;
+    });
   }
 
   public getListTags() {
@@ -93,24 +105,24 @@ export class AddNotificationComponent implements OnInit {
   }
 
   onConfirm(): void {
-    if (this.files.length > 0) {
-      this.keycloak.loadUserProfile().then(user => {
-        // tslint:disable-next-line: no-string-literal
-        this.accountId = user['attributes'].user_id;
+    // if (this.files.length > 0) {
+    //   this.keycloak.loadUserProfile().then(user => {
+    //     // tslint:disable-next-line: no-string-literal
+    //     this.accountId = user['attributes'].user_id;
 
-        this.service.uploadMultiImages(this.files, this.accountId).subscribe((data: any) => {
-          data.forEach(imgInfo => {
-            this.uploadedImage.push(imgInfo.id);
-          });
-          this.formToJSON();
-        }, (error) => {
-          console.error(error);
-        });
-      });
-    } else {
-      this.formToJSON();
-    }
-
+    //     this.service.uploadMultiImages(this.files, this.accountId).subscribe((data: any) => {
+    //       data.forEach(imgInfo => {
+    //         this.uploadedImage.push(imgInfo.id);
+    //       });
+    //       this.formToJSON();
+    //     }, (error) => {
+    //       console.error(error);
+    //     });
+    //   });
+    // } else {
+    //   this.formToJSON();
+    // }
+    this.formToJSON();
   }
 
   getAgency() {
@@ -265,43 +277,83 @@ export class AddNotificationComponent implements OnInit {
   }
 
   // File upload
+  // onSelectFile(event) {
+  //   let i = 0;
+  //   if (event.target.files && event.target.files[0]) {
+  //     for (const file of event.target.files) {
+  //       let urlNone: any;
+  //       const reader = new FileReader();
+  //       reader.onload = (eventLoad) => {
+  //         this.uploaded = true;
+  //         urlNone = eventLoad.target.result;
+  //         this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
+  //           this.urlPreview = result;
+  //           this.fileImport = this.convertBase64toFile(this.urlPreview, file.name);
+  //           if (this.urls.length + 1 <= 5) {
+  //             this.urls.push(this.urlPreview);
+  //             this.files.push(this.fileImport);
+  //             if (this.fileImport.name.length > 20) {
+  //               // Tên file quá dài
+  //               const startText = event.target.files[i].name.substr(0, 5);
+  //               // tslint:disable-next-line:max-line-length
+  //               const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
+  //                 event.target.files[i].name.length);
+  //               this.fileNames.push(startText + '...' + shortText);
+  //               // Tên file gốc - hiển thị tooltip
+  //               this.fileNamesFull.push(event.target.files[i].name);
+  //             } else {
+  //               this.fileNames.push(this.fileImport.name);
+  //               this.fileNamesFull.push(this.fileImport.name);
+  //             }
+  //           } else {
+  //             this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
+  //           }
+  //         });
+  //       };
+  //       reader.readAsDataURL(event.target.files[i]);
+  //       i++;
+  //     }
+  //   }
+  // }
+
   onSelectFile(event) {
-    let i = 0;
     if (event.target.files && event.target.files[0]) {
       for (const file of event.target.files) {
-        let urlNone: any;
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.uploaded = true;
-          urlNone = eventLoad.target.result;
-          this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
-            this.urlPreview = result;
-            this.fileImport = this.convertBase64toFile(this.urlPreview, file.name);
-            if (this.urls.length + 1 <= 5) {
-              this.urls.push(this.urlPreview);
-              this.files.push(this.fileImport);
-              if (this.fileImport.name.length > 20) {
-                // Tên file quá dài
-                const startText = event.target.files[i].name.substr(0, 5);
-                // tslint:disable-next-line:max-line-length
-                const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
-                  event.target.files[i].name.length);
-                this.fileNames.push(startText + '...' + shortText);
-                // Tên file gốc - hiển thị tooltip
-                this.fileNamesFull.push(event.target.files[i].name);
-              } else {
-                this.fileNames.push(this.fileImport.name);
-                this.fileNamesFull.push(this.fileImport.name);
-              }
-            } else {
-              this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
-            }
+        if (this.files.length + 1 <= environment.notification.maxImageUploadSize) {
+          const reader = new FileReader();
+          reader.onload = ((event) => {
+            this.uploaded = true;
+            this.urls.push(event.target.result);
           });
-        };
-        reader.readAsDataURL(event.target.files[i]);
-        i++;
+          reader.readAsDataURL(file);
+          this.files.push(file);
+        } else {
+          this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', environment.notification.maxImageUploadSize.toString(), 'error_notification');
+        }
       }
     }
+    if (this.files.length > 0) {
+      this.uploadImages(this.files);
+    }
+  }
+
+  uploadImages(files) {
+    this.service
+      .uploadMultiImages(files, this.accountId)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round((event.loaded / event.total) * 100);
+            break;
+          case HttpEventType.Response:
+            event.body.forEach((imgInfo) => {
+              this.uploadedImage.push(imgInfo.id);
+            });
+            setTimeout(() => {
+              this.progress = 0;
+            }, 1500);
+        }
+      });
   }
 
   dataURItoBlob(dataURI) {

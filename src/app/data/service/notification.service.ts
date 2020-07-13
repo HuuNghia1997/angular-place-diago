@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { reloadTimeout } from 'src/app/data/service/config.service';
@@ -25,6 +25,8 @@ import { ApiProviderService } from 'src/app/core/service/api-provider.service';
 import { SnackbarService } from './snackbar.service';
 import { KeycloakService } from 'keycloak-angular';
 import { Router, ActivatedRoute } from '@angular/router';
+import { catchError, map } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
@@ -205,7 +207,29 @@ export class NotificationService {
       formData.append('files', file, file.name);
     });
     formData.append('accountId', accountId);
-    return this.http.post(this.uploadFilesURL, formData, { headers });
+    //return this.http.post(this.uploadFilesURL, formData, { headers });
+    return this.http
+      .post(this.uploadFilesURL, formData, {
+        headers,
+        reportProgress: true,
+        observe: 'events',
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      console.error(
+        `Backend returned code ${error.status}, ` + `body was: ${error.error}`
+      );
+    }
+    // return an observable with a user-facing error message
+    return throwError('Something bad happened. Please try again later.');
   }
 
   postNotification(requestBody) {
