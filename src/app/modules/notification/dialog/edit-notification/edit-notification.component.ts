@@ -96,20 +96,63 @@ export class EditNotificationComponent implements OnInit {
     });
   }
 
-  onInput(event: any) {
-    this.keyword = event.target.value;
-    if (this.keyword !== '') {
-      this.service.getUser(this.keyword).subscribe(data => {
-        this.userSearch = data.content;
-        for (let i = 0; i < data.content.length; i++) {
-          this.userSearch[i].userId = data.content[i].id;
+  initUserSearch() {
+    this.service.getUser('').subscribe(data => {
+      this.userSearch = [];
+      for (let i = 0; i < data.content.length; i++) {
+        data.content[i].userId = data.content[i].id;
+        if (!this.checkUserListContain(data.content[i].id)) {
+          this.userSearch.push(data.content[i]);
         }
-      });
-    }
+      }
+    });
   }
 
   resetform() {
-    this.getUser();
+    this.service.getUser('').subscribe(data => {
+      this.userSearch = [];
+      for (let i = 0; i < data.content.length; i++) {
+        data.content[i].userId = data.content[i].id;
+        if (!this.checkUserListContain(data.content[i].id)) {
+          this.userSearch.push(data.content[i]);
+        }
+      }
+    });
+  }
+
+  checkUserListContain(id: string): boolean {
+    for (const i of this.userList) {
+      if (i.id === id) return true;
+    }
+    return false;
+  }
+
+  onSelectTo(event: any) {
+    for (const i of event) {
+      const item = this.userSearch.find(p => p.id == i);
+      const index: number = this.userSearch.indexOf(item);
+      if (index !== -1) {
+        this.userSearch.splice(index, 1);
+      }
+      if (item) {
+        if (this.userList.indexOf(item) < 0) {
+          this.userList.push(item);
+        }
+      }
+    }
+  }
+
+  onInput(event: any) {
+    this.keyword = event.target.value;
+    this.service.getUser(this.keyword).subscribe(data => {
+      this.userSearch = [];
+      for (let i = 0; i < data.content.length; i++) {
+        data.content[i].userId = data.content[i].id;
+        if (!this.checkUserListContain(data.content[i].id)) {
+          this.userSearch.push(data.content[i]);
+        }
+      }
+    });
   }
 
   onConfirm(): void {
@@ -304,7 +347,7 @@ export class EditNotificationComponent implements OnInit {
     this.getNotificationDetail();
     this.getListTags();
     this.getAgency();
-    this.getUser();
+    this.initUserSearch();
   }
 
   getListTags() {
@@ -334,6 +377,11 @@ export class EditNotificationComponent implements OnInit {
       tagSelected.push(item.id);
     }
     tagSelected = tagSelected.map(String);
+
+    this.userList = this.response[0].to;
+    for (let i of this.userList){
+      i.id = i.userId;
+    }
 
     let userSelected = [];
     for (const item of this.response[0].to) {

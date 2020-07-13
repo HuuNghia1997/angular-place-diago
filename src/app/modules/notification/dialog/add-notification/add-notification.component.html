@@ -42,7 +42,7 @@
   <!-- Người nhận -->
   <mat-form-field class="input-full-width" appearance="outline" floatLabel="always">
     <mat-label> Người nhận </mat-label>
-    <mat-select formControlName="to" placeholder="Tất cả" multiple>
+    <mat-select formControlName="to" placeholder="Tất cả" (selectionChange)="onSelectTo($event.value)" multiple>
       <div>
         <div>
           <input matInput #searchUser (input)="onInput($event)" (keydown)="$event.stopPropagation()" placeholder="Nhập từ khóa" class="search-user">

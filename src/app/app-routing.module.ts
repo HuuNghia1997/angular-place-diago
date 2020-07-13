@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, ExtraOptions } from '@angular/router';
 import { environment } from 'env/environment';
 
 const routes: Routes = [
@@ -43,9 +43,14 @@ if (environment.defaultRouterLink) {
   );
 }
 
+const options: ExtraOptions= {
+  onSameUrlNavigation: 'reload',
+  enableTracing: environment.routerConfig.enableTracing
+}
+
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, environment.routerConfig)
+    RouterModule.forRoot(routes, options)
   ],
   exports: [
     RouterModule

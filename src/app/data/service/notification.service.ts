@@ -24,16 +24,18 @@ import {
 import { ApiProviderService } from 'src/app/core/service/api-provider.service';
 import { SnackbarService } from './snackbar.service';
 import { KeycloakService } from 'keycloak-angular';
+import { Router, ActivatedRoute } from '@angular/router';
 
-
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class NotificationService {
 
   constructor(private http: HttpClient,
-              private main: SnackbarService,
-              private dialog: MatDialog,
-              private apiProviderService: ApiProviderService,
-              private keycloak: KeycloakService) { }
+    private main: SnackbarService,
+    private dialog: MatDialog,
+    private apiProviderService: ApiProviderService,
+    private keycloak: KeycloakService,
+    private route: ActivatedRoute,
+    private router: Router) { }
   public getTags = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';
   public uploadFileURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
   public postURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification';
@@ -45,7 +47,6 @@ export class NotificationService {
   public uploadFilesURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/--multiple';
   public getAgencyURL = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/agency/name+logo-id?parent-id=&tag-id=';
   public getUserURL = this.apiProviderService.getUrl('digo-microservice', 'human') + '/user/--search?keyword=';
-
   result: boolean;
 
   private notificationComponent: ListNotificationComponent;
@@ -77,14 +78,22 @@ export class NotificationService {
         const body = JSON.parse(data.body);
         this.main.openSnackBar(message, body.title, result, reason, 'success_notification');
         // tslint:disable-next-line:only-arrow-functions
-        setTimeout(function() {
-          window.location.reload();
+        setTimeout(() => {
+          this.router.navigate(['quan-tri-thong-bao', 'chi-tiet', data.data.id]);
         }, reloadTimeout);
+        //this.router.events.subscribe((url: any) => console.log(url));
       }
       if (data.data.id === null) {
         this.main.openSnackBar('Thêm thông báo', content, 'thất bại', reason, 'error_notification');
       }
     });
+  }
+
+  testNav() {
+    console.log(this.route);
+    console.log(this.router);
+    this.router.events.subscribe((url: any) => console.log(url));
+    console.log(this.router.navigate(['quan-tri-thong-bao', 'chi-tiet', '5f0842c100172a17e0930e26']));
   }
 
   deleteRecord(id, name): void {
@@ -128,8 +137,9 @@ export class NotificationService {
       if (this.result === true) {
         this.main.openSnackBar(message, content, result, reason, 'success_notification');
         // tslint:disable-next-line:only-arrow-functions
-        setTimeout(function() {
-          window.location.reload();
+        setTimeout(() =>{
+          //window.location.reload();
+          this.router.navigate([this.router.url]);
         }, reloadTimeout);
       }
       if (this.result === false) {
@@ -154,7 +164,10 @@ export class NotificationService {
       if (this.result === true) {
         this.main.openSnackBar(message, content, result, reason, 'success_notification');
         // tslint:disable-next-line: deprecation
-        window.location.reload(true);
+        setTimeout(() =>{
+          //window.location.reload();
+          this.router.navigate([this.router.url]);
+        }, reloadTimeout);
       }
       if (this.result === false) {
         this.main.openSnackBar(message, content, 'gửi không thành công', reason, 'error_notification');
@@ -188,8 +201,8 @@ export class NotificationService {
     headers = headers.append('Accept', 'application/json');
     const formData: FormData = new FormData();
     imgFiles.forEach(img => {
-        const file: File = img;
-        formData.append('files', file, file.name);
+      const file: File = img;
+      formData.append('files', file, file.name);
     });
     formData.append('accountId', accountId);
     return this.http.post(this.uploadFilesURL, formData, { headers });

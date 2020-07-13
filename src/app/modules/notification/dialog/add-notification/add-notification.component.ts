@@ -62,19 +62,19 @@ export class AddNotificationComponent implements OnInit {
   agency = new FormControl('', [Validators.required, Validators.pattern(this.reg)]);
 
   constructor(public dialogRef: MatDialogRef<AddNotificationComponent>,
-              private service: NotificationService,
-              @Inject(MAT_DIALOG_DATA) public data: ConfirmAddDialogModel,
-              public datepipe: DatePipe,
-              private imageCompress: NgxImageCompressService,
-              private main: SnackbarService,
-              private keycloak: KeycloakService) {
+    private service: NotificationService,
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmAddDialogModel,
+    public datepipe: DatePipe,
+    private imageCompress: NgxImageCompressService,
+    private main: SnackbarService,
+    private keycloak: KeycloakService) {
     this.popupTitle = data.title;
   }
 
   ngOnInit(): void {
     this.getListTags();
     this.getAgency();
-    this.getUser();
+    this.initUserSearch();
   }
 
   public getListTags() {
@@ -119,29 +119,61 @@ export class AddNotificationComponent implements OnInit {
     });
   }
 
-  getUser() {
+  initUserSearch() {
     this.service.getUser('').subscribe(data => {
-      this.userList = data.content;
+      this.userSearch = data.content;
       for (let i = 0; i < data.content.length; i++) {
-        this.userList[i].userId = data.content[i].id;
+        this.userSearch[i].userId = data.content[i].id;
       }
     });
   }
 
   onInput(event: any) {
     this.keyword = event.target.value;
-    if (this.keyword !== '') {
-      this.service.getUser(this.keyword).subscribe(data => {
-        this.userSearch = data.content;
-        for (let i = 0; i < data.content.length; i++) {
-          this.userSearch[i].userId = data.content[i].id;
+    this.service.getUser(this.keyword).subscribe(data => {
+      this.userSearch = [];
+      for (let i = 0; i < data.content.length; i++) {
+        data.content[i].userId = data.content[i].id;
+        if (!this.checkUserListContain(data.content[i].id)) {
+          this.userSearch.push(data.content[i]);
         }
-      });
+      }
+    });
+    console.log(this.userSearch);
+  }
+
+  checkUserListContain(id: string): boolean {
+    for (const i of this.userList) {
+      if (i.id === id) return true;
+    }
+    return false;
+  }
+
+  onSelectTo(event: any) {
+    for (const i of event) {
+      const item = this.userSearch.find(p => p.id == i);
+      const index: number = this.userSearch.indexOf(item);
+      if (index !== -1) {
+        this.userSearch.splice(index, 1);
+      }
+      if (item) {
+        if (this.userList.indexOf(item) < 0) {
+          this.userList.push(item);
+        }
+      }
     }
   }
 
   resetform() {
-    this.getUser();
+    this.service.getUser('').subscribe(data => {
+      this.userSearch = [];
+      for (let i = 0; i < data.content.length; i++) {
+        data.content[i].userId = data.content[i].id;
+        if (!this.checkUserListContain(data.content[i].id)) {
+          this.userSearch.push(data.content[i]);
+        }
+      }
+    });
   }
 
   formToJSON() {
@@ -253,7 +285,7 @@ export class AddNotificationComponent implements OnInit {
                 const startText = event.target.files[i].name.substr(0, 5);
                 // tslint:disable-next-line:max-line-length
                 const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
-                                                                      event.target.files[i].name.length);
+                  event.target.files[i].name.length);
                 this.fileNames.push(startText + '...' + shortText);
                 // Tên file gốc - hiển thị tooltip
                 this.fileNamesFull.push(event.target.files[i].name);
@@ -303,5 +335,5 @@ export class AddNotificationComponent implements OnInit {
 }
 
 export class ConfirmAddDialogModel {
-  constructor(public title: string) {}
+  constructor(public title: string) { }
 }

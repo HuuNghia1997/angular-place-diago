@@ -11,6 +11,7 @@ import { PeriodicElement } from 'src/app/data/schema/periodic-element';
 import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { User } from 'src/app/data/schema/user';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-list-notification',
@@ -54,19 +55,35 @@ export class ListNotificationComponent implements OnInit, AfterViewInit {
   userSearch: User[] = [];
   keyword: '';
 
+  navigationSubscription
+
   constructor(private service: NotificationService,
               private translator: PaginatorService,
               public datepipe: DatePipe,
-              private cdRef: ChangeDetectorRef) {
+              private cdRef: ChangeDetectorRef,
+              private route: ActivatedRoute,
+              private router: Router) {
     this.dataSource = new MatTableDataSource(this.ELEMENTDATA);
     service.registerMyApp(this);
   }
 
   ngOnInit(): void {
-    this.search(0, pageSizeOptions[1]);
-    this.getListTags();
-    this.getAgency();
-    this.getUser();
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.search(this.paginator.pageIndex, pageSizeOptions[1]);
+        this.getListTags();
+        this.getAgency();
+        this.getUser();
+      }
+    });
+    if (this.navigationSubscription !== undefined) {
+      this.search(0, pageSizeOptions[1]);
+      this.getListTags();
+      this.getAgency();
+      this.getUser();
+    }
+    
   }
 
   ngAfterViewInit() {

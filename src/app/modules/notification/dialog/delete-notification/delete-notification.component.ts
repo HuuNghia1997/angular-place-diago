@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { reloadTimeout } from 'src/app/data/service/config.service';
 import { ApiProviderService } from 'src/app/core/service/api-provider.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-delete-notification',
@@ -19,7 +20,9 @@ export class DeleteNotificationComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<DeleteNotificationComponent>,
               private http: HttpClient,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmDeleteDialogModel,
-              private apiProviderService: ApiProviderService) {
+              private apiProviderService: ApiProviderService,
+              private route: ActivatedRoute,
+              private router: Router) {
     this.title = data.title;
     this.message = data.message;
     this.id = data.id;
@@ -32,8 +35,8 @@ export class DeleteNotificationComponent implements OnInit {
     this.http.delete<any>(this.deleteURL + id).subscribe(data => {
       this.dialogRef.close(true);
       // tslint:disable-next-line: only-arrow-functions
-      setTimeout(function() {
-        window.location.replace('/quan-tri-thong-bao');
+      setTimeout(() => {
+        this.router.navigate(['quan-tri-thong-bao']);
       }, reloadTimeout);
     }, err => {
       console.error(err);
