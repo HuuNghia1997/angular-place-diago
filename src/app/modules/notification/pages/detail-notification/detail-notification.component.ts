@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { notificationHistoryGroupId } from 'src/app/data/service/config.service';
 import { NotificationService } from 'src/app/data/service/notification.service';
 import { ImageInfo } from 'src/app/data/schema/image-info';
@@ -43,15 +43,50 @@ export class DetailNotificationComponent implements OnInit {
   result: boolean;
   blankVal: any;
 
+  navigationSubscription;
+
   constructor(public dialog: MatDialog,
-              private service: NotificationService,
-              public snackBar: MatSnackBar,
-              private route: ActivatedRoute,
-              private apiProviderService: ApiProviderService) { }
+    private service: NotificationService,
+    public snackBar: MatSnackBar,
+    private route: ActivatedRoute,
+    private apiProviderService: ApiProviderService,
+    private router: Router) { }
 
   ngOnInit(): void {
-    this.notificationId = this.route.snapshot.params.id;
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.notificationId = this.route.snapshot.params.id;
+        this.onParamsChange();
+      }
+    });
+    if (this.navigationSubscription !== undefined) {
+      this.notificationId = this.route.snapshot.params.id;
+      this.getNotificationDetail();
+      this.getNotificationHistory();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
+  }
+
+  onParamsChange() {
+    this.response = [];
+    this.notificationTitle = '';
+    this.notificationStatus = [];
+    this.notificationAgency = [];
+    this.notificationContent = '';
+    this.notificationCreatedDate = '';
+    this.notificationPublishedDate = '';
+    this.notificationExpiredDate = '';
+    this.notificationTags = null;
+    this.notificationTo = null;
+    this.filesInfo = [];
     this.getNotificationDetail();
+    this.history = [];
     this.getNotificationHistory();
   }
 
@@ -76,7 +111,7 @@ export class DetailNotificationComponent implements OnInit {
           const reader = new FileReader();
           reader.addEventListener('load', () => {
             urlResult = reader.result;
-            this.service.getImageName_Size(imageId).subscribe((data: any ) => {
+            this.service.getImageName_Size(imageId).subscribe((data: any) => {
               if (data.filename.length > 20) {
                 // Tên file quá dài
                 const startText = data.filename.substr(0, 5);
@@ -160,7 +195,7 @@ export class DetailNotificationComponent implements OnInit {
             // Tên file quá dài
             const startText = event.target.files[i].name.substr(0, 5);
             const shortText = event.target.files[i].name.substr(event.target.files[i].name.length - 7,
-                                                                event.target.files[i].name.length);
+              event.target.files[i].name.length);
             fileName = startText + '...' + shortText;
             // Tên file gốc - hiển thị tooltip
             fileNamesFull = event.target.files[i].name;

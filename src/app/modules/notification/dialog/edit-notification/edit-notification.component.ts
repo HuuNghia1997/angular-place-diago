@@ -12,6 +12,8 @@ import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { KeycloakService } from 'keycloak-angular';
 import { User } from 'src/app/data/schema/user';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-edit-notification',
@@ -30,6 +32,7 @@ export class EditNotificationComponent implements OnInit {
   notificationId: string;
   categoryId = notificationCategoryId;
   accountId: string;
+  username: string;
 
   uploadedImage = [];
   countDefaultImage;
@@ -47,6 +50,8 @@ export class EditNotificationComponent implements OnInit {
   itemsListUsers = [];
   response = [];
   keyword: '';
+  progress: number = 0;
+  updateImageProgress: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<EditNotificationComponent>,
               private service: NotificationService,
@@ -96,52 +101,96 @@ export class EditNotificationComponent implements OnInit {
     });
   }
 
-  onInput(event: any) {
-    this.keyword = event.target.value;
-    if (this.keyword !== '') {
-      this.service.getUser(this.keyword).subscribe(data => {
-        this.userSearch = data.content;
-        for (let i = 0; i < data.content.length; i++) {
-          this.userSearch[i].userId = data.content[i].id;
-        }
-      });
-    }
-  }
-
-  resetform() {
-    this.getUser();
-  }
-
-  onConfirm(): void {
-    this.keycloak.loadUserProfile().then(user => {
-      // tslint:disable-next-line: no-string-literal
-      this.accountId = user['attributes'].user_id;
-      this.countDefaultImage = this.uploadedImage.length;
-      if (this.countDefaultImage > 0) {
-        if (this.files.length > 0) {
-            this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
-              data.forEach(imgInfo => {
-                this.uploadedImage.push(imgInfo.id);
-              });
-              this.formToJSON();
-            });
-          // });
-        } else {
-          this.formToJSON();
-        }
-      } else {
-        if (this.files.length > 0) {
-          this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
-            data.forEach(imgInfo => {
-              this.uploadedImage.push(imgInfo.id);
-            });
-            this.formToJSON();
-          });
-        } else {
-          this.formToJSON();
+  initUserSearch() {
+    this.service.getUser('').subscribe(data => {
+      this.userSearch = [];
+      for (let i = 0; i < data.content.length; i++) {
+        data.content[i].userId = data.content[i].id;
+        if (!this.checkUserListContain(data.content[i].id)) {
+          this.userSearch.push(data.content[i]);
         }
       }
     });
+  }
+
+  resetform() {
+    this.service.getUser('').subscribe(data => {
+      this.userSearch = [];
+      for (let i = 0; i < data.content.length; i++) {
+        data.content[i].userId = data.content[i].id;
+        if (!this.checkUserListContain(data.content[i].id)) {
+          this.userSearch.push(data.content[i]);
+        }
+      }
+    });
+  }
+
+  checkUserListContain(id: string): boolean {
+    for (const i of this.userList) {
+      if (i.id === id) return true;
+    }
+    return false;
+  }
+
+  onSelectTo(event: any) {
+    for (const i of event) {
+      const item = this.userSearch.find(p => p.id == i);
+      const index: number = this.userSearch.indexOf(item);
+      if (index !== -1) {
+        this.userSearch.splice(index, 1);
+      }
+      if (item) {
+        if (this.userList.indexOf(item) < 0) {
+          this.userList.push(item);
+        }
+      }
+    }
+  }
+
+  onInput(event: any) {
+    this.keyword = event.target.value;
+    this.service.getUser(this.keyword).subscribe(data => {
+      this.userSearch = [];
+      for (let i = 0; i < data.content.length; i++) {
+        data.content[i].userId = data.content[i].id;
+        if (!this.checkUserListContain(data.content[i].id)) {
+          this.userSearch.push(data.content[i]);
+        }
+      }
+    });
+  }
+
+  onConfirm(): void {
+    // this.keycloak.loadUserProfile().then(user => {
+    //   // tslint:disable-next-line: no-string-literal
+    //   this.accountId = user['attributes'].user_id;
+    //   this.countDefaultImage = this.uploadedImage.length;
+    //   if (this.countDefaultImage > 0) {
+    //     if (this.files.length > 0) {
+    //         this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
+    //           data.forEach(imgInfo => {
+    //             this.uploadedImage.push(imgInfo.id);
+    //           });
+    //           this.formToJSON();
+    //         });
+    //       // });
+    //     } else {
+    //       this.formToJSON();
+    //     }
+    //   } else {
+    //     if (this.files.length > 0) {
+    //       this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
+    //         data.forEach(imgInfo => {
+    //           this.uploadedImage.push(imgInfo.id);
+    //         });
+    //         this.formToJSON();
+    //       });
+    //     } else {
+    //       this.formToJSON();
+    //     }
+    //   }
+    // });
+    this.formToJSON();
   }
 
   formToJSON() {
@@ -211,57 +260,109 @@ export class EditNotificationComponent implements OnInit {
     });
   }
 
-  // File uploads
+  // // File uploads
+  // onSelectFile(event) {
+  //   let i = 0;
+  //   if (event.target.files && event.target.files[0]) {
+  //     for (const file of event.target.files) {
+  //       // =============================================
+  //       let urlNone: any;
+  //       let urlResult: any;
+  //       let fileName = '';
+  //       let fileNamesFull = '';
+
+  //       // =============================================
+  //       const reader = new FileReader();
+  //       reader.onload = (eventLoad) => {
+  //         this.uploaded = true;
+  //         urlNone = eventLoad.target.result;
+  //         this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
+  //           this.urlPreview = result;
+  //           urlResult = result.split(',')[1];
+  //           this.fileImport = this.convertBase64toFile(result, file.name);
+  //           if (this.filesInfo.length < 5) {
+  //             this.files.push(this.fileImport);
+  //             if (this.fileImport.name.length > 20) {
+  //               // Tên file quá dài
+  //               const startText = event.target.files[i].name.substr(0, 5);
+  //               // tslint:disable-next-line:max-line-length
+  //               const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
+  //                                                                       event.target.files[i].name.length);
+  //               fileName = startText + '...' + shortText;
+  //               // Tên file gốc - hiển thị tooltip
+  //               fileNamesFull = event.target.files[i].name;
+  //             } else {
+  //               fileName = this.fileImport.name;
+  //               fileNamesFull = this.fileImport.name ;
+  //             }
+
+  //             this.filesInfo.push({
+  //               id: i,
+  //               url: this.urlPreview,
+  //               name: fileName,
+  //               fullName: fileNamesFull
+  //             });
+  //           } else {
+  //             this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
+  //           }
+  //         });
+  //       };
+  //       reader.readAsDataURL(event.target.files[i]);
+  //       i++;
+  //     }
+  //   }
+  // }
+
   onSelectFile(event) {
-    let i = 0;
+    this.updateImageProgress = true;
     if (event.target.files && event.target.files[0]) {
+      let i = 0;
       for (const file of event.target.files) {
-        // =============================================
-        let urlNone: any;
-        let urlResult: any;
-        let fileName = '';
-        let fileNamesFull = '';
-
-        // =============================================
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.uploaded = true;
-          urlNone = eventLoad.target.result;
-          this.imageCompress.compressFile(urlNone, -1, 75, 50).then(result => {
-            this.urlPreview = result;
-            urlResult = result.split(',')[1];
-            this.fileImport = this.convertBase64toFile(result, file.name);
-            if (this.filesInfo.length < 5) {
-              this.files.push(this.fileImport);
-              if (this.fileImport.name.length > 20) {
-                // Tên file quá dài
-                const startText = event.target.files[i].name.substr(0, 5);
-                // tslint:disable-next-line:max-line-length
-                const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
-                                                                        event.target.files[i].name.length);
-                fileName = startText + '...' + shortText;
-                // Tên file gốc - hiển thị tooltip
-                fileNamesFull = event.target.files[i].name;
-              } else {
-                fileName = this.fileImport.name;
-                fileNamesFull = this.fileImport.name ;
-              }
-
-              this.filesInfo.push({
-                id: i,
-                url: this.urlPreview,
-                name: fileName,
-                fullName: fileNamesFull
-              });
-            } else {
-              this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', '5', 'error_notification');
-            }
+        if (this.files.length + this.filesInfo.length + 1 <= environment.notification.maxImageUploadSize) {
+          const reader = new FileReader();
+          reader.onload = ((event) => {
+            this.uploaded = true;
+            this.filesInfo.push({
+              id: i,
+              url: event.target.result,
+              name: file.name,
+              fullName: file.name
+            });
+            //this.urls.push(event.target.result);
           });
-        };
-        reader.readAsDataURL(event.target.files[i]);
+          reader.readAsDataURL(file);
+          this.files.push(file);
+        } else {
+          this.main.openSnackBar('Số lượng ', 'hình ảnh ', 'không được vượt quá ', environment.notification.maxImageUploadSize.toString(), 'error_notification');
+        }
         i++;
       }
     }
+    if (this.files.length > 0) {
+      this.uploadImages(this.files);
+    }
+  }
+
+  uploadImages(files) {
+    console.log(this.uploadedImage);
+    this.service
+      .uploadMultiImages(files, this.accountId)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round((event.loaded / event.total) * 100);
+            break;
+          case HttpEventType.Response:
+            event.body.forEach((imgInfo) => {
+              this.uploadedImage.push(imgInfo.id);
+            });
+            console.log(this.uploadedImage);
+            setTimeout(() => {
+              this.progress = 0;
+              this.updateImageProgress = false;
+            }, 1500);
+        }
+      });
   }
 
   dataURItoBlob(dataURI) {
@@ -304,7 +405,15 @@ export class EditNotificationComponent implements OnInit {
     this.getNotificationDetail();
     this.getListTags();
     this.getAgency();
-    this.getUser();
+    this.initUserSearch();
+    this.getUserProfile();
+  }
+
+  getUserProfile(): void {
+    this.keycloak.loadUserProfile().then((user) => {
+      this.accountId = user['attributes'].user_id;
+      this.username = user.username;
+    });
   }
 
   getListTags() {
@@ -334,6 +443,11 @@ export class EditNotificationComponent implements OnInit {
       tagSelected.push(item.id);
     }
     tagSelected = tagSelected.map(String);
+
+    this.userList = this.response[0].to;
+    for (let i of this.userList){
+      i.id = i.userId;
+    }
 
     let userSelected = [];
     for (const item of this.response[0].to) {

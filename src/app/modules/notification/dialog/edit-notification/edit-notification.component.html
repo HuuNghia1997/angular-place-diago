@@ -42,7 +42,7 @@
   <!-- Người nhận -->
   <mat-form-field class="input-full-width" appearance="outline" floatLabel="always">
     <mat-label> Người nhận </mat-label>
-    <mat-select formControlName="to" placeholder="Tất cả" multiple>
+    <mat-select formControlName="to" placeholder="Tất cả" (selectionChange)="onSelectTo($event.value)" multiple>
       <div>
         <div>
           <input matInput #searchUser (input)="onInput($event)" (keydown)="$event.stopPropagation()" placeholder="Nhập từ khóa" class="search-user">
@@ -80,11 +80,12 @@
           </a>
         </div>
       </div>
+      <mat-progress-bar class="progress" mode="determinate" *ngIf="progress > 0" [value]="progress"></mat-progress-bar>
     </div>
   </div>
   <div mat-dialog-actions class="mt-1" align="center">
     <a mat-raised-button class="btn-cancel" (click)="onDismiss()"> Huỷ bỏ </a>
     <span class="ml-1 mr-1"></span>
-    <button mat-raised-button class="primary-blue-btn" type="submit" [disabled]="updateForm.invalid"> Cập nhật </button>
+    <button mat-raised-button class="primary-blue-btn" type="submit" [disabled]="updateForm.invalid || updateImageProgress"> Cập nhật </button>
   </div>
 </form>

@@ -109,6 +109,9 @@ export const environment = {
       'pk.eyJ1IjoibW5oYWktbWFwYm94IiwiYSI6ImNrYmlvZ3d5bjBmdzcyem5xcWhnaDFrYjIifQ.tdsFG-l6QwZeKXDtO_r99g',
   },
   provinceDefaultId: 82,
+  notification: {
+    maxImageUploadSize:  5
+  }
 };
 
 export const projectIdProcess = '3f9d9e1b-02cd-4e76-ad98-a67ab9830bf3';

@@ -22,6 +22,7 @@ const routes: Routes = [
       }
     ],
     canActivate: [AuthGuard],
+    runGuardsAndResolvers: 'paramsChange',
     data: {
       anyRoles: ['admin', 'citizens_notification_manager', 'citizens_admin']
     }

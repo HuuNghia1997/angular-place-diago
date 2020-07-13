@@ -42,11 +42,13 @@
   <!-- Người nhận -->
   <mat-form-field class="input-full-width" appearance="outline" floatLabel="always">
     <mat-label> Người nhận </mat-label>
-    <mat-select formControlName="to" placeholder="Tất cả" multiple>
+    <mat-select formControlName="to" placeholder="Tất cả" (selectionChange)="onSelectTo($event.value)" multiple>
       <div>
         <div>
-          <input matInput #searchUser (input)="onInput($event)" (keydown)="$event.stopPropagation()" placeholder="Nhập từ khóa" class="search-user">
-          <button mat-icon-button class="btn-clear" *ngIf="searchUser.value !== ''" (click)="searchUser.value = ''; resetform()">
+          <input matInput #searchUser (input)="onInput($event)" (keydown)="$event.stopPropagation()"
+            placeholder="Nhập từ khóa" class="search-user">
+          <button mat-icon-button class="btn-clear" *ngIf="searchUser.value !== ''"
+            (click)="searchUser.value = ''; resetform()">
             <mat-icon> close </mat-icon>
           </button>
         </div>
@@ -67,19 +69,22 @@
         <mat-icon> cloud_upload </mat-icon>
         Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc <a href=""> Tải lên </a>
       </button>
-      <input id="img_upload" name="img_upload[]" type='file' (change)="onSelectFile($event)" multiple accept=".JPG, .PNG, .JPEG" value="{{blankVal}}">
+      <input id="img_upload" name="img_upload[]" type='file' (change)="onSelectFile($event)" multiple
+        accept=".JPG, .PNG, .JPEG" value="{{blankVal}}">
     </div>
     <div class="image_drag_upload_preview">
       <div class="list_uploaded" *ngFor='let url of urls; let i = index;'>
         <div class="img_items  mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ urls[i] +')'}">
         </div>
         <div class="img_control">
-          <span class="file_name" matTooltip="{{fileNamesFull[i]}}" [matTooltipPosition]="'right'">{{fileNames[i]}}</span>
+          <span class="file_name" matTooltip="{{fileNamesFull[i]}}"
+            [matTooltipPosition]="'right'">{{fileNames[i]}}</span>
           <a mat-icon-button class="delete_img" align="end">
             <mat-icon (click)="removeItem(i)">delete_outline</mat-icon>
           </a>
         </div>
       </div>
+      <mat-progress-bar class="progress" mode="determinate" *ngIf="progress > 0" [value]="progress"></mat-progress-bar>
     </div>
   </div>
   <div mat-dialog-actions class="mt-1" align="center">
@@ -88,4 +93,3 @@
     <button mat-raised-button class="primary-blue-btn" type="submit" [disabled]="addForm.invalid"> Lưu lại </button>
   </div>
 </form>
-
