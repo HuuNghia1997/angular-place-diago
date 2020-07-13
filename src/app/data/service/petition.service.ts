@@ -12,8 +12,7 @@ import { reloadTimeout } from './config.service';
 import { SnackbarService } from './snackbar.service';
 import { ConfirmationCompletedPetitionDialogModel, ConfirmationCompletedComponent } from 'src/app/modules/petition/dialog/confirmation-completed/confirmation-completed.component';
 import { ConfirmUpdateResultDialogModel, UpdateResultComponent } from 'src/app/modules/petition/dialog/update-result/update-result.component';
-import { title } from 'process';
-import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
+import { ConfirmMapDialogModel, MapComponent } from 'src/app/modules/accept-petition/dialog/map/map.component';
 import { CommentDialogModel, CommentComponent } from 'src/app/modules/petition/dialog/comment/comment.component';
 import { ConfirmLightboxDialogModel, PreviewLightboxComponent } from 'src/app/modules/petition/dialog/preview-lightbox/preview-lightbox.component';
 import { Router } from '@angular/router';
@@ -25,7 +24,7 @@ export class PetitionService {
   result: boolean;
 
   public getTagsUrl = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';
-  public getPetitionUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/task/--with-variables';
+  public getPetitionUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/task/';
   public getFileUrl = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
   public uploadFilesURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/--multiple';
   public processInstanceUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/process-instances/';
@@ -42,6 +41,42 @@ export class PetitionService {
               private snackbar: SnackbarService,
               private router: Router) {}
 
+  formErrorMessage(id: number) {
+    switch (id) {
+      case 1:
+        return 'Vui lòng nhập tiêu đề';
+      case 2:
+        return 'Vui lòng chọn thời gian';
+      case 3:
+        return 'Vui lòng chọn địa điểm';
+      case 4:
+        return 'Vui lòng nhập nội dung';
+      case 5:
+        return 'Vui lòng nhập tên người phản ánh';
+      case 6:
+        return 'Vui lòng nhập số điện thoại';
+      default:
+        return 'You must enter a valid value';
+    }
+  }
+
+  openMapDialog(address, center) {
+    const dialogData = new ConfirmMapDialogModel(
+      address,
+      center.longitude,
+      center.latitude
+    );
+    const dialogRef = this.dialog.open(MapComponent, {
+      minWidth: '80%',
+      data: dialogData,
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('This dialog was closed');
+    });
+  }
+
   getListTag(categoryId): Observable<any> {
     return this.http.get(this.getTagsUrl + categoryId);
   }
@@ -55,7 +90,7 @@ export class PetitionService {
   }
 
   getPetitionList(page, size, paged): Observable<any> {
-    return this.http.get<any>(this.getPetitionUrl + '?size=' + size + '&paged=' + paged + '&page=' + page);
+    return this.http.get<any>(this.getPetitionUrl + '/--with-variables' + '?size=' + size + '&paged=' + paged + '&page=' + page);
   }
 
   search(page, paged, size, name, place, categoryId, receptionMethodId, fromDate, toDate): Observable<any> {
@@ -98,21 +133,19 @@ export class PetitionService {
       .set('page', page)
       .set('paged', paged)
       .set('size', size);
-    return this.http.get<any>(this.getPetitionUrl, { params: body, headers });
+    return this.http.get<any>(this.getPetitionUrl + '/--with-variables', { params: body, headers });
   }
 
-  getDetailPetition(id): Observable<any> {
+  getDetailPetition(taskId): Observable<any> {
     let headers = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
     headers = headers.append('Accept', '*/*');
     const query = {
-      processVariables:
-      {
-        petitionId: id
-      }
+      includeProcessVariables: false,
+      includeTaskVariables: true
     };
     const body = new HttpParams().set('query', decodeURIComponent(JSON.stringify(query)));
-    return this.http.get<any>(this.getPetitionUrl, { params: body, headers });
+    return this.http.get<any>(this.getPetitionUrl + taskId + '/--with-variables', { params: body, headers });
   }
 
   getFile(fileId) {
@@ -227,8 +260,8 @@ export class PetitionService {
     });
   }
 
-  updatePetition(id, name): void {
-    const dialogData = new ConfirmUpdatePetitionDialogModel('Cập nhật phản ánh', id);
+  updatePetition(taskId, name): void {
+    const dialogData = new ConfirmUpdatePetitionDialogModel('Cập nhật phản ánh', taskId);
     const dialogRef = this.dialog.open(UpdatePetitionComponent, {
       width: '80%',
       maxHeight: '600px',

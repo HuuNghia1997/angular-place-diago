@@ -1,7 +1,7 @@
 <!--  Title  -->
 <mat-toolbar class="title">
   <mat-toolbar-row>
-    <h6 class="name-page"> Chi tiết phản ánh </h6>
+    <h6 class="name-page"> {{ taskName }} </h6>
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -16,7 +16,7 @@
 
     <div class="button-action">
       <!-- Btn chỉnh sửa -->
-      <button mat-button class="fs-13" (click)="updatePetition(petitionId, petitionTitle)">
+      <button mat-stroked-button class="fs-13" (click)="updatePetition(taskId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
         <span> Chỉnh sửa </span>
       </button>
@@ -24,18 +24,18 @@
       <!-- Btn nhận xử lý -->
       <div *ngIf="petitionStatus === 'CREATED'; then receivedBlock else elseBlock"></div>
       <ng-template #receivedBlock>
-        <button mat-button class="ml-1 fs-13" (click)="claimTask(petitionTitle)">
+        <button mat-stroked-button class="ml-1 fs-13" (click)="claimTask(petitionTitle)">
           <mat-icon fontSet="material-icons-outlined"> dns </mat-icon>
           <span> Nhận xử lý </span>
         </button>
       </ng-template>
       <ng-template #elseBlock>
         <span *ngIf="petitionStatus === 'ASSIGNED'">
-          <button mat-button class="ml-1 fs-13" (click)="completePetition(petitionId, petitionTitle)">
+          <button mat-stroked-button class="ml-1 fs-13" (click)="completePetition(petitionId, petitionTitle)">
             <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
             <span> Xác nhận hoàn thành </span>
           </button>
-          <button mat-button class="ml-1 fs-13" (click)="releaseTask(petitionTitle)">
+          <button mat-stroked-button class="ml-1 fs-13" (click)="releaseTask(petitionTitle)">
             <mat-icon fontSet="material-icons-outlined"> reply </mat-icon>
             <span> Bỏ nhận xử lý </span>
           </button>
@@ -43,13 +43,13 @@
       </ng-template>
 
       <!-- Btn xem quy trình -->
-      <button mat-button class="ml-1 fs-13" (click)="showProcess(petitionId, petitionTitle)">
+      <button mat-stroked-button class="ml-1 fs-13" (click)="showProcess(petitionId, petitionTitle)">
         <mat-icon> timeline </mat-icon>
         <span> Xem quy trình </span>
       </button>
 
       <!-- Btn cập nhật kết quả -->
-      <button mat-button class="ml-1 fs-13" (click)="updateResult(petitionId, petitionTitle)">
+      <button mat-stroked-button class="ml-1 fs-13" (click)="updateResult(petitionId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> assignment </mat-icon>
         <span> Cập nhật kết quả </span>
       </button>
@@ -66,6 +66,11 @@
               <td class="td-2" *ngFor='let tag of petitionTag; let i = index'>
                 {{ tag.name }} {{ i === petitionTag.length - 1 ? '' : ',' }}
               </td>
+            </tr>
+            <tr>
+              <td class="td-1"> Công khai: </td>
+              <td class="td-2"> <span [ngClass]="processPublic === false ? 'btn-none-public' : 'btn-public'">
+                {{ getPublic(processPublic) }} </span> </td>
             </tr>
             <tr>
               <td class="td-1"> Thời gian xảy ra: </td>
@@ -254,25 +259,7 @@
               </td>
             </tr>
           </table> <!-- Table thông tin người phản ánh -->
-
-          <!-- Thông tin xử lý -->
-          <h4> Thông tin xử lý </h4>
-          <table class="table-info-process">
-            <tr>
-              <td class="td-1 width-40"> Công việc: </td>
-              <td class="td-2 width-60">
-                <span class="btn-receive"> {{ taskName }} </span>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-1 width-40"> Công khai: </td>
-              <td class="td-2 width-60">
-                <span [ngClass]="processPublic === false ? 'btn-none-public' : 'btn-public'">
-                  {{ getPublic(processPublic) }} </span>
-              </td>
-            </tr>
-          </table> <!-- Table thông tin xử lý -->
-
+          
           <!-- Kết quả xử lý -->
           <h4 [ngClass]="resultPetition === undefined ? 'd-none' : 'mt-2'"> Kết quả xử lý </h4>
           <table [ngClass]="resultPetition === undefined ? 'd-none' : 'table-result'">

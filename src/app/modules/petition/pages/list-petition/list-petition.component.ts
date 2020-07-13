@@ -196,7 +196,6 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     if (formObj.title === '' && formObj.place === '' && formObj.receptionMethod === '' &&
       formObj.tag === '' && formObj.startDate === null && formObj.endDate === null) {
       this.service.getPetitionList(page, pageSize, true).subscribe(data => {
-        console.log(data);
         this.fetchData(data, page, pageSize);
       }, err => {
         if (err.status === 401) {
@@ -231,6 +230,7 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     this.totalPages = Math.ceil(totalPage);
     this.selectedPageSize = pageSize;
     this.resetPageSize();
+    console.log(this.ELEMENT_DATA);
   }
 
   getStatus(status: string) {

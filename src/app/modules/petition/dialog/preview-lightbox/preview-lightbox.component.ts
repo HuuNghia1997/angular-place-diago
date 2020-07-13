@@ -41,7 +41,6 @@ export class PreviewLightboxComponent implements OnInit {
       const fileExtension = this.fileUpload[i].url.substring(this.fileUpload[i].url.indexOf(':') + 1, this.fileUpload[i].url.indexOf('/'));
       this.fileUpload[i]['type'] = fileExtension;
     }
-    console.log(this.fileUpload);
     this.openImage(this.fileURL, this.fileId);
   }
 

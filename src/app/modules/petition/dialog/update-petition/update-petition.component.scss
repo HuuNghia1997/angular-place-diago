@@ -38,13 +38,12 @@ input, textarea, mat-select {
 }
 
 .place-input {
-  width: 90%;
+  width: 92%;
 }
 
 .btn-choose {
   float: right;
   height: 50px;
-  border: 1px solid #333333;
   display: flex;
   justify-content: center;
   color: #1371FF;
@@ -63,10 +62,6 @@ input, textarea, mat-select {
 .btn-update {
   color: #ffffff;
   background-color: #1976D2;
-}
-
-.btn-cancel {
-  border: 1px solid #333333;
 }
 
 .mt-1 {
@@ -93,4 +88,8 @@ input, textarea, mat-select {
 
 mat-hint {
   color: red;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: #44444450;
 }
