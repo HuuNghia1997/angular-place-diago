@@ -555,7 +555,7 @@ export class DetailPetitionComponent implements OnInit {
     }
   }
 
-  openLightbox(fileURL, fileId) {
-    this.service.openLightbox(fileURL, fileId, this.fileUpload);
+  openLightbox(fileURL, fileId, fileName) {
+    this.service.openLightbox(fileURL, fileId, this.fileUpload, fileName);
   }
 }

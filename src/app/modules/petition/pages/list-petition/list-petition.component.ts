@@ -230,7 +230,7 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     this.totalPages = Math.ceil(totalPage);
     this.selectedPageSize = pageSize;
     this.resetPageSize();
-    console.log(this.ELEMENT_DATA);
+    console.log(JSON.stringify(this.ELEMENT_DATA));
   }
 
   getStatus(status: string) {

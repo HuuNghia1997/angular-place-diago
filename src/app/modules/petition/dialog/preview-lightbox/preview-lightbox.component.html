@@ -1,16 +1,23 @@
 <button mat-icon-button class="close_btn" (click)="onDismiss()">
     <mat-icon>close</mat-icon>
 </button>
+<span class="fileName" *ngIf="fileType == 'image'">{{ fileName }}</span>
 <div class="preview_zone">
         <div *ngIf="fileType == 'image'" class="img_preview" [ngStyle]="{'background-image': 'url('+ selectedURL +')'}"></div>
-        <video *ngIf="fileType == 'video'" class="video_preview" [src]="selectedURL" controls autoplay></video>
-        <audio *ngIf="fileType == 'audio'" class="audio_preview" [src]="selectedURL" controls autoplay></audio>
+        <div class="newTab" *ngIf="fileType == 'video' || fileType == 'audio'">
+            <a [href]="selectedURL" target="_blank">
+                <mat-icon>launch</mat-icon>
+                <p>Phát {{ fileName }} trong tab mới</p>
+            </a>
+        </div>
+        <!-- <video *ngIf="fileType == 'video'" class="video_preview" [src]="selectedURL" controls autoplay></video>
+        <audio *ngIf="fileType == 'audio'" class="audio_preview" [src]="selectedURL" controls autoplay></audio> -->
 </div>
 <div class="bottom_carousel">
     <owl-carousel-o [options]="customOptions"> 
         <ng-container *ngFor="let file of fileUpload">
             <ng-template carouselSlide>
-                <a href="javascript:void(0)" (click)="openImage(file.url, file.id.id)">
+                <a href="javascript:void(0)" (click)="openImage(file.url, file.id.id, file.name)">
                     <div *ngIf="file.type == 'image'" class="slide_img" [ngStyle]="{'background-image': 'url('+ file.url +')'}" [title]="file.fullName"></div>
                     <div *ngIf="file.type == 'video'" class="slide_img" [ngStyle]="{'background-image': 'url(\'./assets/img/video.png\')'}" [title]="file.fullName"></div>
                     <div *ngIf="file.type == 'audio'" class="slide_img" [ngStyle]="{'background-image': 'url(\'./assets/img/audio.png\')'}" [title]="file.fullName"></div>

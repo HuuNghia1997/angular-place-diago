@@ -2,6 +2,7 @@
     border-radius: 0;
     background-color: rgba(0, 0, 0, 0.8);
     color: #fff;
+    padding-bottom: 0.5em;
 }
 
 .close_btn {
@@ -15,7 +16,6 @@
     position: absolute;
     bottom: 0;
     width: 50%;
-    margin-bottom: 1em;
     text-align: center;
     left: 50%;
     margin-left: -25%;
@@ -29,8 +29,31 @@
     height: 70vh;
     margin-top: -42vh;
     margin-left: -40vw;
+    text-align: center;
+    display: table;
 }
 
+.newTab {
+    font-size: 20px;
+    color: #b0b0b0;
+    display:table-cell;
+    vertical-align:middle;
+}
+
+.newTab a {
+    color: #b0b0b0;
+    text-decoration: none;
+    transition: .3s;
+}
+
+.newTab a:hover {
+    color: #fff;
+}
+
+.newTab a .mat-icon {
+    transform: scale(2);
+    padding-bottom: .5em;
+}
 .slide_img {
     height: 15vh;
     background-position: center;

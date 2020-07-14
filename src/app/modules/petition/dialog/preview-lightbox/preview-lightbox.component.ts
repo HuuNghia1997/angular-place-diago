@@ -16,6 +16,7 @@ export class PreviewLightboxComponent implements OnInit {
   fileUpload: ImageInfo[];
   selectedURL: any;
   fileType: string;
+  fileName: string;
 
   constructor(public dialogRef: MatDialogRef<PreviewLightboxComponent>,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmLightboxDialogModel,
@@ -24,11 +25,12 @@ export class PreviewLightboxComponent implements OnInit {
     this.fileURL = data.fileURL;
     this.fileId = data.fileId;
     this.fileUpload = data.fileUpload;
+    this.fileName = data.fileName;
   }
 
   customOptions: OwlOptions = {
     loop: false,
-    mouseDrag: false,
+    mouseDrag: true,
     touchDrag: false,
     pullDrag: true,
     nav: false,
@@ -41,14 +43,15 @@ export class PreviewLightboxComponent implements OnInit {
       const fileExtension = this.fileUpload[i].url.substring(this.fileUpload[i].url.indexOf(':') + 1, this.fileUpload[i].url.indexOf('/'));
       this.fileUpload[i]['type'] = fileExtension;
     }
-    this.openImage(this.fileURL, this.fileId);
+    this.openImage(this.fileURL, this.fileId, this.fileName);
   }
 
   onDismiss(): void {
     this.dialogRef.close();
   }
 
-  openImage(url, id): void {
+  openImage(url, id, name): void {
+    this.fileName = name;
     this.fileType = url.substring(url.indexOf(':') + 1, url.indexOf('/'));
     if (this.fileType === 'video' || this.fileType === 'audio') {
       this.service.getFile(id).subscribe(data => {
@@ -60,6 +63,7 @@ export class PreviewLightboxComponent implements OnInit {
         document.body.appendChild(downloadLink);
         const blobURL: any = this.sanitizer.bypassSecurityTrustUrl(downloadLink.href);
         this.selectedURL = blobURL;
+        window.open(blobURL.changingThisBreaksApplicationSecurity, '_blank');
       });
     } else {
       this.selectedURL = url;
@@ -70,5 +74,6 @@ export class PreviewLightboxComponent implements OnInit {
 export class ConfirmLightboxDialogModel {
   constructor(public fileURL: string,
               public fileId: string,
-              public fileUpload: ImageInfo[]) { }
+              public fileUpload: ImageInfo[],
+              public fileName: string) { }
 }
