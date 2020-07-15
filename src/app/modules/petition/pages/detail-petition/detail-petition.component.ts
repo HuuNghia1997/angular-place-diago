@@ -5,11 +5,11 @@ import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatDialog } from '@angular/material/dialog';
 import { PetitionService } from 'src/app/data/service/petition.service';
 import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
-import { reloadTimeout } from 'src/app/data/service/config.service';
+import { reloadTimeout, petitionAcceptFileExtension, petitionAcceptFileType } from 'src/app/data/service/config.service';
 import { KeycloakService } from 'keycloak-angular';
 import { FormGroup, FormControl } from '@angular/forms';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
-import { HttpEventType } from '@angular/common/http';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-detail-petition',
@@ -22,10 +22,11 @@ export class DetailPetitionComponent implements OnInit {
   commentDataSource = new MatTreeNestedDataSource<any>();
 
   petitionId: string;
+  processInstanceId: string;
   taskId: string;
   isExpand = true;
   status: string;
-
+  acceptFileExtension = petitionAcceptFileExtension;
   petition = [];
   petitionStatus: string;
   petitionTitle: string;
@@ -65,6 +66,7 @@ export class DetailPetitionComponent implements OnInit {
   TREE_DATA = [];
   blankVal: any;
   files = [];
+  allFiles = [];
   imgResultAfterCompress: string;
   localCompressedURl: any;
   fileImport: File;
@@ -101,7 +103,6 @@ export class DetailPetitionComponent implements OnInit {
   taskId: new FormControl('')
 });
 
-  token: any;
   type: number[] = [];
   accountId: string;
 
@@ -109,21 +110,23 @@ export class DetailPetitionComponent implements OnInit {
               private dialog: MatDialog,
               private service: PetitionService,
               private keycloak: KeycloakService,
-              private snackbar: SnackbarService) {
+              private snackbar: SnackbarService,
+              private sanitizer: DomSanitizer) {
     this.taskId = this.actRoute.snapshot.params.id;
     this.commentDataSource.data = this.TREE_DATA;
   }
 
   ngOnInit(): void {
     this.getDetail();
-    this.getComment();
-    this.getHistory();
   }
 
   getComment() {
     const groupId = 1;
     this.service.getComment(groupId, this.petitionId).subscribe(cmt => {
-      this.TREE_DATA = cmt.content;
+      const size = cmt.numberOfElements;
+      for (let i = size - 1; i >= 0; i--) {
+        this.TREE_DATA.push(cmt.content[i]);
+      }
     });
   }
 
@@ -134,70 +137,45 @@ export class DetailPetitionComponent implements OnInit {
   hasChild = (_: number, node: any) => !!node.content && node.content.length > 0;
 
   uploadFile() {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.token = this.keycloak.getKeycloakInstance().token;
-
-      this.keycloak.loadUserProfile().then(user => {
-        // tslint:disable-next-line: no-string-literal
-        this.accountId = user['attributes'].user_id;
-        this.countDefaultImage = this.uploadedImage.length;
-        if (this.countDefaultImage > 0) {
-          if (this.files.length > 0) {
-            this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-
-              // if (file.type === HttpEventType.Response) {
-              //   console.log('Upload complete');
-              // }
-              // if (file.type === HttpEventType.UploadProgress) {
-              //   const percentDone = Math.round(100 * file.loaded / file.total);
-              //   console.log('Progress ' + percentDone + '%');
-              // }
-
-              file.forEach(e => {
-                this.type.push(2);
-                this.uploadedImage.push({
-                  id: e.id,
-                  name: e.filename,
-                  group: this.type
-                });
-                this.type = [];
+    (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'block';
+    this.keycloak.loadUserProfile().then(user => {
+      // tslint:disable-next-line: no-string-literal
+      this.accountId = user['attributes'].user_id;
+      this.countDefaultImage = this.uploadedImage.length;
+      if (this.countDefaultImage > 0) {
+        if (this.files.length > 0) {
+          this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+            file.forEach(e => {
+              this.type.push(2);
+              this.uploadedImage.push({
+                id: e.id,
+                name: e.filename,
+                group: this.type
               });
-              this.formToJson();
+              this.type = [];
             });
-          } else {
-            this.formToJson();
-          }
+            this.formToJson(1, '');
+          });
         } else {
-          if (this.files.length > 0) {
-            this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-
-              // if (file.type === HttpEventType.Response) {
-              //   console.log('Upload complete');
-              // }
-              // if (file.type === HttpEventType.UploadProgress) {
-              //   const percentDone = Math.round(100 * file.loaded / file.total);
-              //   console.log('Progress ' + percentDone + '%');
-              // }
-
-              file.forEach(e => {
-                this.type.push(2);
-                this.uploadedImage.push({
-                  id: e.id,
-                  name: e.filename,
-                  group: this.type
-                });
-                this.type = [];
-              });
-              this.formToJson();
-            });
-          } else {
-            this.formToJson();
-          }
+          this.formToJson(1, '');
         }
-      });
-    }, err => {
-      if (err.status === 401) {
-        this.keycloak.login();
+      } else {
+        if (this.files.length > 0) {
+          this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+            file.forEach(e => {
+              this.type.push(2);
+              this.uploadedImage.push({
+                id: e.id,
+                name: e.filename,
+                group: this.type
+              });
+              this.type = [];
+            });
+            this.formToJson(1, '');
+          });
+        } else {
+          this.formToJson(1, '');
+        }
       }
     });
   }
@@ -206,64 +184,74 @@ export class DetailPetitionComponent implements OnInit {
     let i = 0;
     if (event.target.files && event.target.files[0]) {
       for (const file of event.target.files) {
-        // =============================================
-        let urlResult: any;
-        let fileName = '';
-        let fileNamesFull = '';
-
-        // =============================================
-        this.files.push(file);
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.upload = true;
-          urlResult = eventLoad.target.result;
-          if (file.name.length > 20) {
-            // Tên file quá dài
-            const startText = event.target.files[i].name.substr(0, 5);
-            // tslint:disable-next-line:max-line-length
-            const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
-            fileName = startText + '...' + shortText;
-            // Tên file gốc - hiển thị tooltip
-            fileNamesFull = event.target.files[i].name;
-          } else {
-            fileName = file.name;
-            fileNamesFull = file.name;
-          }
-          this.fileUpload.push({
-            id: i,
-            url: urlResult,
-            name: fileName,
-            fullName: fileNamesFull
-          });
-        };
-        reader.readAsDataURL(event.target.files[i]);
-        i++;
+        if (petitionAcceptFileType.indexOf(file.type) > 0) {
+          console.log(file.type);
+          // =============================================
+          let urlResult: any;
+          let fileName = '';
+          let fileNamesFull = '';
+          // =============================================
+          this.files.push(file);
+          const reader = new FileReader();
+          reader.onload = (eventLoad) => {
+            this.upload = true;
+            urlResult = eventLoad.target.result;
+            if (file.name.length > 20) {
+              // Tên file quá dài
+              const startText = file.name.substr(0, 5);
+              // tslint:disable-next-line:max-line-length
+              const shortText = file.name.substring(file.name.length - 6, file.name.length);
+              fileName = startText + '...' + shortText;
+              // Tên file gốc - hiển thị tooltip
+              fileNamesFull = file.name;
+            } else {
+              fileName = file.name;
+              fileNamesFull = file.name;
+            }
+            this.fileUpload.push({
+              id: i,
+              url: urlResult,
+              name: fileName,
+              fullName: fileNamesFull
+            });
+          };
+          reader.readAsDataURL(event.target.files[i]);
+          i++;
+        } else {
+          this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin này', '', '', '', 'error_notification');
+        }
       }
     }
-    this.uploadFile();
+    if (i === this.files.length) {
+      this.uploadFile();
+    }
   }
 
   removeItem(id: string) {
-    let counter = 0;
-    let index = 0;
-    this.fileUpload.forEach(file => {
-      if (file.id === id) {
-        index = counter;
-      }
-      counter++;
-    });
-    this.uploadedImage = this.uploadedImage.filter(item => item.id !== id);
-    this.filesInfo.splice(index, 1);
-    this.files.splice(index, 1);
-
+    (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'block';
     this.blankVal = '';
-    console.log('List file còn lại: ');
-    console.log(this.files);
+    const updatedMainArray: ImageInfo[] = [];
+    for (const el of this.fileUpload) {
+      if (el.id.id !== id) {
+        updatedMainArray.push(el);
+      }
+    }
+    this.fileUpload = updatedMainArray;
+
+    const updatedArray = [];
+    for (const el of this.uploadedImage) {
+      if (el.id !== id) {
+        updatedArray.push(el);
+      }
+    }
+    this.uploadedImage = updatedArray;
+    this.formToJson(2, id);
   }
 
   getDetail() {
     this.service.getDetailPetition(this.taskId).subscribe(data => {
       this.petition.push(data.entry);
+      console.log(data.entry);
       this.setViewData();
     }, err => {
       if (err.status === 401) {
@@ -272,22 +260,54 @@ export class DetailPetitionComponent implements OnInit {
     });
   }
 
-  updateImage(requestBody) {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.service.postVariable(data.list.entries[0].entry.id, requestBody).subscribe(res => {
-        // this.dialogRef.close(true);
-        // tslint:disable-next-line: only-arrow-functions
-        setTimeout(function() {
-          // window.location.reload();
-        }, reloadTimeout);
-      }, err => {
-        // this.dialogRef.close(false);
-        console.error(err);
-      });
+  uploadImage(requestBody) {
+    this.service.postVariable(this.taskId, requestBody).subscribe(res => {
+      // tslint:disable-next-line: only-arrow-functions
+      setTimeout(() => {
+        (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
+      }, 500);
+      this.snackbar.openSnackBar('Tải lên', '', 'thành công', '', 'success_notification');
+    }, err => {
+      setTimeout(() => {
+        (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
+      }, 500);
+      this.snackbar.openSnackBar('Tải lên', '', 'thất bại', '', 'error_notification');
+      setTimeout(() => {
+        window.location.reload();
+      }, reloadTimeout);
+      console.error(err);
     });
   }
 
-  formToJson() {
+  removeImage(requestBody, fileId: string) {
+    this.service.postVariable(this.taskId, requestBody).subscribe(res => {
+      this.service.deleteFile(fileId).subscribe(data => {
+        setTimeout(() => {
+          (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
+        }, 500);
+        this.snackbar.openSnackBar('Xoá tệp tin', '', 'thành công', '', 'success_notification');
+      }, err => {
+        setTimeout(() => {
+          (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
+        }, 500);
+        this.snackbar.openSnackBar('Xoá tệp tin', '', 'thất bại', '', 'error_notification');
+        setTimeout(() => {
+          // window.location.reload();
+        }, reloadTimeout);
+        console.error(err);
+      });
+    }, err => {
+      setTimeout(() => {
+        (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
+      }, 500);
+      setTimeout(() => {
+        window.location.reload();
+      }, reloadTimeout);
+      console.error(err);
+    });
+  }
+
+  formToJson(type, fileId: string) {
     const formObj = this.updateFormTask.getRawValue();
     formObj.value.id = this.petition[0].taskLocalVariables.petitionData.id;
     formObj.value.title = this.petition[0].taskLocalVariables.title;
@@ -313,10 +333,16 @@ export class DetailPetitionComponent implements OnInit {
     formObj.value.file = this.uploadedImage;
     formObj.taskId = this.taskId;
     formObj.payloadType = 'UpdateTaskVariablePayload';
-
     const resultJSON = JSON.stringify(formObj, null, 2);
-    console.log(resultJSON);
-    this.updateImage(resultJSON);
+
+    switch (type) {
+      case 1: // upload image
+        this.uploadImage(resultJSON);
+        break;
+      case 2: // delete image
+        this.removeImage(resultJSON, fileId);
+        break;
+    }
   }
 
   setViewData() {
@@ -338,7 +364,8 @@ export class DetailPetitionComponent implements OnInit {
     this.processPublic = this.petition[0].taskLocalVariables.petitionData.isPublic;
     this.taskName = this.petition[0].name;
     this.taskId = this.petition[0].id;
-
+    this.processInstanceId = this.petition[0].processInstanceId;
+    this.petitionId = this.petition[0].taskLocalVariables.petitionData.id;
     this.resultPetition = this.petition[0].taskLocalVariables.petitionData.result;
     if (this.resultPetition !== undefined) {
       this.resultIsPublic = this.petition[0].taskLocalVariables.petitionData.result.isPublic;
@@ -364,7 +391,7 @@ export class DetailPetitionComponent implements OnInit {
                 if (data.filename.length > 20) {
                   // Tên file quá dài
                   const startText = data.filename.substr(0, 5);
-                  const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                  const shortText = data.filename.substr(data.filename.length - 6, data.filename.length);
                   fileName = startText + '...' + shortText;
                   // Tên file gốc - hiển thị tooltip
                   fileNamesFull = data.filename;
@@ -434,6 +461,8 @@ export class DetailPetitionComponent implements OnInit {
     }
     this.uploaded = true;
     this.upload = true;
+    this.getComment();
+    this.getHistory();
   }
 
   getHistory() {
@@ -469,25 +498,18 @@ export class DetailPetitionComponent implements OnInit {
   }
 
   releaseTask(name) {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      const taskId = data.list.entries[0].entry.id;
-      const message = 'Bỏ nhận xử lý';
-      const content = name;
-      const reason = '';
-      this.service.releaseTask(taskId).subscribe(res => {
-        this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
-        // tslint:disable-next-line: only-arrow-functions
-        setTimeout(function() {
-          window.location.reload();
-        }, reloadTimeout);
-      }, err => {
-        if (err.status === 401) {
-          this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
-          this.keycloak.login();
-        }
-      });
+    const message = 'Bỏ nhận xử lý';
+    const content = name;
+    const reason = '';
+    this.service.releaseTask(this.taskId).subscribe(res => {
+      this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
+      // tslint:disable-next-line: only-arrow-functions
+      setTimeout(function() {
+        window.location.reload();
+      }, reloadTimeout);
     }, err => {
       if (err.status === 401) {
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
         this.keycloak.login();
       }
     });
@@ -497,20 +519,20 @@ export class DetailPetitionComponent implements OnInit {
     this.service.updatePetition(taskId, name);
   }
 
-  updateResult(id, name) {
-    this.service.updateResult(id, name);
+  updateResult(taskId, name) {
+    this.service.updateResult(taskId, name);
   }
 
-  showProcess(id, name) {
-    this.service.showProcess(id, name);
+  showProcess(processInstanceId, name) {
+    this.service.showProcess(processInstanceId, name);
   }
 
-  completePetition(id, name) {
-    this.service.completePetition(id, name);
+  completePetition(taskId, name) {
+    this.service.completePetition(taskId, name);
   }
 
-  comment(id) {
-    this.service.comment(id);
+  comment(petitionId) {
+    this.service.comment(petitionId);
   }
 
   getStatus(status: string) {
@@ -555,7 +577,18 @@ export class DetailPetitionComponent implements OnInit {
     }
   }
 
-  openLightbox(fileURL, fileId, fileName) {
-    this.service.openLightbox(fileURL, fileId, this.fileUpload, fileName);
+  openLightbox(fileURL, fileId, fileName, type) {
+    switch (type) {
+      case 1:
+        this.service.openLightbox(fileURL, fileId, this.fileUpload, fileName);
+        break;
+      case 2:
+        this.service.openLightbox(fileURL, fileId, this.filesInfo, fileName);
+        break;
+    }
+  }
+
+  bypassSecurityTrustUrl(base64URL) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(base64URL);
   }
 }

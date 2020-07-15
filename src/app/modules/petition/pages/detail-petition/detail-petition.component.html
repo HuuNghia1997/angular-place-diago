@@ -31,7 +31,7 @@
       </ng-template>
       <ng-template #elseBlock>
         <span *ngIf="petitionStatus === 'ASSIGNED'">
-          <button mat-stroked-button class="ml-1 fs-13" (click)="completePetition(petitionId, petitionTitle)">
+          <button mat-stroked-button class="ml-1 fs-13" (click)="completePetition(taskId, petitionTitle)">
             <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
             <span> Xác nhận hoàn thành </span>
           </button>
@@ -43,13 +43,13 @@
       </ng-template>
 
       <!-- Btn xem quy trình -->
-      <button mat-stroked-button class="ml-1 fs-13" (click)="showProcess(petitionId, petitionTitle)">
+      <button mat-stroked-button class="ml-1 fs-13" (click)="showProcess(processInstanceId, petitionTitle)">
         <mat-icon> timeline </mat-icon>
         <span> Xem quy trình </span>
       </button>
 
       <!-- Btn cập nhật kết quả -->
-      <button mat-stroked-button class="ml-1 fs-13" (click)="updateResult(petitionId, petitionTitle)">
+      <button mat-stroked-button class="ml-1 fs-13" (click)="updateResult(taskId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> assignment </mat-icon>
         <span> Cập nhật kết quả </span>
       </button>
@@ -123,19 +123,21 @@
                 Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc <a href=""> Tải lên </a>
               </button>
               <input id="img_upload" name="img_upload[]" type='file' (change)="onFileSelected($event)" multiple
-                accept="file_extension|image/*" value="{{blankVal}}">
+                [accept]="acceptFileExtension" value="{{blankVal}}">
             </div>
 
             <div class="image_drag_upload_preview">
               <div class="list_upload" *ngFor="let file of fileUpload">
-                <a href="javascript:void(0)" (click)="openLightbox(file.url ,file.id.id, file.name)"><div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div></a>
+                <a href="javascript:void(0)" (click)="openLightbox(file.url ,file.id.id, file.fullName, 1)">
+                  <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                </a>
                 <div class="img_control">
                   <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'">
                     {{ file.name }} </span>
-                  <a mat-icon-button class="delete_img" download="{{ file.name }}" href="{{ file.url }}">
+                  <a mat-icon-button class="delete_img" download="{{ file.name }}" [href]="bypassSecurityTrustUrl(file.url)">
                     <mat-icon class="icon"> save_alt </mat-icon>
                   </a>
-                  <a mat-icon-button class="delete_img" align="end" (click)="removeItem(file.id)">
+                  <a mat-icon-button class="delete_img" align="end" (click)="removeItem(file.id.id)">
                     <mat-icon class="icon"> delete_outline </mat-icon>
                   </a>
                 </div>
@@ -150,29 +152,10 @@
           <mat-tab-group>
             <!-- Bình luận -->
             <mat-tab label="Bình luận">
-              <!-- <mat-tree [dataSource]="commentDataSource" [treeControl]="treeControl" class="tree"> -->
-              <!-- <mat-tree *ngFor='let cmt of TREE_DATA' [treeControl]="treeControl" class="tree">
-                <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle> {{ node.user.fullname }} </mat-tree-node>
-                <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-                  <div class="mat-tree-node">
-                    <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.content" style="border: none">
-                      <mat-icon class="mat-icon-rtl-mirror">
-                        {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
-                      </mat-icon>
-                    </button>
-                    <span class="name-user"> {{ node.user.fullname }} </span>
-                    <span class="action"> &nbsp;đã bình luận - {{ node.crearedDate }} </span>
-                  </div>
-                  <ul [class.tree-invisible]="treeControl.isExpanded(node)">
-                    <ng-container matTreeNodeOutlet></ng-container>
-                  </ul>
-                  <mat-divider></mat-divider>
-                </mat-nested-tree-node>
-              </mat-tree> -->
               <div *ngFor='let cmt of TREE_DATA'>
                 <div style="margin-top: 1em; margin-bottom: 0.5em">
                   <span>
-                    <mat-icon style="vertical-align: middle;"> keyboard_arrow_down </mat-icon>
+                    <mat-icon style="vertical-align: middle; transform: scale(0.5); color: #636363;"> fiber_manual_record </mat-icon>
                     <span class="name-user"> {{ cmt.user.fullname }} </span>
                     <span class="action"> &nbsp;đã bình luận - {{ cmt.createdDate | date : 'dd/MM/yyyy HH:mm:ss' }}
                     </span>
@@ -293,7 +276,9 @@
           <div [ngClass]="resultPetition === undefined || filesInfo.length === 0 ? 'd-none' : 'img_uploaded'">
             <div class="image_drag_upload_preview">
               <div class="list_uploaded" *ngFor="let file of filesInfo">
-                <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                <a href="javascript:void(0)" (click)="openLightbox(file.url ,file.id.id, file.fullName, 2)">
+                  <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                </a>
                 <div class="img_control">
                   <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'">
                     {{ file.name }} </span>

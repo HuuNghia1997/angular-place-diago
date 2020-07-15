@@ -26,6 +26,7 @@ export class PetitionService {
   public getTagsUrl = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';
   public getPetitionUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/digo/task/';
   public getFileUrl = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
+  public deleteFileUrl = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
   public uploadFilesURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/--multiple';
   public processInstanceUrl = this.apiProviderService.getUrl('digo-microservice', 'rb-petition') + '/v1/process-instances/';
   public getHistoryURL = this.apiProviderService.getUrl('digo-microservice', 'logman') + '/history?group-id=';
@@ -160,6 +161,13 @@ export class PetitionService {
     return this.http.get(this.getFileUrl + fileId + '/filename+size', { headers });
   }
 
+  deleteFile(fileId: string) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    headers = headers.append('Accept', '*/*');
+    return this.http.delete(this.deleteFileUrl + fileId, { headers });
+  }
+
   getModel(processInstanceId) {
     const headers = new HttpHeaders().set('Accept', 'image/svg+xml');
     return this.http.get(this.processInstanceUrl + processInstanceId + '/model', { headers, responseType: 'blob' });
@@ -172,7 +180,7 @@ export class PetitionService {
   }
 
   getNextFlow(taskId) {
-    return this.http.get<any>(this.nextFlowUrl + taskId + '/--check-gateway');
+    return this.http.get<any>(this.nextFlowUrl + taskId + '/--check-gateway?level=2');
   }
 
   // Cập nhật phản ánh & cập nhật kết quả
@@ -222,18 +230,18 @@ export class PetitionService {
     return this.http.get<any>(this.commentUrl + '?group-id=' + groupId + '&item-id=' + itemId);
   }
 
-  showProcess(id, name): void {
-    const dialogData = new ShowProcessDialogModel(name, id);
+  showProcess(processInstanceId, name): void {
+    const dialogData = new ShowProcessDialogModel(name, processInstanceId);
     const dialogRef = this.dialog.open(ShowProcessComponent, {
       width: '80%',
       maxHeight: '600px',
       data: dialogData,
-      disableClose: true
+      disableClose: false
     });
   }
 
-  comment(id): void {
-    const dialogData = new CommentDialogModel('Bình luận', id);
+  comment(petitionId): void {
+    const dialogData = new CommentDialogModel('Bình luận', petitionId);
     const dialogRef = this.dialog.open(CommentComponent, {
       width: '50%',
       maxHeight: '600px',
@@ -288,8 +296,8 @@ export class PetitionService {
     });
   }
 
-  updateResult(id, name): void {
-    const dialogData = new ConfirmUpdateResultDialogModel('Cập nhật phản ánh', id);
+  updateResult(taskId, name): void {
+    const dialogData = new ConfirmUpdateResultDialogModel('Cập nhật phản ánh', taskId);
     const dialogRef = this.dialog.open(UpdateResultComponent, {
       width: '80%',
       maxHeight: '600px',
@@ -316,8 +324,8 @@ export class PetitionService {
     });
   }
 
-  completePetition(id, name): void {
-    const dialogData = new ConfirmationCompletedPetitionDialogModel('Xác nhận hoàn thành', id);
+  completePetition(taskId, name): void {
+    const dialogData = new ConfirmationCompletedPetitionDialogModel('Xác nhận hoàn thành', taskId);
     const dialogRef = this.dialog.open(ConfirmationCompletedComponent, {
       width: '40%',
       data: dialogData,

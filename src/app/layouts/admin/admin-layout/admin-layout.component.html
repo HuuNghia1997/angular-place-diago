@@ -1,4 +1,5 @@
 <div class="main-container" [class.main-is-mobile]="mobileQuery.matches">
+  <mat-progress-bar mode="indeterminate" class="loading_progress_bar"></mat-progress-bar>
   <mat-sidenav-container class="main-sidenav-container">
     <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'"
                  [fixedInViewport]="mobileQuery.matches" [opened]="true">

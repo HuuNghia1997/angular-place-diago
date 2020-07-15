@@ -17,7 +17,7 @@
     <owl-carousel-o [options]="customOptions"> 
         <ng-container *ngFor="let file of fileUpload">
             <ng-template carouselSlide>
-                <a href="javascript:void(0)" (click)="openImage(file.url, file.id.id, file.name)">
+                <a href="javascript:void(0)" (click)="openImage(file.url, file.id.id, file.fullName)">
                     <div *ngIf="file.type == 'image'" class="slide_img" [ngStyle]="{'background-image': 'url('+ file.url +')'}" [title]="file.fullName"></div>
                     <div *ngIf="file.type == 'video'" class="slide_img" [ngStyle]="{'background-image': 'url(\'./assets/img/video.png\')'}" [title]="file.fullName"></div>
                     <div *ngIf="file.type == 'audio'" class="slide_img" [ngStyle]="{'background-image': 'url(\'./assets/img/audio.png\')'}" [title]="file.fullName"></div>

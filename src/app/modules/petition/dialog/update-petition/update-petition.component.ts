@@ -167,13 +167,25 @@ export class UpdatePetitionComponent implements OnInit {
   }
 
   setViewData() {
-    console.log(JSON.stringify(this.petition));
     if (this.petition[0].taskLocalVariables.isPublic === false) {
       this.checkedIsPublic = false;
     } else {
       this.checkedIsPublic = true;
     }
 
+    const place = this.petition[0].taskLocalVariables.petitionData.reporter.address.place;
+    let provinceId;
+    let districtId;
+    let villageId;
+    if ( place.find(p => p.typeId === 1) !== undefined) {
+      provinceId = place.find(p => p.typeId === 1).id;
+    }
+    if ( place.find(p => p.typeId === 2) !== undefined) {
+      districtId = place.find(p => p.typeId === 2).id;
+    }
+    if ( place.find(p => p.typeId === 3) !== undefined) {
+      villageId = place.find(p => p.typeId === 3).id;
+    }
     this.updateForm = new FormGroup({
       title: new FormControl(this.petition[0].taskLocalVariables.petitionData.title),
       takePlaceOn: new FormControl(new Date(this.petition[0].taskLocalVariables.petitionData.takePlaceOn)),
@@ -185,17 +197,15 @@ export class UpdatePetitionComponent implements OnInit {
       identityId: new FormControl(this.petition[0].taskLocalVariables.petitionData.reporter.identityId),
       address: new FormControl(this.petition[0].taskLocalVariables.petitionData.reporter.address.address),
       type: new FormControl('' + this.petition[0].taskLocalVariables.petitionData.reporter.type),
-      // village: new FormControl('' + this.petition[0].taskLocalVariables.petitionData.reporter.address.place[0].id),
-      // district: new FormControl('' + this.petition[0].taskLocalVariables.petitionData.reporter.address.place[1].id),
-      // province: new FormControl('' + this.petition[0].taskLocalVariables.petitionData.reporter.address.place[2].id),
+      village: new FormControl('' + villageId),
+      district: new FormControl('' + districtId),
+      province: new FormControl('' + provinceId),
       petitionLatitude: new FormControl(this.petition[0].taskLocalVariables.petitionData.takePlaceAt.latitude),
       petitionLongitude: new FormControl(this.petition[0].taskLocalVariables.petitionData.takePlaceAt.longitude),
     });
 
-    const idProvince = this.petition[0].taskLocalVariables.petitionData.reporter.address.place[2].id;
-    const idDistrict = this.petition[0].taskLocalVariables.petitionData.reporter.address.place[1].id;
-    this.getDistrict(idProvince);
-    this.getVillage(idDistrict);
+    this.getDistrict(provinceId);
+    this.getVillage(districtId);
 
     this.address = this.petition[0].taskLocalVariables.petitionData.takePlaceAt.fullAddress;
     this.latitude = this.petition[0].taskLocalVariables.petitionData.takePlaceAt.latitude;

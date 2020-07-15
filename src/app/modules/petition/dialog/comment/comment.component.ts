@@ -30,7 +30,7 @@ export class CommentComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: CommentDialogModel,
               private keycloak: KeycloakService,
               private userService: UserService) {
-    this.petitionId = data.id;
+    this.petitionId = data.petitionId;
   }
 
   ngOnInit(): void {
@@ -44,13 +44,11 @@ export class CommentComponent implements OnInit {
   }
 
   postComment(requestBody) {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.service.postComment(requestBody).subscribe(res => {
-        this.dialogRef.close(true);
-      }, err => {
-        this.dialogRef.close(false);
-        console.error(err);
-      });
+    this.service.postComment(requestBody).subscribe(res => {
+      this.dialogRef.close(true);
+    }, err => {
+      this.dialogRef.close(false);
+      console.error(err);
     });
   }
 
@@ -76,5 +74,5 @@ export class CommentComponent implements OnInit {
 
 export class CommentDialogModel {
   constructor(public title: string,
-              public id: string) { }
+              public petitionId: string) { }
 }

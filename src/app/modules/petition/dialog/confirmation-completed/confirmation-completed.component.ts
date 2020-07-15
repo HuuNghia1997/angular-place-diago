@@ -22,7 +22,6 @@ export class ConfirmationCompletedComponent implements OnInit {
   checkedStep1: string;
   checkedStep2 = false;
   submit = 2;
-  petitionId: string;
   exclusive: boolean;
   outGoingFlow = [];
   requestBody = [];
@@ -52,9 +51,9 @@ export class ConfirmationCompletedComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public data: ConfirmationCompletedPetitionDialogModel,
               public keycloak: KeycloakService,
               private userService: UserService,
-              // tslint:disable-next-line: variable-name
+    // tslint:disable-next-line: variable-name
               private database: ChecklistDatabase) {
-    this.petitionId = data.id;
+    this.taskId = data.taskId;
 
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
@@ -82,8 +81,8 @@ export class ConfirmationCompletedComponent implements OnInit {
   transformer = (node: TodoItemNode, level: number) => {
     const existingNode = this.nestedNodeMap.get(node);
     const flatNode = existingNode && existingNode.name === node.name
-        ? existingNode
-        : new TodoItemFlatNode();
+      ? existingNode
+      : new TodoItemFlatNode();
     flatNode.id = node.id;
     flatNode.name = node.name;
     flatNode.targetName = node.targetName;
@@ -118,7 +117,7 @@ export class ConfirmationCompletedComponent implements OnInit {
       const parallel = this.getParallelNode(node);
       const sizeI = parallel.length;
       for (let i = 0; i < sizeI; i++) {
-        if (currentState === false){
+        if (currentState === false) {
           const descendants = this.treeControl.getDescendants(parallel[i]);
           const sizeJ = descendants.length;
           for (let j = 0; j < sizeJ; j++) {
@@ -135,7 +134,7 @@ export class ConfirmationCompletedComponent implements OnInit {
         this.checklistSelection.deselect(descendants[j]);
       }
       this.checklistSelection.deselect(node);
-    } else{
+    } else {
       this.checklistSelection.select(node);
     }
     this.checkAllParentsSelectionWithState(node, currentState);
@@ -199,7 +198,7 @@ export class ConfirmationCompletedComponent implements OnInit {
     return null;
   }
 
-  getParallelNode(node: TodoItemFlatNode): TodoItemFlatNode[]{
+  getParallelNode(node: TodoItemFlatNode): TodoItemFlatNode[] {
     const ret: TodoItemFlatNode[] = [];
     const currentLevel = this.getLevel(node);
     let startIndex = 0;
@@ -224,17 +223,17 @@ export class ConfirmationCompletedComponent implements OnInit {
     return ret;
   }
 
-  itemClick(){
+  itemClick() {
     const condition = [];
     const selectedItem = this.checklistSelection.selected;
     const size = selectedItem.length;
     for (let i = 0; i < size; i++) {
-      if (!(condition.indexOf(selectedItem[i]) > -1 )){
+      if (!(condition.indexOf(selectedItem[i]) > -1)) {
         condition.push(selectedItem[i]);
       }
       let parent: TodoItemFlatNode | null = this.getParentNode(selectedItem[i]);
       while (parent) {
-        if (!(condition.indexOf(parent) > -1 )) {
+        if (!(condition.indexOf(parent) > -1)) {
           condition.push(parent);
         }
         parent = this.getParentNode(parent);
@@ -252,9 +251,9 @@ export class ConfirmationCompletedComponent implements OnInit {
     const formObj = variable.getRawValue();
     const formBody = this.body.getRawValue();
     formBody.variables = formObj;
-    formBody.payloadType = 'SetProcessVariablesPayload';
+    formBody.payloadType = 'UpdateTaskVariablePayload';
     const resultJson = JSON.stringify(formBody, null, 2);
-    this.postVariable(resultJson);
+    // this.postVariable(resultJson);
     this.completeJSON();
   }
 
@@ -292,18 +291,11 @@ export class ConfirmationCompletedComponent implements OnInit {
   }
 
   getNextFlow() {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.taskId = data.list.entries[0].entry.id;
-      this.service.getNextFlow(this.taskId).subscribe(res => {
-        this.TREE_DATA = res;
-        if (this.TREE_DATA !== null) {
-          this.database.initialize(this.TREE_DATA);
-        }
-      }, err => {
-        if (err.status === 401) {
-          this.keycloak.login();
-        }
-      });
+    this.service.getNextFlow(this.taskId).subscribe(res => {
+      this.TREE_DATA = res;
+      if (this.TREE_DATA !== null) {
+        this.database.initialize(this.TREE_DATA);
+      }
     }, err => {
       if (err.status === 401) {
         this.keycloak.login();
@@ -312,52 +304,41 @@ export class ConfirmationCompletedComponent implements OnInit {
   }
 
   postVariable(requestBody) {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      console.log(data.list.entries[0].entry.processInstanceId);
-      this.service.postVariable(data.list.entries[0].entry.processInstanceId, requestBody).subscribe(res => {
-        this.dialogRef.close(true);
-      }, err => {
-        this.dialogRef.close(false);
-        console.error(err);
-      });
+    this.service.postVariable(this.taskId, requestBody).subscribe(res => {
+      this.dialogRef.close(true);
     }, err => {
-      if (err.status === 401) {
-        this.keycloak.login();
-      }
+      this.dialogRef.close(false);
+      console.error(err);
     });
-
   }
 
   completeJSON() {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.keycloak.loadUserProfile().then(user => {
+    this.keycloak.loadUserProfile().then(user => {
+      // tslint:disable-next-line: no-string-literal
+      this.userService.getUserInfo(user['attributes'].user_id).subscribe(info => {
         // tslint:disable-next-line: no-string-literal
-        this.userService.getUserInfo(user['attributes'].user_id).subscribe(info => {
-          // tslint:disable-next-line: no-string-literal
-          this.fullname = info['fullname'];
+        this.fullname = info['fullname'];
 
-          const complete = new FormGroup({
-            payloadType: new FormControl('CompleteTaskPayload'),
-            taskId: new FormControl(this.taskId),
-            variables: new FormGroup({
-              // tslint:disable-next-line: no-string-literal
-              userId: new FormControl(user['attributes'].user_id[0]),
-              userFullname: new FormControl(this.fullname)
-            })
-          });
-
-          const formObj = complete.getRawValue();
-          const resultJson = JSON.stringify(formObj, null, 2);
-          this.completeTask(this.taskId, resultJson);
+        const complete = new FormGroup({
+          payloadType: new FormControl('CompleteTaskPayload'),
+          taskId: new FormControl(this.taskId),
+          variables: new FormGroup({
+            // tslint:disable-next-line: no-string-literal
+            userId: new FormControl(user['attributes'].user_id[0]),
+            userFullname: new FormControl(this.fullname)
+          })
         });
-      }, error => {
-        console.error(error);
+
+        const formObj = complete.getRawValue();
+        const resultJson = JSON.stringify(formObj, null, 2);
+        console.log(resultJson);
+        this.completeTask(this.taskId, resultJson);
       });
     });
   }
 
-  completeTask(id, requestBody) {
-    this.service.completeTask(id, requestBody).subscribe(res => {
+  completeTask(taskId, requestBody) {
+    this.service.completeTask(taskId, requestBody).subscribe(res => {
       this.database.destroy();
       this.dialogRef.close(true);
     }, err => {
@@ -376,5 +357,5 @@ export class ConfirmationCompletedComponent implements OnInit {
 
 export class ConfirmationCompletedPetitionDialogModel {
   constructor(public title: string,
-              public id: string) { }
+              public taskId: string) { }
 }

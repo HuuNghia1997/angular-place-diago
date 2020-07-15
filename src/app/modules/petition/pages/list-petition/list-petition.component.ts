@@ -104,45 +104,39 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     });
   }
 
-  claimTask(id, name) {
-    this.service.getDetailPetition(id).subscribe(data => {
-      const taskId = data.list.entries[0].entry.id;
-      const message = 'Nhận xử lý';
-      const content = name;
-      const reason = '';
-      this.service.claimTask(taskId).subscribe(res => {
-        this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
-        // tslint:disable-next-line: only-arrow-functions
-        setTimeout(function() {
-          window.location.reload();
-        }, reloadTimeout);
-      }, err => {
-        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
-        if (err.status === 401) {
-          this.keycloak.login();
-        }
-      });
+  claimTask(taskId, name) {
+    const message = 'Nhận xử lý';
+    const content = name;
+    const reason = '';
+    this.service.claimTask(taskId).subscribe(res => {
+      this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
+      // tslint:disable-next-line: only-arrow-functions
+      setTimeout(function() {
+        window.location.reload();
+      }, reloadTimeout);
+    }, err => {
+      this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+      if (err.status === 401) {
+        this.keycloak.login();
+      }
     });
   }
 
-  releaseTask(id, name) {
-    this.service.getDetailPetition(id).subscribe(data => {
-      const taskId = data.list.entries[0].entry.id;
-      const message = 'Bỏ nhận xử lý';
-      const content = name;
-      const reason = '';
-      this.service.releaseTask(taskId).subscribe(res => {
-        this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
-        // tslint:disable-next-line: only-arrow-functions
-        setTimeout(function() {
-          window.location.reload();
-        }, reloadTimeout);
-      }, err => {
+  releaseTask(taskId, name) {
+    const message = 'Bỏ nhận xử lý';
+    const content = name;
+    const reason = '';
+    this.service.releaseTask(taskId).subscribe(res => {
+      this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
+      // tslint:disable-next-line: only-arrow-functions
+      setTimeout(function() {
+        window.location.reload();
+      }, reloadTimeout);
+    }, err => {
+      if (err.status === 401) {
         this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
-        if (err.status === 401) {
-          this.keycloak.login();
-        }
-      });
+        this.keycloak.login();
+      }
     });
   }
 
@@ -230,7 +224,6 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     this.totalPages = Math.ceil(totalPage);
     this.selectedPageSize = pageSize;
     this.resetPageSize();
-    console.log(JSON.stringify(this.ELEMENT_DATA));
   }
 
   getStatus(status: string) {

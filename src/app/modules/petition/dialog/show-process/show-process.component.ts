@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class ShowProcessComponent implements OnInit {
 
-  workflowId: string;
+  processInstanceId: string;
   status: number;
   workflowName: any;
   svgIcon: any;
@@ -19,7 +19,7 @@ export class ShowProcessComponent implements OnInit {
               private service: PetitionService,
               @Inject(MAT_DIALOG_DATA) public data: ShowProcessDialogModel,
               private sanitizer: DomSanitizer) {
-    this.workflowId = data.id;
+    this.processInstanceId = data.processInstanceId;
   }
 
   ngOnInit(): void {
@@ -27,12 +27,10 @@ export class ShowProcessComponent implements OnInit {
   }
 
   getModel() {
-    this.service.getDetailPetition(this.workflowId).subscribe(data => {
-      this.service.getModel(data.list.entries[0].entry.processInstanceId).subscribe(model => {
-        const blob = new Blob([model], { type: 'image/svg+xml' });
-        const url = URL.createObjectURL(blob);
-        this.svgIcon = this.sanitizer.bypassSecurityTrustUrl(url);
-      });
+    this.service.getModel(this.processInstanceId).subscribe(model => {
+      const blob = new Blob([model], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      this.svgIcon = this.sanitizer.bypassSecurityTrustUrl(url);
     });
   }
 
@@ -45,6 +43,6 @@ export class ShowProcessComponent implements OnInit {
 
 export class ShowProcessDialogModel {
   constructor(public title: string,
-              public id: string) {
+              public processInstanceId: string) {
   }
 }

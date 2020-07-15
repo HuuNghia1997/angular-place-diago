@@ -3,10 +3,7 @@
 <form [formGroup]="comment" (submit)="formToJson()" id="ngForm">
   <mat-form-field appearance="outline" class="full-input">
     <mat-label> Bình luận </mat-label>
-    <textarea matInput formControlName="content"
-              cdkTextareaAutosize
-              cdkAutosizeMinRows="1"
-              cdkAutosizeMaxRows="6"></textarea>
+    <textarea matInput formControlName="content" rows="5"></textarea>
   </mat-form-field>
 </form>
 <mat-dialog-actions align="center">
