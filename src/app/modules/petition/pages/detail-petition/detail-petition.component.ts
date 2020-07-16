@@ -47,9 +47,12 @@ export class DetailPetitionComponent implements OnInit {
   processPublic: boolean;
   resultPetition: any;
   resultIsPublic: boolean;
+  resultIsApproved: boolean;
   resultDatePublic: string;
   resultContent: string;
   countResultContent: number;
+  reporterLocation: any;
+  takePlaceAtLocation: any;
 
   filesInfo: ImageInfo[] = [];
   fileUpload: ImageInfo[] = [];
@@ -369,9 +372,11 @@ export class DetailPetitionComponent implements OnInit {
     this.reporterPhone = this.petition[0].taskLocalVariables.petitionData.reporter.phone;
     this.reporteridentityId = this.petition[0].taskLocalVariables.petitionData.reporter.identityId;
     this.reporterType = this.petition[0].taskLocalVariables.petitionData.reporter.type;
-    this.reporterAddress = this.petition[0].taskLocalVariables.petitionData.reporter.address.address + ',';
+    this.reporterAddress = this.petition[0].taskLocalVariables.petitionData.reporter.address.address;
     this.reporterPlace = this.petition[0].taskLocalVariables.petitionData.reporter.address.place;
     this.processPublic = this.petition[0].taskLocalVariables.petitionData.isPublic;
+    this.reporterLocation = this.petition[0].taskLocalVariables.petitionData.reporterLocation;
+    this.takePlaceAtLocation = this.petition[0].taskLocalVariables.petitionData.takePlaceAt;
     this.taskName = this.petition[0].name;
     this.taskId = this.petition[0].id;
     this.processInstanceId = this.petition[0].processInstanceId;
@@ -382,6 +387,7 @@ export class DetailPetitionComponent implements OnInit {
       this.resultDatePublic = this.petition[0].taskLocalVariables.petitionData.result.date;
       this.resultContent = this.petition[0].taskLocalVariables.petitionData.result.content;
       this.countResultContent = this.resultContent.split(' ').length;
+      this.resultIsApproved = this.petition[0].taskLocalVariables.petitionData.result.approved;
     }
 
     this.uploadedImage = this.petition[0].taskLocalVariables.petitionData.file;
@@ -587,6 +593,16 @@ export class DetailPetitionComponent implements OnInit {
     }
   }
 
+  getApprove(isApproved: boolean) {
+    switch (isApproved) {
+      case false:
+        return 'Chưa phê duyệt';
+      case true:
+        return 'Đã phê duyệt';
+    }
+  }
+
+
   openLightbox(fileURL, fileId, fileName, type) {
     switch (type) {
       case 1:
@@ -601,4 +617,9 @@ export class DetailPetitionComponent implements OnInit {
   bypassSecurityTrustUrl(base64URL) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(base64URL);
   }
+
+  openMapDialog(address, long, lat) {
+    this.service.openMapDialog(address, { longitude: long, latitude: lat });
+  }
+
 }

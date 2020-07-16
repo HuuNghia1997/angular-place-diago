@@ -89,8 +89,11 @@
             <tr>
               <td class="td-1"> Nơi tạo phản ánh: </td>
               <td class="td-2">
-                {{ petitionCreatePlace }} (
-                <button class="btn-map">
+                {{ reporterAddress }},
+                <span *ngFor='let pl of reporterPlace; let i = index'>
+                  {{ pl.name }} {{ i === reporterPlace.length - 1 ? '' : ',' }}
+                </span>(
+                <button class="btn-map" (click)="openMapDialog(reporterLocation.fullAddress, reporterLocation.longitude, reporterLocation.latitude)">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
                 </button>)
@@ -100,7 +103,7 @@
               <td class="td-1"> Địa điểm phản ánh: </td>
               <td>
                 {{ petitionTakePlaceAt }} (
-                <button class="btn-map">
+                <button class="btn-map" (click)="openMapDialog(takePlaceAtLocation.fullAddress, takePlaceAtLocation.longitude, takePlaceAtLocation.latitude)">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
                 </button>)
@@ -151,13 +154,13 @@
           <h4 class="mt-2"> Hoạt động </h4>
           <mat-tab-group>
             <!-- Bình luận -->
-            <mat-tab label="Bình luận">
+            <mat-tab label="Ý kiến xử lý">
               <div *ngFor='let cmt of TREE_DATA'>
                 <div style="margin-top: 1em; margin-bottom: 0.5em">
                   <span>
                     <mat-icon style="vertical-align: middle; transform: scale(0.5); color: #636363;"> fiber_manual_record </mat-icon>
                     <span class="name-user"> {{ cmt.user.fullname }} </span>
-                    <span class="action"> &nbsp;đã bình luận - {{ cmt.createdDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+                    <span class="action"> &nbsp;đã thêm ý kiến xử lý - {{ cmt.createdDate | date : 'dd/MM/yyyy HH:mm:ss' }}
                     </span>
                   </span>
                 </div>
@@ -169,7 +172,7 @@
 
               <button mat-button class="mt-10" (click)="comment(petitionId)">
                 <mat-icon fontSet="material-icons-outlined"> insert_comment </mat-icon>
-                Bình luận
+                Thêm ý kiến xử lý
               </button>
             </mat-tab> <!-- Bình luận -->
 
@@ -231,14 +234,14 @@
             <tr>
               <td class="td-1 width-40"> Địa chỉ: </td>
               <td class="td-2 width-60">
-                {{ reporterAddress }}
+                {{ reporterAddress }},
                 <span *ngFor='let pl of reporterPlace; let i = index'>
                   {{ pl.name }} {{ i === reporterPlace.length - 1 ? '' : ',' }}
                 </span>
-                (<button class="btn-map">
+                <!-- (<button class="btn-map">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
-                </button>)
+                </button>) -->
               </td>
             </tr>
           </table> <!-- Table thông tin người phản ánh -->
@@ -255,6 +258,13 @@
               <td class="td-2 width-60">
                 <span [ngClass]="resultIsPublic === false ? 'btn-none-public' : 'btn-public'">
                   {{ getPublic(resultIsPublic) }} </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-1 width-40"> Phê duyệt kết quả: </td>
+              <td class="td-2 width-60">
+                <span [ngClass]="resultIsApproved === false ? 'btn-none-public' : 'btn-public'">
+                  {{ getApprove(resultIsApproved) }} </span>
               </td>
             </tr>
           </table>

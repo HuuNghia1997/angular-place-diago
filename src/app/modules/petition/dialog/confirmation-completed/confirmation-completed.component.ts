@@ -329,7 +329,7 @@ export class ConfirmationCompletedComponent implements OnInit {
           variables: new FormGroup({
             // tslint:disable-next-line: no-string-literal
             userId: new FormControl(user['attributes'].user_id[0]),
-            fullname: new FormControl(this.fullname)
+            userFullname: new FormControl(this.fullname)
           })
         });
 

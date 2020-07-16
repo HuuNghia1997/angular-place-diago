@@ -288,7 +288,7 @@ export class PetitionService {
     const result = 'thành công';
     const reason = '';
     dialogRef.afterClosed().subscribe(dialogResult => {
-      this.result = dialogResult.status;
+      this.result = dialogResult;
       if (this.result === true) {
         this.snackbar.openSnackBar(message, content, result, reason, 'success_notification');
         // tslint:disable-next-line:only-arrow-functions
