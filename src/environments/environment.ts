@@ -60,12 +60,23 @@ export const environment = {
         },
         {
           name: 'models',
-          path: 'v1',
-          rootUrl: 'https://digo-api-01.vnptigate.vn/modeling-service/'
+          path: 'modeling-service/v1',
         },
         {
           name: 'rb-petition',
           path: 'rb-petition'
+        },
+        {
+          name: 'basedata',
+          path: 'ba'
+        },
+        {
+          name: 'messenger',
+          path: 'me'
+        },
+        {
+          name: 'surfeed-rb-petition',
+          path: 'rb-petition',
         }
       ]
     }

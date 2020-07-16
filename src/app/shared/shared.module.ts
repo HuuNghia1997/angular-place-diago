@@ -10,10 +10,11 @@ import { CustomSnackbarComponent } from './components/custom-snackbar/custom-sna
   declarations: [
     SilentCheckSsoComponent,
     CustomSnackbarComponent
+    
   ],
   imports: [
     MaterialModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   exports: [
     MaterialModule,

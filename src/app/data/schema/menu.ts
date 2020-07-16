@@ -84,6 +84,24 @@ export const MENU_DATA: Menu[] = [
         ]
       },
       {
+        title: 'Tất cả phản ánh',
+        route: 'tat-ca-phan-anh',
+        role: [
+          {
+            id: 1,
+            role: 'admin'
+          },
+          {
+            id: 2,
+            role: 'citizens_petition_manager'
+          },
+          {
+            id: 3,
+            role: 'citizens_admin'
+          }
+        ]
+      },
+      {
         title: 'Cấu hình phản ánh',
         route: 'cau-hinh-phan-anh',
         role: [

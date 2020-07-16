@@ -49,12 +49,12 @@ export class EditNotificationComponent implements OnInit {
   keyword: '';
 
   constructor(public dialogRef: MatDialogRef<EditNotificationComponent>,
-              private service: NotificationService,
-              public datepipe: DatePipe,
-              @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateDialogModel,
-              private imageCompress: NgxImageCompressService,
-              private main: SnackbarService,
-              private keycloak: KeycloakService) {
+    private service: NotificationService,
+    public datepipe: DatePipe,
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateDialogModel,
+    private imageCompress: NgxImageCompressService,
+    private main: SnackbarService,
+    private keycloak: KeycloakService) {
     this.popupTitle = data.title;
     this.notificationId = data.id;
   }
@@ -119,12 +119,12 @@ export class EditNotificationComponent implements OnInit {
       this.countDefaultImage = this.uploadedImage.length;
       if (this.countDefaultImage > 0) {
         if (this.files.length > 0) {
-            this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
-              data.forEach(imgInfo => {
-                this.uploadedImage.push(imgInfo.id);
-              });
-              this.formToJSON();
+          this.service.uploadMultiImages(this.files, this.accountId).subscribe((data) => {
+            data.forEach(imgInfo => {
+              this.uploadedImage.push(imgInfo.id);
             });
+            this.formToJSON();
+          });
           // });
         } else {
           this.formToJSON();
@@ -238,13 +238,13 @@ export class EditNotificationComponent implements OnInit {
                 const startText = event.target.files[i].name.substr(0, 5);
                 // tslint:disable-next-line:max-line-length
                 const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7,
-                                                                        event.target.files[i].name.length);
+                  event.target.files[i].name.length);
                 fileName = startText + '...' + shortText;
                 // Tên file gốc - hiển thị tooltip
                 fileNamesFull = event.target.files[i].name;
               } else {
                 fileName = this.fileImport.name;
-                fileNamesFull = this.fileImport.name ;
+                fileNamesFull = this.fileImport.name;
               }
 
               this.filesInfo.push({
@@ -330,14 +330,17 @@ export class EditNotificationComponent implements OnInit {
   setViewData() {
     let tagSelected = [];
     let sent: boolean;
+    console.log(this.response);
     for (const item of this.response[0].tag) {
       tagSelected.push(item.id);
     }
     tagSelected = tagSelected.map(String);
-
     let userSelected = [];
-    for (const item of this.response[0].to) {
-      userSelected.push(item.userId);
+    if (this.response[0].to) {
+      
+      for (const item of this.response[0].to) {
+        userSelected.push(item.userId);
+      }
     }
     userSelected = userSelected.map(String);
 
@@ -376,7 +379,7 @@ export class EditNotificationComponent implements OnInit {
           const reader = new FileReader();
           reader.addEventListener('load', () => {
             urlResult = reader.result;
-            this.service.getImageName_Size(i).subscribe((data: any ) => {
+            this.service.getImageName_Size(i).subscribe((data: any) => {
               if (data.filename.length > 20) {
                 // Tên file quá dài
                 const startText = data.filename.substr(0, 5);
@@ -415,5 +418,5 @@ export class EditNotificationComponent implements OnInit {
 
 export class ConfirmUpdateDialogModel {
   constructor(public title: string,
-              public id: string) { }
+    public id: string) { }
 }
