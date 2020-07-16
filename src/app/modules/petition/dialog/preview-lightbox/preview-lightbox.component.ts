@@ -69,6 +69,10 @@ export class PreviewLightboxComponent implements OnInit {
       this.selectedURL = url;
     }
   }
+
+  bypassSecurityTrustUrl(base64URL) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(base64URL);
+  }
 }
 
 export class ConfirmLightboxDialogModel {

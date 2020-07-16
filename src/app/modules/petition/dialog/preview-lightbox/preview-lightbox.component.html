@@ -3,26 +3,37 @@
 </button>
 <span class="fileName" *ngIf="fileType == 'image'">{{ fileName }}</span>
 <div class="preview_zone">
-        <div *ngIf="fileType == 'image'" class="img_preview" [ngStyle]="{'background-image': 'url('+ selectedURL +')'}"></div>
-        <div class="newTab" *ngIf="fileType == 'video' || fileType == 'audio'">
-            <a [href]="selectedURL" target="_blank">
-                <mat-icon>launch</mat-icon>
-                <p>Phát {{ fileName }} trong tab mới</p>
-            </a>
-        </div>
-        <!-- <video *ngIf="fileType == 'video'" class="video_preview" [src]="selectedURL" controls autoplay></video>
-        <audio *ngIf="fileType == 'audio'" class="audio_preview" [src]="selectedURL" controls autoplay></audio> -->
+    <div *ngIf="fileType == 'image'" class="img_preview" [ngStyle]="{'background-image': 'url('+ selectedURL +')'}">
+    </div>
+    <div class="newTab" *ngIf="fileType == 'video' || fileType == 'audio'">
+        <a [href]="selectedURL" target="_blank">
+            <mat-icon>launch</mat-icon>
+            <p>Phát {{ fileName }} trong tab mới</p>
+        </a>
+    </div>
+    <div class="newTab" *ngIf="fileType !== 'video' && fileType !== 'audio' && fileType !== 'image'">
+        <a download="{{ fileName }}" [href]="bypassSecurityTrustUrl(selectedURL)">
+            <mat-icon>cloud_download</mat-icon>
+            <p>Tải xuống {{ fileName }}</p>
+        </a>
+    </div>
 </div>
 <div class="bottom_carousel">
-    <owl-carousel-o [options]="customOptions"> 
+    <owl-carousel-o [options]="customOptions">
         <ng-container *ngFor="let file of fileUpload">
             <ng-template carouselSlide>
                 <a href="javascript:void(0)" (click)="openImage(file.url, file.id.id, file.fullName)">
-                    <div *ngIf="file.type == 'image'" class="slide_img" [ngStyle]="{'background-image': 'url('+ file.url +')'}" [title]="file.fullName"></div>
-                    <div *ngIf="file.type == 'video'" class="slide_img" [ngStyle]="{'background-image': 'url(\'./assets/img/video.png\')'}" [title]="file.fullName"></div>
-                    <div *ngIf="file.type == 'audio'" class="slide_img" [ngStyle]="{'background-image': 'url(\'./assets/img/audio.png\')'}" [title]="file.fullName"></div>
-                    <div *ngIf="file.type !== 'image' && file.type !== 'video' && file.type !== 'audio'" class="slide_img" 
-                    [ngStyle]="{'background-image': 'url(\'./assets/img/anotherFile.png\')'}" [title]="file.fullName"></div>
+                    <div *ngIf="file.type == 'image'" class="slide_img"
+                        [ngStyle]="{'background-image': 'url('+ file.url +')'}" [title]="file.fullName"></div>
+                    <div *ngIf="file.type == 'video'" class="slide_img"
+                        [ngStyle]="{'background-image': 'url(\'./assets/img/video.png\')'}" [title]="file.fullName">
+                    </div>
+                    <div *ngIf="file.type == 'audio'" class="slide_img"
+                        [ngStyle]="{'background-image': 'url(\'./assets/img/audio.png\')'}" [title]="file.fullName">
+                    </div>
+                    <div *ngIf="file.type !== 'image' && file.type !== 'video' && file.type !== 'audio'"
+                        class="slide_img" [ngStyle]="{'background-image': 'url(\'./assets/img/anotherFile.png\')'}"
+                        [title]="file.fullName"></div>
                 </a>
             </ng-template>
         </ng-container>

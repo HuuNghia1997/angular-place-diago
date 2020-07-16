@@ -8,7 +8,7 @@ import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SnackbarService } from 'src/app/data/service/snackbar.service';
-import { reloadTimeout } from 'src/app/data/service/config.service';
+import { reloadTimeout, petitionAcceptFileExtension, petitionAcceptFileType } from 'src/app/data/service/config.service';
 
 @Component({
   selector: 'app-update-result',
@@ -27,7 +27,7 @@ export class UpdateResultComponent implements OnInit {
   checkedIsApproved = false;
   petition = [];
   fileUpload: ImageInfo[] = [];
-
+  acceptFileExtension = petitionAcceptFileExtension;
   resultForm = new FormGroup({
     content: new FormControl(''),
     date: new FormControl(''),
@@ -135,39 +135,51 @@ export class UpdateResultComponent implements OnInit {
     let i = 0;
     if (event.target.files && event.target.files[0]) {
       for (const file of event.target.files) {
-        // =============================================
-        let urlResult: any;
-        let fileName = '';
-        let fileNamesFull = '';
+        if (petitionAcceptFileType.indexOf(file.type) > 0) {
+          // =============================================
+          let urlResult: any;
+          let fileName = '';
+          let fileNamesFull = '';
 
-        // =============================================
-        this.files.push(file);
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.upload = true;
-          urlResult = eventLoad.target.result;
-          if (file.name.length > 20) {
-            // Tên file quá dài
-            const startText = file.name.substr(0, 5);
-            // tslint:disable-next-line:max-line-length
-            const shortText = file.name.substring(file.name.length - 6, file.name.length);
-            fileName = startText + '...' + shortText;
-            // Tên file gốc - hiển thị tooltip
-            fileNamesFull = file.name;
-          } else {
-            fileName = file.name;
-            fileNamesFull = file.name;
+          // =============================================
+          this.files.push(file);
+          const reader = new FileReader();
+          reader.onload = (eventLoad) => {
+            this.upload = true;
+            urlResult = eventLoad.target.result;
+            if (file.name.length > 20) {
+              // Tên file quá dài
+              const startText = file.name.substr(0, 5);
+              // tslint:disable-next-line:max-line-length
+              const shortText = file.name.substring(file.name.length - 6, file.name.length);
+              fileName = startText + '...' + shortText;
+              // Tên file gốc - hiển thị tooltip
+              fileNamesFull = file.name;
+            } else {
+              fileName = file.name;
+              fileNamesFull = file.name;
+            }
+            const tempId = {id: file.lastModified.toString()};
+            this.fileUpload.push({
+              id: tempId,
+              url: urlResult,
+              name: fileName,
+              fullName: fileNamesFull
+            });
+          };
+          reader.readAsDataURL(event.target.files[i]);
+          i++;
+        } else {
+          if (file.type.substring(file.type.lastIndexOf('/') + 1 ) === 'vnd.openxmlformats-officedocument.wordprocessingml.document') {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', 'DOCX', '', '', 'error_notification');
           }
-          const tempId = {id: file.lastModified.toString()};
-          this.fileUpload.push({
-            id: tempId,
-            url: urlResult,
-            name: fileName,
-            fullName: fileNamesFull
-          });
-        };
-        reader.readAsDataURL(event.target.files[i]);
-        i++;
+          else if (file.type.substring(file.type.lastIndexOf('/') + 1 ) === 'msword') {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', 'DOC', '', '', 'error_notification');
+          }
+          else {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', file.type.substring(file.type.lastIndexOf('/') + 1 ).toUpperCase(), '', '', 'error_notification');
+          }
+        }
       }
     }
   }
@@ -302,7 +314,7 @@ export class UpdateResultComponent implements OnInit {
   }
 
   updateResult(requestBody) {
-    this.service.postVariable(this.taskId, requestBody).subscribe(res => {
+    this.service.putVariable(this.taskId, requestBody).subscribe(res => {
       this.removedImage.forEach(id => {
         this.service.deleteFile(id).subscribe(data => {
         }, err => {

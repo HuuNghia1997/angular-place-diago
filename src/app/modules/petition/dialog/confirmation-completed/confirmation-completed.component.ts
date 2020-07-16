@@ -34,6 +34,7 @@ export class ConfirmationCompletedComponent implements OnInit {
 
   select: string;
   taskId: string;
+  processInstancesId: string;
   commonArray = [];
   fullname: string;
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
@@ -251,9 +252,10 @@ export class ConfirmationCompletedComponent implements OnInit {
     const formObj = variable.getRawValue();
     const formBody = this.body.getRawValue();
     formBody.variables = formObj;
-    formBody.payloadType = 'UpdateTaskVariablePayload';
+    formBody.payloadType = 'SetProcessVariablesPayload';
     const resultJson = JSON.stringify(formBody, null, 2);
-    // this.postVariable(resultJson);
+    // console.log(resultJson);
+    this.postVariable(resultJson);
     this.completeJSON();
   }
 
@@ -288,6 +290,9 @@ export class ConfirmationCompletedComponent implements OnInit {
 
   ngOnInit(): void {
     this.getNextFlow();
+    this.service.getDetailPetition(this.taskId).subscribe(data => {
+      this.processInstancesId = data.entry.processInstanceId;
+    });
   }
 
   getNextFlow() {
@@ -304,7 +309,7 @@ export class ConfirmationCompletedComponent implements OnInit {
   }
 
   postVariable(requestBody) {
-    this.service.postVariable(this.taskId, requestBody).subscribe(res => {
+      this.service.postVariable(this.processInstancesId, requestBody).subscribe(res => {
       this.dialogRef.close(true);
     }, err => {
       this.dialogRef.close(false);
@@ -318,20 +323,19 @@ export class ConfirmationCompletedComponent implements OnInit {
       this.userService.getUserInfo(user['attributes'].user_id).subscribe(info => {
         // tslint:disable-next-line: no-string-literal
         this.fullname = info['fullname'];
-
         const complete = new FormGroup({
           payloadType: new FormControl('CompleteTaskPayload'),
           taskId: new FormControl(this.taskId),
           variables: new FormGroup({
             // tslint:disable-next-line: no-string-literal
             userId: new FormControl(user['attributes'].user_id[0]),
-            userFullname: new FormControl(this.fullname)
+            fullname: new FormControl(this.fullname)
           })
         });
 
         const formObj = complete.getRawValue();
         const resultJson = JSON.stringify(formObj, null, 2);
-        console.log(resultJson);
+        // console.log(resultJson);
         this.completeTask(this.taskId, resultJson);
       });
     });

@@ -222,7 +222,7 @@ export class UpdatePetitionComponent implements OnInit {
   }
 
   updateResult(requestBody) {
-    this.service.postVariable(this.taskId, requestBody).subscribe(res => {
+    this.service.putVariable(this.taskId, requestBody).subscribe(res => {
       this.dialogRef.close(true);
     }, err => {
       this.dialogRef.close(false);
@@ -277,7 +277,6 @@ export class UpdatePetitionComponent implements OnInit {
         name: ''
       };
       formObj.province = this.listProvince.find(p => p.id === Number(formObj.province));
-      console.log(formObj.province);
       if (formObj.province !== undefined) {
         province = formObj.province;
         province.typeId = 1;
@@ -351,7 +350,7 @@ export class UpdatePetitionComponent implements OnInit {
     delete formObj.isPublic;
 
     const resultJSON = JSON.stringify(formObj, null, 2);
-    console.log(resultJSON);
+    // console.log(resultJSON);
     this.updateResult(resultJSON);
   }
 

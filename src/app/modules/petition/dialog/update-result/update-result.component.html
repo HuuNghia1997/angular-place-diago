@@ -24,7 +24,7 @@
         Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc <a href=""> Tải lên </a>
       </button>
       <input id="img_upload" name="img_upload[]" type='file' (change)="onFileSelected($event)" multiple
-        accept="file_extension|image/*" value="{{blankVal}}">
+      [accept]="acceptFileExtension" value="{{blankVal}}">
     </div>
 
     <div class="image_drag_upload_preview">

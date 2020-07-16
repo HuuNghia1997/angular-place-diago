@@ -181,11 +181,11 @@ export class DetailPetitionComponent implements OnInit {
   }
 
   onFileSelected(event: any) {
+    const oldListFile = this.fileUpload;
     let i = 0;
     if (event.target.files && event.target.files[0]) {
       for (const file of event.target.files) {
         if (petitionAcceptFileType.indexOf(file.type) > 0) {
-          console.log(file.type);
           // =============================================
           let urlResult: any;
           let fileName = '';
@@ -218,11 +218,22 @@ export class DetailPetitionComponent implements OnInit {
           reader.readAsDataURL(event.target.files[i]);
           i++;
         } else {
-          this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin này', '', '', '', 'error_notification');
+          if (file.type.substring(file.type.lastIndexOf('/') + 1 ) === 'vnd.openxmlformats-officedocument.wordprocessingml.document') {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', 'DOCX', '', '', 'error_notification');
+          }
+          else if (file.type.substring(file.type.lastIndexOf('/') + 1 ) === 'msword') {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', 'DOC', '', '', 'error_notification');
+          }
+          else {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', file.type.substring(file.type.lastIndexOf('/') + 1 ).toUpperCase(), '', '', 'error_notification');
+          }
+          setTimeout(() => {
+            window.location.reload();
+          }, reloadTimeout);
         }
       }
     }
-    if (i === this.files.length) {
+    if (i === event.target.files.length) {
       this.uploadFile();
     }
   }
@@ -251,7 +262,6 @@ export class DetailPetitionComponent implements OnInit {
   getDetail() {
     this.service.getDetailPetition(this.taskId).subscribe(data => {
       this.petition.push(data.entry);
-      console.log(data.entry);
       this.setViewData();
     }, err => {
       if (err.status === 401) {
@@ -261,7 +271,7 @@ export class DetailPetitionComponent implements OnInit {
   }
 
   uploadImage(requestBody) {
-    this.service.postVariable(this.taskId, requestBody).subscribe(res => {
+    this.service.putVariable(this.taskId, requestBody).subscribe(res => {
       // tslint:disable-next-line: only-arrow-functions
       setTimeout(() => {
         (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
@@ -280,7 +290,7 @@ export class DetailPetitionComponent implements OnInit {
   }
 
   removeImage(requestBody, fileId: string) {
-    this.service.postVariable(this.taskId, requestBody).subscribe(res => {
+    this.service.putVariable(this.taskId, requestBody).subscribe(res => {
       this.service.deleteFile(fileId).subscribe(data => {
         setTimeout(() => {
           (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
@@ -292,7 +302,7 @@ export class DetailPetitionComponent implements OnInit {
         }, 500);
         this.snackbar.openSnackBar('Xoá tệp tin', '', 'thất bại', '', 'error_notification');
         setTimeout(() => {
-          // window.location.reload();
+          window.location.reload();
         }, reloadTimeout);
         console.error(err);
       });

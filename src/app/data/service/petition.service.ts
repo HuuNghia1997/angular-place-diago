@@ -184,10 +184,16 @@ export class PetitionService {
   }
 
   // Cập nhật phản ánh & cập nhật kết quả
-  postVariable(taskId, requestBody) {
+  putVariable(taskId, requestBody) {
     let headers = new HttpHeaders();
     headers = headers.set('Content-Type', 'application/json');
     return this.http.put<any>(this.taskVariableUrl + taskId + '/variables/petitionData', requestBody, { headers });
+  }
+
+  postVariable(processInstancesId, requestBody) {
+    let headers = new HttpHeaders();
+    headers = headers.set('Content-Type', 'application/json');
+    return this.http.post<any>(this.processInstanceUrl + processInstancesId + '/variables', requestBody, { headers });
   }
 
   completeTask(taskId, requestBody) {
@@ -282,7 +288,7 @@ export class PetitionService {
     const result = 'thành công';
     const reason = '';
     dialogRef.afterClosed().subscribe(dialogResult => {
-      this.result = dialogResult;
+      this.result = dialogResult.status;
       if (this.result === true) {
         this.snackbar.openSnackBar(message, content, result, reason, 'success_notification');
         // tslint:disable-next-line:only-arrow-functions
