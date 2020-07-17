@@ -248,10 +248,6 @@ export class ListAllPetitionComponent implements OnInit, AfterViewInit {
     // this.service.openCancelDialog(id, name);
   }
 
-  updateRecord(id, name): void {
-    this.service.updateRecord(id, name);
-  }
-
   acceptPetition(id, name): void {
     // this.service.openAcceptDialog(id, name);
   }

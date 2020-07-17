@@ -490,12 +490,11 @@ export class AllPetitionService {
     }
   }
 
-  openMapDialog(address, lat, long, type) {
+  openMapDialog(address, lat, long) {
     const dialogData = new ConfirmMapDialogModel(
       address,
       lat,
-      long,
-      type
+      long
     );
     const dialogRef = this.dialog.open(MapComponent, {
       minWidth: '80%',

@@ -464,8 +464,8 @@ export class DetailAllPetitionComponent implements OnInit {
     }
   }
 
-  openMapDialog(address, lat, long, type) {
-    this.service.openMapDialog(address, lat, long, type);
+  openMapDialog(address, lat, long) {
+    this.service.openMapDialog(address, lat, long);
   }
 
   openLightbox(fileURL, fileId, fileName, type) {

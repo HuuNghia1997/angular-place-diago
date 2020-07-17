@@ -55,7 +55,7 @@
               <td class="td-1"> Nơi tạo phản ánh: </td>
               <td class="td-2">
                 {{ takePlaceAtFullAddress }} (
-                  <button class="btn-map" (click)="openMapDialog(takePlaceAtFullAddress, reporterLocation.latitude, reporterLocation.longitude, 0)">
+                  <button class="btn-map" (click)="openMapDialog(takePlaceAtFullAddress, reporterLocation.latitude, reporterLocation.longitude)">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
                 </button>)
@@ -65,7 +65,7 @@
               <td class="td-1"> Địa điểm phản ánh: </td>
               <td>
                 {{ takePlaceAtFullAddress }} (
-                  <button class="btn-map" (click)="openMapDialog(takePlaceAtFullAddress, takePlaceAtLocation.latitude, takePlaceAtLocation.longitude, 0)">
+                  <button class="btn-map" (click)="openMapDialog(takePlaceAtFullAddress, takePlaceAtLocation.latitude, takePlaceAtLocation.longitude)">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
                 </button>)
