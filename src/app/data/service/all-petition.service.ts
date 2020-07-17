@@ -1,38 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  HttpClient,
-  HttpHeaders,
-  HttpEvent,
-  HttpErrorResponse,
-  HttpEventType,
-  HttpParams
-} from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpEvent, HttpErrorResponse, HttpEventType, HttpParams } from '@angular/common/http';
 import { KeycloakService } from 'keycloak-angular';
 import { ApiProviderService } from 'src/app/core/service/api-provider.service';
 import { MatDialog } from '@angular/material/dialog';
-import { reloadTimeout } from 'src/app/data/service/config.service';
-import {
-  ConfirmAddDialogModel,
-  AddPetitionComponent,
-} from 'src/app/modules/accept-petition/dialog/add-petition/add-petition.component';
-import {
-  ConfirmUpdateDialogModel,
-  EditPetitionComponent,
-} from 'src/app/modules/accept-petition/dialog/edit-petition/edit-petition.component';
-import {
-  ConfirmDeleteDialogModel,
-  DeletePetitionComponent,
-} from 'src/app/modules/accept-petition/dialog/delete-petition/delete-petition.component';
-import {
-  ConfirmAcceptDialogModel,
-  AcceptPetitionComponent,
-} from 'src/app/modules/accept-petition/dialog/accept-petition/accept-petition.component';
+import { ConfirmMapDialogModel, MapComponent } from 'src/app/modules/all-petition/dialog/map/map.component';
+import { ConfirmAddDialogModel, AddPetitionComponent } from 'src/app/modules/accept-petition/dialog/add-petition/add-petition.component';
+import { ConfirmUpdateDialogModel, EditPetitionComponent } from 'src/app/modules/all-petition/dialog/edit-petition/edit-petition.component';
+import { ConfirmDeleteDialogModel, DeletePetitionComponent } from 'src/app/modules/accept-petition/dialog/delete-petition/delete-petition.component';
+import { ConfirmAcceptDialogModel, AcceptPetitionComponent } from 'src/app/modules/accept-petition/dialog/accept-petition/accept-petition.component';
 import { SnackbarService } from './snackbar.service';
-import { query } from '@angular/animations';
 import { catchError, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { AllPetitionShowProcessDialogModel, ShowProcessAllPetitionComponent } from 'src/app/modules/all-petition/dialog/show-process-all-petition/show-process-all-petition.component';
+import { ConfirmLightboxDialogModel, PreviewLightboxComponent } from 'src/app/modules/all-petition/dialog/preview-lightbox/preview-lightbox.component';
+import { reloadTimeout } from './config.service';
 
 @Injectable({
   providedIn: 'root',
@@ -49,55 +31,26 @@ export class AllPetitionService {
   ) {}
 
   // Connect API
-  public getTags =
-    this.apiProviderService.getUrl('digo-microservice', 'basecat') +
-    '/tag?category-id=';
-  public getAgencyURL =
-    this.apiProviderService.getUrl('digo-microservice', 'basedata') +
-    '/agency/name+logo-id?parent-id=&tag-id=';
-  public searchURL =
-    this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
-    '/petition/--search?';
-  public postURL =
-    this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
-    '/petition';
-  public uploadFilesURL =
-    this.apiProviderService.getUrl('digo-microservice', 'fileman') +
-    '/file/--multiple';
-  public getDetailURL =
-    this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
-    '/petition/';
-  public putURL =
-    this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
-    '/petition/';
-  public getFileURL =
-    this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
-  public getHistory =
-    this.apiProviderService.getUrl('digo-microservice', 'logman') +
-    '/history?group-id=';
-  public getUserURL =
-    this.apiProviderService.getUrl('digo-microservice', 'human') +
-    '/user/--search?keyword=';
-  public getWorkflowURL =
-    this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
-    '/workflow/--apply?tag=';
-  public getPlaceURL =
-    this.apiProviderService.getUrl('digo-microservice-basedata', 'basedata') +
-    '/place?nation-id=';
-  public postProcessInstancesURL =
-    this.apiProviderService.getUrl('digo-microservice', 'surfeed') +
-    '/su/petition/id=';
-  public getProcessDefinitionsURL =
-    this.apiProviderService.getUrl('digo-microservice', 'surfeed-rb-petition') +
-    '/v1/process-definitions/';
-  public getComment =
-    this.apiProviderService.getUrl('digo-microservice', 'messenger') +
-    '/comment?group-id=';
-  public postCommentURL =
-    this.apiProviderService.getUrl('digo-microservice', 'messenger') +
-    '/comment';
+  public getTags = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';
+  public getAgencyURL = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/agency/name+logo-id?parent-id=&tag-id=';
+  public searchURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/petition/--search?';
+  public postURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/petition';
+  public uploadFilesURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/--multiple';
+  public getDetailURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/petition/';
+  public putURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/petition/';
+  public getFileURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
+  public getHistory = this.apiProviderService.getUrl('digo-microservice', 'logman') + '/history?group-id=';
+  public getUserURL = this.apiProviderService.getUrl('digo-microservice', 'human') + '/user/--search?keyword=';
+  public getWorkflowURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/workflow/--apply?tag=';
+  public getPlaceURL = this.apiProviderService.getUrl('digo-microservice-basedata', 'basedata') + '/place?nation-id=';
+  public postProcessInstancesURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed') + '/su/petition/id=';
+  public getProcessDefinitionsURL = this.apiProviderService.getUrl('digo-microservice', 'surfeed-rb-petition') + '/v1/process-definitions/';
+  public getComment = this.apiProviderService.getUrl('digo-microservice', 'messenger') + '/comment?group-id=';
+  public postCommentURL = this.apiProviderService.getUrl('digo-microservice', 'messenger') + '/comment';
   public getPetitionUrl = this.apiProviderService.getUrl('digo-microservice', 'surfeed-rb-petition') + '/digo/task/--with-variables';
   public processInstanceUrl = this.apiProviderService.getUrl('digo-microservice', 'surfeed-rb-petition') + '/v1/process-instances/';
+  public getPlaceUrl = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/place?nation-id=';
+  public deleteFileUrl = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
 
   // Lấy danh sách chuyên mục phản ánh
   getListTag(id: string): Observable<any> {
@@ -135,18 +88,12 @@ export class AllPetitionService {
     let headers = new HttpHeaders();
     headers = headers.append('Accept', 'application/json');
     const formData: FormData = new FormData();
-    imgFiles.forEach((img) => {
-      const file: File = img;
-      formData.append('files', file, file.name);
+    imgFiles.forEach(files => {
+        const file: File = files;
+        formData.append('files', file, file.name);
     });
     formData.append('accountId', accountId);
-    return this.http
-      .post(this.uploadFilesURL, formData, {
-        headers,
-        reportProgress: true,
-        observe: 'events',
-      })
-      .pipe(catchError(this.handleError));
+    return this.http.post<any>(this.uploadFilesURL, formData, { headers });
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -222,6 +169,13 @@ export class AllPetitionService {
     return this.http.get(this.getFileURL + imageId + '/filename+size', {
       headers,
     });
+  }
+
+  deleteFile(fileId: string) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    headers = headers.append('Accept', '*/*');
+    return this.http.delete(this.deleteFileUrl + fileId, { headers });
   }
 
   // Lấy bình luận
@@ -365,10 +319,10 @@ export class AllPetitionService {
     });
   }
 
-  updateRecord(id, name): void {
-    const dialogData = new ConfirmUpdateDialogModel('Cập nhật thông báo', id);
+  updateRecord(id, name, needReload): void {
+    const dialogData = new ConfirmUpdateDialogModel('Cập nhật phản ánh', id);
     const dialogRef = this.dialog.open(EditPetitionComponent, {
-      maxWidth: '80%',
+      width: '80%',
       height: '600px',
       data: dialogData,
       disableClose: true,
@@ -389,9 +343,11 @@ export class AllPetitionService {
           'success_notification'
         );
         // tslint:disable-next-line:only-arrow-functions
-        // setTimeout(function () {
-        //   window.location.reload();
-        // }, reloadTimeout);
+        if (needReload === 1) {
+          setTimeout(() => {
+            window.location.reload();
+          }, reloadTimeout);
+        }
       }
       if (this.result === false) {
         this.main.openSnackBar(
@@ -499,7 +455,7 @@ export class AllPetitionService {
   }
 
   showMap(lat, long): void {
-    console.log('run this')
+    console.log('run this');
     // const dialogData = new GoogleMapDialogModel("Dialog", "abc");
     // const dialogRef = this.dialog.open(GoogleMapDialogComponent, {
     //   width: '80%',
@@ -532,5 +488,43 @@ export class AllPetitionService {
       default:
         return 'You must enter a valid value';
     }
+  }
+
+  openMapDialog(address, lat, long, type) {
+    const dialogData = new ConfirmMapDialogModel(
+      address,
+      lat,
+      long,
+      type
+    );
+    const dialogRef = this.dialog.open(MapComponent, {
+      minWidth: '80%',
+      data: dialogData,
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('This dialog was closed');
+    });
+  }
+
+  openLightbox(fileURL, fileId, listFileUpload, fileName): void {
+    const dialogData = new ConfirmLightboxDialogModel(fileURL, fileId, listFileUpload, fileName);
+    const dialogRef = this.dialog.open(PreviewLightboxComponent, {
+      maxWidth: '100vw',
+      width: '100vw',
+      height: '100vh',
+      data: dialogData,
+      disableClose: false,
+      panelClass: 'lightbox_dialog'
+    });
+  }
+
+  getProvince(nationId, provinceTypeId) {
+    return this.http.get<any>(this.getPlaceUrl + nationId + '&parent-type-id=' + provinceTypeId);
+  }
+
+  getDistrict(nationId, districtTypeId, provinceId) {
+    return this.http.get<any>(this.getPlaceUrl + nationId + '&parent-type-id=' + districtTypeId + '&parent-id=' + provinceId);
   }
 }

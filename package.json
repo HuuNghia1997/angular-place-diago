@@ -34,6 +34,7 @@
     "mapbox-gl": "^1.11.0",
     "ng2-file-upload": "^1.4.0",
     "ngx-image-compress": "^8.0.4",
+    "ngx-owl-carousel-o": "^3.0.1",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"

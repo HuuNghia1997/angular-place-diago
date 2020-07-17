@@ -12,15 +12,21 @@ import {
   NgxMatNativeDateModule,
 } from '@angular-material-components/datetime-picker';
 import { ShowProcessAllPetitionComponent } from './dialog/show-process-all-petition/show-process-all-petition.component';
-import { GoogleMapsModule } from "@angular/google-maps";
+import { GoogleMapsModule } from '@angular/google-maps';
 import { GoogleMapAllPetitionComponent } from './dialog/google-map-all-petition/google-map-all-petition.component';
+import { PreviewLightboxComponent } from './dialog/preview-lightbox/preview-lightbox.component';
+import { MapComponent } from './dialog/map/map.component';
+import { EditPetitionComponent } from './dialog/edit-petition/edit-petition.component';
 
 @NgModule({
   declarations: [
     ListAllPetitionComponent,
     DetailAllPetitionComponent,
     ShowProcessAllPetitionComponent,
-    GoogleMapAllPetitionComponent
+    GoogleMapAllPetitionComponent,
+    PreviewLightboxComponent,
+    MapComponent,
+    EditPetitionComponent
   ],
   imports: [
     CommonModule,

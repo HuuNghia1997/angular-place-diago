@@ -1,19 +1,10 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  AfterViewInit,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ChangeDetectorRef} from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { AllPetitionElement } from 'src/app/data/schema/all-petition-element';
-import {
-  PICK_FORMATS,
-  pageSizeOptions,
-} from 'src/app/data/service/config.service';
+import { PICK_FORMATS, pageSizeOptions } from 'src/app/data/service/config.service';
 import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
@@ -147,7 +138,7 @@ export class ListAllPetitionComponent implements OnInit, AfterViewInit {
     }, 500);
   }
 
-  //Lấy danh sách chuyên mục từ service
+  // Lấy danh sách chuyên mục từ service
   public getListTag() {
     this.service.getListTag(this.categoryId).subscribe(
       (data) => {
@@ -170,12 +161,12 @@ export class ListAllPetitionComponent implements OnInit, AfterViewInit {
 
     formObject.startDate = this.datepipe.transform(
       formObject.startDate,
-      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+      'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ'
     );
 
     formObject.endDate = this.datepipe.transform(
       formObject.endDate,
-      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+      'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ'
     );
 
     if (formObject.title != null) {
@@ -249,8 +240,12 @@ export class ListAllPetitionComponent implements OnInit, AfterViewInit {
     this.service.addRecord();
   }
 
+  updatePetition(id, name): void {
+    this.service.updateRecord(id, name, 0);
+  }
+
   openCancelDialog(id, name): void {
-    //this.service.openCancelDialog(id, name);
+    // this.service.openCancelDialog(id, name);
   }
 
   updateRecord(id, name): void {
@@ -258,6 +253,6 @@ export class ListAllPetitionComponent implements OnInit, AfterViewInit {
   }
 
   acceptPetition(id, name): void {
-    //this.service.openAcceptDialog(id, name);
+    // this.service.openAcceptDialog(id, name);
   }
 }
