@@ -139,35 +139,10 @@ export class MapComponent implements OnInit, AfterViewInit {
     })
 
   }
-  getGeoder(latlng) {
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: latlng }, function (results, status) {
-      if (status === "OK") {
-        if (results[0]) {
 
-          return results[0].formatted_address;
 
-          // if (this.markers.length < 1) {
-
-          // }else{
-          //   this.markers.splice(0, 1);
-          //   this.addMarker(results[0].formatted_address);
-          //   this.infoContent = results[0].formatted_address;
-          // }
-        } else {
-          window.alert("No results found");
-        }
-      } else {
-        window.alert("Geocoder failed due to: " + status);
-      }
-    });
-  }
-  logCenter() {
-    console.log(this.infoContent);
-  }
 
   addMarker(name) {
-    this.infoContent = name;
     this.markers.push({
       position: {
         lat: this.center.lat,
