@@ -4,7 +4,7 @@ import { environment } from 'src/environments/environment';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs';
-
+import { Observer } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
@@ -13,7 +13,7 @@ export class MapboxService {
 
   centerPoint = [];
   private map: mapboxgl.Map;
-
+  geocoder: google.maps.Geocoder;
   searchedPlace = new BehaviorSubject<string>('');
   latitude = new BehaviorSubject<string>('');
   longitude = new BehaviorSubject<string>('');
@@ -27,6 +27,25 @@ export class MapboxService {
 
   constructor() {
     mapboxgl.accessToken = environment.mapbox.accessToken;
+    this.geocoder = new google.maps.Geocoder();
+  }
+  geocode(latLng): Observable<any> {
+    return Observable.create((observer: Observer<any>) => {
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ location: latLng }, function (results, status) {
+        if (status === "OK") {
+          if (results[0]) {
+            observer.next(results[0].formatted_address);
+            observer.complete();
+          } else {
+            window.alert("No results found");
+          }
+        } else {
+          window.alert("Geocoder failed due to: " + status);
+        }
+      });
+
+    });
   }
 
   buildMap(center) {

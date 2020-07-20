@@ -47,6 +47,7 @@ import { SnackbarService } from './snackbar.service';
 import { query } from '@angular/animations';
 import { catchError, map } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { ConfirmLightboxDialogModel, PreviewLightboxComponent } from 'src/app/modules/accept-petition/dialog/preview-lightbox/preview-lightbox.component';
 
 @Injectable({
   providedIn: 'root',
@@ -60,7 +61,7 @@ export class AcceptPetitionService {
     private dialog: MatDialog,
     private apiProviderService: ApiProviderService,
     private keycloak: KeycloakService
-  ) {}
+  ) { }
 
   // Connect API
   public getTags =
@@ -113,6 +114,22 @@ export class AcceptPetitionService {
     this.apiProviderService.getUrl('digo-microservice', 'messenger') +
     '/comment';
 
+    
+  //mở dialog preview-lightbox
+  openLightbox(fileURL, fileId, listFileUpload, fileName, group): void {
+    const dialogData = new ConfirmLightboxDialogModel(fileURL, fileId, listFileUpload, fileName, group);
+    const dialogRef = this.dialog.open(PreviewLightboxComponent, {
+      maxWidth: '100vw',
+      width: '100vw',
+      height: '100vh',
+      data: dialogData,
+      disableClose: false,
+      panelClass: 'lightbox_dialog'
+    });
+
+
+    
+  }
   // Lấy danh sách chuyên mục phản ánh
   getListTag(id: string): Observable<any> {
     return this.http.get(this.getTags + id);
@@ -161,6 +178,7 @@ export class AcceptPetitionService {
         observe: 'events',
       })
       .pipe(catchError(this.handleError));
+
   }
 
   deleteImage(id): Observable<any> {
@@ -237,7 +255,11 @@ export class AcceptPetitionService {
       responseType: 'blob',
     });
   }
-
+  getFile(fileId) {
+    let headers = new HttpHeaders();
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.get(this.getFileURL + fileId, { headers, responseType: 'blob' });
+  }
   getImageName_Size(imageId) {
     let headers = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/json');
@@ -257,13 +279,13 @@ export class AcceptPetitionService {
     headers = headers.append('Content-Type', 'application/json');
     return this.http.get(
       this.getComment +
-        groupId +
-        '&item-id=' +
-        itemId +
-        '&page=' +
-        page +
-        '&size=' +
-        size,
+      groupId +
+      '&item-id=' +
+      itemId +
+      '&page=' +
+      page +
+      '&size=' +
+      size,
       { headers }
     );
   }
@@ -279,13 +301,13 @@ export class AcceptPetitionService {
     headers = headers.append('Content-Type', 'application/json');
     return this.http.get(
       this.getHistory +
-        groupId +
-        '&item-id=' +
-        itemId +
-        '&page=' +
-        page +
-        '&size=' +
-        size,
+      groupId +
+      '&item-id=' +
+      itemId +
+      '&page=' +
+      page +
+      '&size=' +
+      size,
       { headers }
     );
   }
@@ -309,11 +331,11 @@ export class AcceptPetitionService {
   ): Observable<any> {
     return this.http.get(
       this.getPlaceURL +
-        nationId +
-        '&parent-type-id=' +
-        parentTypeId +
-        '&parent-id=' +
-        parentId
+      nationId +
+      '&parent-type-id=' +
+      parentTypeId +
+      '&parent-id=' +
+      parentId
     );
   }
 
@@ -350,7 +372,6 @@ export class AcceptPetitionService {
       data: dialogData,
       disableClose: true,
     });
-
     const message = 'Phản ánh';
     const content = '';
     const result = 'được thêm thành công';

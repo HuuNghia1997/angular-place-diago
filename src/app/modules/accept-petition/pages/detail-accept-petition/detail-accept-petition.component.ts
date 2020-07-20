@@ -3,7 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { MatDialog } from '@angular/material/dialog';
-import { ImageInfo } from 'src/app/data/schema/image-info';
+import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
+
 import { AcceptPetitionService } from 'src/app/data/service/accept-petition.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -14,6 +15,7 @@ import {
   AcceptPetitionElement,
   Comments,
 } from 'src/app/data/schema/accept-petition-element';
+import { typeArrImg } from 'src/environments/environment';
 
 function readBase64(file): Promise<any> {
   const reader = new FileReader();
@@ -117,6 +119,8 @@ export class DetailAcceptPetitionComponent implements OnInit {
 
   // Lịch sử
   history = [];
+  //file ảnh mặc định
+  typeImg = [];
 
   // Bình luận
   comments = [];
@@ -138,9 +142,12 @@ export class DetailAcceptPetitionComponent implements OnInit {
     public dialog: MatDialog,
     private service: AcceptPetitionService,
     public snackBar: MatSnackBar
-  ) {}
+  ) {
+
+  }
 
   ngOnInit(): void {
+    this.typeImg = typeArrImg;
     this.petitionId = this.route.snapshot.params.id;
     this.getPetitionDetail();
     this.getPetitionHistory();
@@ -150,7 +157,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   getPetitionDetail() {
     this.service.getPetitionDetail(this.petitionId).subscribe(
       (data) => {
-        this.response.push(data);
+        this.response.push(data);        
         this.setViewData();
       },
       (err) => {
@@ -166,10 +173,12 @@ export class DetailAcceptPetitionComponent implements OnInit {
         typeString = item.name;
       }
     });
-
     return typeString;
   }
-
+  // Add dialog
+  addRecord() {
+    this.service.addRecord();
+  }
   setViewData() {
     // console.log(this.response[0]);
     if (this.response[0].agency != undefined) {
@@ -228,6 +237,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
 
         this.service.getImage(image.id).subscribe(
           (data) => {
+
             const reader = new FileReader();
             reader.addEventListener(
               'load',
@@ -246,13 +256,15 @@ export class DetailAcceptPetitionComponent implements OnInit {
                       fileName = startText + '...' + shortText;
                       // Tên file gốc - hiển thị tooltip
                       fileNamesFull = data.filename;
+
+
                     } else {
                       fileName = data.filename;
                       fileNamesFull = data.filename;
                     }
                     this.filesInfo.push({
-                      id: image.id,
-                      url: urlResult,
+                      id: image,
+                      url: image.group[0] == 1 ? urlResult : image.group[0] == 2 ? this.typeImg[0].url : image.group[0] == 3 ? this.typeImg[1].url : null,
                       name: fileName,
                       fullName: fileNamesFull,
                     });
@@ -330,7 +342,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
       );
   }
 
-  buildTree(item) {}
+  buildTree(item) { }
 
   isExpandToggle() {
     this.isExpand = !this.isExpand;
@@ -383,7 +395,9 @@ export class DetailAcceptPetitionComponent implements OnInit {
       return 1;
     }
   }
-
+  openLightbox(fileURL, fileId, fileName, group) {
+    this.service.openLightbox(fileURL, fileId, this.filesInfo, fileName, group);
+  }
   selectStyleStatus(status) {
     switch (status) {
       case 1:

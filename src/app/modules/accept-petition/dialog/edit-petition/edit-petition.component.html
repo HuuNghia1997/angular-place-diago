@@ -1,8 +1,7 @@
 <h3 class="dialog_title" mat-dialog-title>Cập nhật {{ titleDialog }}</h3>
-
 <form [formGroup]="updateForm" (submit)="onConfirm()">
   <mat-dialog-content class="mat-typography">
-    <h4 id="title">Thông tin người {{ titleDialog }}</h4>
+    <h4 id="title">Thông tin người  {{ titleDialog }}</h4>
 
     <!-- Người gửi -->
     <mat-form-field appearance="outline" class="input-1-3-width">
@@ -166,7 +165,7 @@
     </mat-form-field>
 
 	<h4 id="title">Tập tin đính kèm</h4>
-  <!-- File đính kèm -->    
+  <!-- File đính kèm -->
 <!-- Địa điểm phản ánh -->
     <mat-form-field appearance="outline" class="place-input">
       <mat-label> Địa điểm phản ánh </mat-label>
@@ -215,7 +214,7 @@
           type="file"
           (change)="onSelectFile($event)"
           multiple
-          accept=".JPG, .PNG, .JPEG"
+          accept="{this.typeFile[0]}"
           value="{{ blankVal }}"
         />
       </div>
@@ -254,7 +253,7 @@
   <mat-dialog-actions align="center">
     <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>
     <button mat-button class="btn-cancel" [mat-dialog-close]="true">
-      Lưu và Áp dụng
+      Lưu và Chuyển xử lý
     </button>
     <button
       mat-button

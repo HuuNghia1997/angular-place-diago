@@ -130,7 +130,6 @@ export class DetailPetitionComponent implements OnInit {
   uploadFile() {
     this.service.getDetailPetition(this.petitionId).subscribe(data => {
       this.token = this.keycloak.getKeycloakInstance().token;
-
       this.keycloak.loadUserProfile().then(user => {
         // tslint:disable-next-line: no-string-literal
         this.accountId = user['attributes'].user_id;
@@ -211,6 +210,8 @@ export class DetailPetitionComponent implements OnInit {
             name: fileName,
             fullName: fileNamesFull
           });
+          console.log(this.fileUpload);
+
         };
         reader.readAsDataURL(event.target.files[i]);
         i++;

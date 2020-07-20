@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { CarouselModule } from 'ngx-owl-carousel-o';
 import { AcceptPetitionRoutingModule } from './accept-petition-routing.module';
 import { ListAcceptPetitionComponent } from './pages/list-accept-petition/list-accept-petition.component';
 import { DetailAcceptPetitionComponent } from './pages/detail-accept-petition/detail-accept-petition.component';
@@ -8,6 +8,7 @@ import { AddPetitionComponent } from './dialog/add-petition/add-petition.compone
 import { EditPetitionComponent } from './dialog/edit-petition/edit-petition.component';
 import { DeletePetitionComponent } from './dialog/delete-petition/delete-petition.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { GoogleMapsModule } from '@angular/google-maps';
 import {
   NgxMatDatetimePickerModule,
   NgxMatTimepickerModule,
@@ -19,6 +20,7 @@ import { MapComponent } from './dialog/map/map.component';
 import { WorkflowDiagramComponent } from './dialog/workflow-diagram/workflow-diagram.component';
 import { NgxGalleryModule } from 'ngx-gallery-9';
 import { PreviewImageComponent } from './dialog/preview-image/preview-image.component';
+import { PreviewLightboxComponent } from './dialog/preview-lightbox/preview-lightbox.component';
 
 
 @NgModule({
@@ -33,6 +35,7 @@ import { PreviewImageComponent } from './dialog/preview-image/preview-image.comp
     MapComponent,
     WorkflowDiagramComponent,
     PreviewImageComponent,
+    PreviewLightboxComponent
   ],
   imports: [
     CommonModule,
@@ -41,7 +44,9 @@ import { PreviewImageComponent } from './dialog/preview-image/preview-image.comp
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule,
     NgxMatTimepickerModule,
-    NgxGalleryModule
+    NgxGalleryModule,
+    GoogleMapsModule,
+    CarouselModule
   ],
 })
 export class AcceptPetitionModule {}
