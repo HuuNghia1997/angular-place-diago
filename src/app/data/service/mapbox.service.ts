@@ -38,7 +38,7 @@ export class MapboxService {
             observer.next(results[0].formatted_address);
             observer.complete();
           } else {
-            window.alert("No results found");
+            window.alert("No results");
           }
         } else {
           window.alert("Geocoder failed due to: " + status);
