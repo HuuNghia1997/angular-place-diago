@@ -64,7 +64,8 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.search(0, pageSizeOptions[1]);
+    this.selectedPageSize = pageSizeOptions[1];
+    this.search(0);
     this.dataSource.sort = this.sort;
     this.getListTag();
   }
@@ -145,33 +146,34 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
   }
 
   onPaginateChange($event) {
+    this.selectedPageSize = $event.pageSize;
     this.paginatorChange(0, $event.pageSize, 5);
   }
 
   public paginatorChange(page, pageSize, type) {
     switch (type) {
       case 1:
-        this.search(page, pageSize);
+        this.search(page);
         this.currentPage++;
         this.resetPageSize();
         break;
       case 2:
-        this.search(page, pageSize);
+        this.search(page);
         this.currentPage--;
         this.resetPageSize();
         break;
       case 3:
-        this.search(page, pageSize);
+        this.search(page);
         this.currentPage = this.totalPages;
         this.resetPageSize();
         break;
       case 4:
-        this.search(page, pageSize);
+        this.search(page);
         this.currentPage = 0;
         this.resetPageSize();
         break;
       case 5:
-        this.search(page, pageSize);
+        this.search(page);
         this.currentPage = 0;
         this.resetPageSize();
         break;
@@ -185,12 +187,12 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     }, 500);
   }
 
-  search(page, pageSize) {
+  search(page) {
     const formObj = this.searchForm.getRawValue();
     if (formObj.title === '' && formObj.place === '' && formObj.receptionMethod === '' &&
       formObj.tag === '' && formObj.startDate === null && formObj.endDate === null) {
-      this.service.getPetitionList(page, pageSize, true).subscribe(data => {
-        this.fetchData(data, page, pageSize);
+      this.service.getPetitionList(page, this.selectedPageSize, true).subscribe(data => {
+        this.fetchData(data, page, this.selectedPageSize);
       }, err => {
         if (err.status === 401) {
           this.keycloak.login();
@@ -203,8 +205,8 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
       const category = formObj.tag;
       const fromDate = formObj.startDate;
       const toDate = formObj.endDate;
-      this.service.search(page, true, pageSize, title, place, category, receptionMethod, fromDate, toDate).subscribe(res => {
-        this.fetchData(res, page, pageSize);
+      this.service.search(page, true, this.selectedPageSize, title, place, category, receptionMethod, fromDate, toDate).subscribe(res => {
+        this.fetchData(res, page, this.selectedPageSize);
       });
     }
   }

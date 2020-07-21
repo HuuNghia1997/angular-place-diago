@@ -16,7 +16,7 @@ import { MapboxService } from 'src/app/data/service/mapbox.service';
 import { KeycloakService } from 'keycloak-angular';
 import { DatePipe } from '@angular/common';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
-
+import { typeFile, typeArrImg } from "./../../../../../environments/environment"
 @Component({
   selector: 'app-add-petition',
   templateUrl: './add-petition.component.html',
@@ -31,10 +31,11 @@ import { HttpEvent, HttpEventType } from '@angular/common/http';
   ],
 })
 export class AddPetitionComponent implements OnInit {
-  // Initialization
+  bgImageVariable = "./../../../../../assets/img/video.jpg";
   categoryId = petitionCategoryId;
   tagList = [];
   agencyList: AgencyInfo[] = [];
+  img: string = "./../../../../../assets/img/video.png";
   reporterTypeList: any = [
     { id: 1, name: 'Cá nhân' },
     { id: 2, name: 'Tổ chức' },
@@ -123,7 +124,8 @@ export class AddPetitionComponent implements OnInit {
   provinces = [];
   towns = [];
   villages = [];
-
+  typeFile = [];
+  typeImg = [];
   constructor(
     private service: AcceptPetitionService,
     public dialogRef: MatDialogRef<AddPetitionComponent>,
@@ -133,9 +135,11 @@ export class AddPetitionComponent implements OnInit {
     private keycloak: KeycloakService,
     public datepipe: DatePipe,
     private map: MapboxService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.typeFile = typeFile;
+    this.typeImg = typeArrImg;
     this.getUserProfile();
     this.getListTag();
     this.getAgency();
@@ -377,6 +381,8 @@ export class AddPetitionComponent implements OnInit {
     // Add Image
     formObject.file = this.uploadedImage;
 
+    
+
     // // Temporary variable - Final result
     delete formObject.reporterFullName;
     delete formObject.reporterPhone;
@@ -390,16 +396,14 @@ export class AddPetitionComponent implements OnInit {
     delete formObject.petitionLatitude;
     delete formObject.petitionLongitude;
 
-    const resultJson = JSON.stringify(formObject, null, 2);
-
-    console.log(resultJson);
+    const resultJson = JSON.stringify(formObject, null, 2); 
     this.postPetition(resultJson);
   }
 
   onDismiss(): void {
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
-
+    // console.log(this.uploadedImage);
     // this.uploadedImage.forEach((item) => {
     //   this.service.deleteImage(item.id).subscribe((res) => console.log(res));
     // });
@@ -420,9 +424,16 @@ export class AddPetitionComponent implements OnInit {
 
   isFileImage(file) {
     const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
-
     return file && acceptedImageTypes.includes(file['type'])
-}
+  }
+  isFileVideo(file) {
+    const acceptedImageTypes = ['video/mp4', 'video/MPEG-4','video/AVI','video/OGM','video/MPG','video/WMV'];
+    return file && acceptedImageTypes.includes(file['type'])
+  }
+  isFileAudio(file) {
+    const acceptedImageTypes = ['audio/mpeg'];
+    return file && acceptedImageTypes.includes(file['type'])
+  }
 
   // File upload
   onSelectFile(event) {
@@ -430,8 +441,7 @@ export class AddPetitionComponent implements OnInit {
     let urlPreview;
     let fileImport;
     let files = [];
-
-    if(this.isFileImage(event.target.files[0])) {
+    if (this.isFileImage(event.target.files[0])) {
       if (event.target.files && event.target.files[0]) {
         for (const file of event.target.files) {
           let urlNone: any;
@@ -450,7 +460,7 @@ export class AddPetitionComponent implements OnInit {
                 );
                 fileImport = this.convertBase64toFile(urlPreview, file.name);
                 if (this.urls.length + 1 <= 5) {
-                  this.urls.push(this.urlPreview);
+                  this.urls.push({url: this.urlPreview ,temp:null });
                   this.files.push(this.fileImport);
                   files.push(fileImport);
                   if (this.fileImport.name.length > 20) {
@@ -483,22 +493,40 @@ export class AddPetitionComponent implements OnInit {
           i++;
         }
       }
-
       setTimeout(() => {
         this.uploadImages(files);
       }, 1500);
-    } else {
+    } else if(this.isFileVideo(event.target.files[0])) {
+      fileImport = event.target.files[0];
+      files.push(fileImport);
+      const startText = event.target.files[i].name.substr(0, 5);
+      const shortText = event.target.files[i].name.substring(
+        event.target.files[i].name.length - 7,
+        event.target.files[i].name.length
+      );
+      this.fileNames.push(startText + '...' + shortText);
+      this.uploadImages1(files);
+    } else if(this.isFileAudio(event.target.files[0])) {
+      fileImport = event.target.files[0];
+      files.push(fileImport);
+      const startText = event.target.files[i].name.substr(0, 5);
+      // tslint:disable-next-line:max-line-length
+      const shortText = event.target.files[i].name.substring(
+        event.target.files[i].name.length - 7,
+        event.target.files[i].name.length
+      );
+      this.fileNames.push(startText + '...' + shortText);
+      this.uploadImages2(files);
+    }else{
       this.main.openSnackBar(
-        'File không phải ảnh, ',
+        'File không phải hình ảnh, video, âm thanh',
         '',
         'vui lòng thêm lại',
         '',
         'error_notification'
       );
     }
-
   }
-
   uploadImages(files) {
     this.service
       .uploadMultiImages(files, this.accountId)
@@ -513,11 +541,44 @@ export class AddPetitionComponent implements OnInit {
                 id: imgInfo.id,
                 name: imgInfo.filename,
                 group: 1,
+                type:"img",
                 updateDate: this.datepipe.transform(
                   new Date(),
                   "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                 ),
               };
+              this.uploadedImage.push(temp);
+
+
+            });
+            setTimeout(() => {
+              this.progress = 0;
+            }, 1500);
+        }
+      });
+  }
+
+  uploadImages1(files) {
+    this.service
+      .uploadMultiImages(files, this.accountId)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round((event.loaded / event.total) * 100);
+            break;
+          case HttpEventType.Response:
+            event.body.forEach((imgInfo) => {
+              let temp = {
+                id: imgInfo.id,
+                name: imgInfo.filename,
+                group: 2,
+                type:"video",
+                updateDate: this.datepipe.transform(
+                  new Date(),
+                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                ),
+              };
+              this.urls.push({url:this.typeImg[2].url,temp:temp });
               this.uploadedImage.push(temp);
             });
             setTimeout(() => {
@@ -526,6 +587,57 @@ export class AddPetitionComponent implements OnInit {
         }
       });
   }
+  uploadImages2(files) {
+    this.service
+      .uploadMultiImages(files, this.accountId)
+      .subscribe((event: HttpEvent<any>) => {
+        switch (event.type) {
+          case HttpEventType.UploadProgress:
+            this.progress = Math.round((event.loaded / event.total) * 100);
+            break;
+          case HttpEventType.Response:
+            event.body.forEach((imgInfo) => {
+              let temp = {
+                id: imgInfo.id,
+                name: imgInfo.filename,
+                group: 3,
+                type:"audio",
+                updateDate: this.datepipe.transform(
+                  new Date(),
+                  "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                ),
+              };
+              this.uploadedImage.push(temp);
+              this.urls.push({url: this.typeImg[1].url,temp:temp });
+
+            });
+            setTimeout(() => {
+              this.progress = 0;
+            }, 1500);
+        }
+      });
+  }
+
+  //   openImage(url, id, name): void {
+  //     this.fileName = name;
+  //     this.fileType = url.substring(url.indexOf(':') + 1, url.indexOf('/'));
+  //     if (this.fileType === 'video' || this.fileType === 'audio') {
+  //       this.service.getFile(id).subscribe(data => {
+  //         const dataType = data.type;
+  //         const binaryData = [];
+  //         binaryData.push(data);
+  //         const downloadLink = document.createElement('a');
+  //         downloadLink.href = window.URL.createObjectURL(new Blob(binaryData, {type: dataType}));
+  //         document.body.appendChild(downloadLink);
+  //         const blobURL: any = this.sanitizer.bypassSecurityTrustUrl(downloadLink.href);
+  //         this.selectedURL = blobURL;
+  //         window.open(blobURL.changingThisBreaksApplicationSecurity, '_blank');
+  //       });
+  //     } else {
+  //       this.selectedURL = url;
+  //     }
+  //   }
+  // }
 
   dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(',')[1]);
@@ -561,5 +673,5 @@ export class AddPetitionComponent implements OnInit {
 }
 
 export class ConfirmAddDialogModel {
-  constructor(public title: string) {}
+  constructor(public title: string) { }
 }

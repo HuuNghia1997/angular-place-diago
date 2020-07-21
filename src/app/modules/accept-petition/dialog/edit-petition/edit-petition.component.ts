@@ -9,7 +9,7 @@ import {
 } from '@angular/material/dialog';
 import { PickDatetimeAdapter } from 'src/app/data/schema/pick-datetime-adapter';
 import { PICK_FORMATS } from 'src/app/data/service/config.service';
-import { ImageInfo } from 'src/app/data/schema/image-info';
+import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { AgencyInfo } from 'src/app/data/schema/agency-info';
 import {
   NgxMatDateAdapter,
@@ -21,6 +21,7 @@ import { SnackbarService } from 'src/app/data/service/snackbar.service';
 import { NgxImageCompressService } from 'ngx-image-compress';
 import { KeycloakService } from 'keycloak-angular';
 import { HttpEvent, HttpEventType } from '@angular/common/http';
+import { typeArrImg, typeFile } from 'src/environments/environment';
 
 function readBase64(file): Promise<any> {
   const reader = new FileReader();
@@ -74,12 +75,13 @@ export class EditPetitionComponent implements OnInit {
   // Upload file
   uploaded: boolean;
   blankVal: any;
-  uploadedImage = [];
+  // uploadedImage = [];
+  uploadedImage: UpdateFile[] = [];
   countDefaultImage;
   listTags = [];
   itemTagList = [];
   files = [];
-  filesInfo: ImageInfo[] = [];
+  filesInfo = [];
   urls = [];
   fileNames = [];
   fileNamesFull = [];
@@ -175,9 +177,9 @@ export class EditPetitionComponent implements OnInit {
   public stepHour = 1;
   public stepMinute = 1;
   public stepSecond = 1;
-
+  public typeImg = [];
   public hasBaseDropZoneOver = false;
-
+  typeFile = [];
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateDialogModel,
     private service: AcceptPetitionService,
@@ -193,6 +195,8 @@ export class EditPetitionComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.typeFile = typeFile;
+    this.typeImg = typeArrImg;
     this.getUserProfile();
     this.getPetitionDetail();
     this.getListTag();
@@ -300,6 +304,8 @@ export class EditPetitionComponent implements OnInit {
     this.service.getPetitionDetail(this.petitionId).subscribe(
       (data) => {
         this.response.push(data);
+        console.log(data);
+
         this.setViewData();
       },
       (err) => {
@@ -373,7 +379,7 @@ export class EditPetitionComponent implements OnInit {
       let temp = {
         id: item.id,
         name: item.name,
-        group: item.group[0],
+        group: item.group,
         updateDate: this.datepipe.transform(
           new Date(),
           "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -415,7 +421,7 @@ export class EditPetitionComponent implements OnInit {
                     }
                     this.filesInfo.push({
                       id: i,
-                      url: urlResult,
+                      url: i.group[0] == 1 ? urlResult : i.group[0] == 2 ? this.typeImg[0].url : i.group[0] == 3 ? this.typeImg[1].url : null,
                       name: fileName,
                       fullName: fileNamesFull,
                     });
@@ -443,6 +449,7 @@ export class EditPetitionComponent implements OnInit {
   }
 
   updatePetition(requestBody) {
+    console.log(requestBody);
     this.service.updatePetition(requestBody, this.petitionId).subscribe(
       (data) => {
         // Close dialog, return true
@@ -463,6 +470,7 @@ export class EditPetitionComponent implements OnInit {
 
   formToJSON() {
     const formObject = this.updateForm.getRawValue();
+
 
     // Tag
     const selectedTag = formObject.tag;
@@ -572,10 +580,8 @@ export class EditPetitionComponent implements OnInit {
 
     // receptionMethod
     formObject.receptionMethod = 3;
-
     // Add Image
     formObject.file = this.uploadedImage;
-
     // // Temporary variable - Final result
     delete formObject.reporterFullName;
     delete formObject.reporterPhone;
@@ -590,8 +596,6 @@ export class EditPetitionComponent implements OnInit {
     delete formObject.petitionLongitude;
 
     const resultJson = JSON.stringify(formObject, null, 2);
-
-    console.log(resultJson);
     this.updatePetition(resultJson);
   }
 
@@ -623,10 +627,16 @@ export class EditPetitionComponent implements OnInit {
 
   isFileImage(file) {
     const acceptedImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
-
     return file && acceptedImageTypes.includes(file['type']);
   }
-
+  isFileVideo(file) {
+    const acceptedImageTypes = ['video/mp4', 'video/MPEG-4', 'video/AVI', 'video/OGM', 'video/MPG', 'video/WMV'];
+    return file && acceptedImageTypes.includes(file['type'])
+  }
+  isFileAudio(file) {
+    const acceptedImageTypes = ['audio/mpeg'];
+    return file && acceptedImageTypes.includes(file['type'])
+  }
   // File uploads
   onSelectFile(event) {
     let i = 0;
@@ -698,6 +708,28 @@ export class EditPetitionComponent implements OnInit {
       setTimeout(() => {
         this.uploadImages(files);
       }, 1500);
+    } else if (this.isFileVideo(event.target.files[0])) {
+      fileImport = event.target.files[0];
+      files.push(fileImport);
+      const startText = event.target.files[i].name.substr(0, 5);
+      const shortText = event.target.files[i].name.substring(
+        event.target.files[i].name.length - 7,
+        event.target.files[i].name.length
+      );
+      this.fileNames.push(startText + '...' + shortText);
+      this.uploadImages1(files);
+    } else if (this.isFileAudio(event.target.files[0])) {
+      console.log("audido");
+      fileImport = event.target.files[0];
+      files.push(fileImport);
+      const startText = event.target.files[i].name.substr(0, 5);
+      // tslint:disable-next-line:max-line-length
+      const shortText = event.target.files[i].name.substring(
+        event.target.files[i].name.length - 7,
+        event.target.files[i].name.length
+      );
+      this.fileNames.push(startText + '...' + shortText);
+      this.uploadImages2(files);
     } else {
       this.main.openSnackBar(
         'File không phải ảnh, ',
@@ -721,12 +753,11 @@ export class EditPetitionComponent implements OnInit {
                 this.progress = Math.round((event.loaded / event.total) * 100);
                 break;
               case HttpEventType.Response:
-                console.log(event.body);
                 event.body.forEach((imgInfo) => {
                   let temp = {
                     id: imgInfo.id,
                     name: imgInfo.filename,
-                    group: 1,
+                    group: [1],
                     updateDate: this.datepipe.transform(
                       new Date(),
                       "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -750,12 +781,11 @@ export class EditPetitionComponent implements OnInit {
                 this.progress = Math.round((event.loaded / event.total) * 100);
                 break;
               case HttpEventType.Response:
-                console.log(event.body);
                 event.body.forEach((imgInfo) => {
                   let temp = {
                     id: imgInfo.id,
                     name: imgInfo.filename,
-                    group: 1,
+                    group: [1],
                     updateDate: this.datepipe.transform(
                       new Date(),
                       "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -771,8 +801,140 @@ export class EditPetitionComponent implements OnInit {
       }
     }
 
-    // console.log(this.uploadedImage);
   }
+  uploadImages1(files) {
+    this.countDefaultImage = this.uploadedImage.length;
+    if (this.countDefaultImage > 0) {
+      if (files.length > 0) {
+        this.service
+          .uploadMultiImages(files, this.accountId)
+          .subscribe((event: HttpEvent<any>) => {
+            switch (event.type) {
+              case HttpEventType.UploadProgress:
+                this.progress = Math.round((event.loaded / event.total) * 100);
+                break;
+              case HttpEventType.Response:
+                console.log(event.body);
+                event.body.forEach((imgInfo) => {
+                  let temp1 = {
+                    id: imgInfo.id,
+                    name: imgInfo.filename,
+                    group: [2],
+                    updateDate: this.datepipe.transform(
+                      new Date(),
+                      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    ),
+                  };
+                  this.uploadedImage.push(temp1);
+                  this.filesInfo.push({ url: this.typeImg[1].url, temp: temp1, fullName: imgInfo.filename, name: imgInfo.filename });
+
+                });
+                setTimeout(() => {
+                  this.progress = 0;
+                }, 1500);
+            }
+          });
+      }
+    } else {
+      if (files.length > 0) {
+        this.service
+          .uploadMultiImages(files, this.accountId)
+          .subscribe((event: HttpEvent<any>) => {
+            switch (event.type) {
+              case HttpEventType.UploadProgress:
+                this.progress = Math.round((event.loaded / event.total) * 100);
+                break;
+              case HttpEventType.Response:
+                event.body.forEach((imgInfo) => {
+                  let temp = {
+                    id: imgInfo.id,
+                    name: imgInfo.filename,
+                    group: [2],
+                    updateDate: this.datepipe.transform(
+                      new Date(),
+                      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    ),
+                  };
+                  this.uploadedImage.push(temp);
+                  this.filesInfo.push({ url: this.typeImg[1].url, temp: temp, fullName: imgInfo.filename, name: imgInfo.filename });
+                });
+                setTimeout(() => {
+                  this.progress = 0;
+                }, 1500);
+            }
+          });
+      }
+    }
+
+  }
+  uploadImages2(files) {
+    this.countDefaultImage = this.uploadedImage.length;
+    if (this.countDefaultImage > 0) {
+      if (files.length > 0) {
+        this.service
+          .uploadMultiImages(files, this.accountId)
+          .subscribe((event: HttpEvent<any>) => {
+            switch (event.type) {
+              case HttpEventType.UploadProgress:
+                this.progress = Math.round((event.loaded / event.total) * 100);
+                break;
+              case HttpEventType.Response:
+                event.body.forEach((imgInfo) => {
+                  let temp = {
+                    id: imgInfo.id,
+                    name: imgInfo.filename,
+                    group: [3],
+                    updateDate: this.datepipe.transform(
+                      new Date(),
+                      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    ),
+                  };
+                  this.uploadedImage.push(temp);
+                  this.filesInfo.push({ url: this.typeImg[1].url, temp: temp, fullName: imgInfo.filename, name: imgInfo.filename });
+
+                });
+                setTimeout(() => {
+                  this.progress = 0;
+                }, 1500);
+            }
+          });
+      }
+    } else {
+      if (files.length > 0) {
+        this.service
+          .uploadMultiImages(files, this.accountId)
+          .subscribe((event: HttpEvent<any>) => {
+            switch (event.type) {
+              case HttpEventType.UploadProgress:
+                this.progress = Math.round((event.loaded / event.total) * 100);
+                break;
+              case HttpEventType.Response:
+                event.body.forEach((imgInfo) => {
+                  console.log(imgInfo);
+
+                  let temp = {
+                    id: imgInfo.id,
+                    name: imgInfo.filename,
+                    group: [3],
+                    updateDate: this.datepipe.transform(
+                      new Date(),
+                      "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                    ),
+                  };
+                  this.uploadedImage.push(temp);
+                  this.filesInfo.push({ url: this.typeImg[1].url, temp: temp, fullName: imgInfo.filename, name: imgInfo.filename });
+
+                });
+                setTimeout(() => {
+                  this.progress = 0;
+                }, 1500);
+            }
+          });
+      }
+    }
+
+  }
+
 
   dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(',')[1]);
@@ -793,17 +955,16 @@ export class EditPetitionComponent implements OnInit {
     return imageFile;
   }
 
-  // Xoá file
   removeItem(id: string) {
     let counter = 0;
     let index = 0;
-    this.filesInfo.forEach((file) => {
+    this.filesInfo.forEach(file => {
       if (file.id === id) {
         index = counter;
       }
       counter++;
     });
-    this.uploadedImage = this.uploadedImage.filter((item) => item != id);
+    this.uploadedImage = this.uploadedImage.filter(item => item.id != id);
     this.filesInfo.splice(index, 1);
     this.files.splice(index, 1);
 
@@ -811,5 +972,5 @@ export class EditPetitionComponent implements OnInit {
   }
 }
 export class ConfirmUpdateDialogModel {
-  constructor(public title: string, public id: string) {}
+  constructor(public title: string, public id: string) { }
 }

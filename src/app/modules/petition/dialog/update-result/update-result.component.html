@@ -17,7 +17,7 @@
   </form>
 
   <h4 class="fw-500 mt-1"> File kết quả </h4>
-  <div [ngClass]="{'img_upload': upload === true}">
+  <div [ngClass]="{'img_uploaded': upload === true}">
     <div class="drag_upload_btn">
       <button mat-button [ngClass]="{'btn_uploaded': uploaded === true, 'clear_img_queue': uploaded === false}">
         <mat-icon> cloud_upload </mat-icon>

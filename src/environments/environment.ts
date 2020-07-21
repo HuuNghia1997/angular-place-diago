@@ -116,7 +116,10 @@ export const environment = {
 
 export const projectIdProcess = '3f9d9e1b-02cd-4e76-ad98-a67ab9830bf3';
 export const typeProcess = 'PROCESS';
-
+export const typeFile = [
+  '.JPG, .JPG, .PNG, .JPEG, .GIF, .TIFF, .PSD, .PDF, .EPS, .AI, .INDD, .RAW, .docx, .dot , .pdf, .MP4, .mp3, .doc',
+];
+export const typeArrImg = [{type:"video",url:"./assets/img/video.png"},{type:"audio",url:"./assets/img/audio.png"},{type:"video",url:"./assets/img/video.jpg"}]
 /*
  * For easier debugging in development mode, you can import the following file
  * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
