@@ -5,8 +5,9 @@
     <button mat-icon-button disabled></button>
     <mat-checkbox *ngIf="node.gatewayType != 1" class="checklist-leaf-node"
                   [checked]="checklistSelection.isSelected(node)"
-                  (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
-    <mat-checkbox *ngIf="node.gatewayType == 1" class="checklist-leaf-node"
+                  (change)="todoLeafSelectionToggle(node)"
+                  [ngClass]="{'custom_mat_checkbox': node.gatewayType === 1}">{{node.targetName}}</mat-checkbox>
+    <mat-checkbox *ngIf="node.gatewayType == 1" class="checklist-leaf-node custom_mat_checkbox"
                   [checked]="checklistSelection.isSelected(node)"
                   (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
   </mat-tree-node>
@@ -22,7 +23,7 @@
     <mat-checkbox  *ngIf="node.gatewayType == 1"
                   [checked]="checklistSelection.isSelected(node)"
                   [indeterminate]="descendantsPartiallySelected(node)"
-                  (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
+                  (change)="todoLeafSelectionToggle(node)" class="custom_mat_checkbox">{{node.targetName}}</mat-checkbox>
     <mat-checkbox  *ngIf="node.gatewayType != 1"
                   [checked]="checklistSelection.isSelected(node)"
                   [indeterminate]="descendantsPartiallySelected(node)"

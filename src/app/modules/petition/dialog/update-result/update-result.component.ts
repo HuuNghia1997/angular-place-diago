@@ -6,6 +6,9 @@ import * as jwt_decode from 'jwt-decode';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ImageInfo, UpdateFile } from 'src/app/data/schema/image-info';
 import { DatePipe } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SnackbarService } from 'src/app/data/service/snackbar.service';
+import { reloadTimeout, petitionAcceptFileExtension, petitionAcceptFileType } from 'src/app/data/service/config.service';
 
 @Component({
   selector: 'app-update-result',
@@ -23,38 +26,9 @@ export class UpdateResultComponent implements OnInit {
   checkedIsPublic = false;
   checkedIsApproved = false;
   petition = [];
-
-  updateForm = new FormGroup({
-    variables: new FormGroup({
-      title: new FormControl(''),
-      petitionData: new FormGroup({
-        id: new FormControl(''),
-        title: new FormControl(''),
-        description: new FormControl(''),
-        takePlaceAt: new FormControl(''),
-        reporterLocation: new FormControl(''),
-        takePlaceOn: new FormControl(''),
-        status: new FormControl(''),
-        confirm: new FormControl(''),
-        workflow: new FormControl(''),
-        tag: new FormControl(''),
-        file: new FormControl(''),
-        reporter: new FormControl(''),
-        thumbnailId: new FormControl(''),
-        createdDate: new FormControl(''),
-        isPublic: new FormControl(''),
-        isAnonymous: new FormControl(''),
-        result: new FormGroup({}),
-        processInstanceId: new FormControl(''),
-        deploymentId: new FormControl(''),
-        agency: new FormControl(''),
-        receptionMethod: new FormControl('')
-      }),
-    }),
-    payloadType: new FormControl('')
-  });
-
-  result = new FormGroup({
+  fileUpload: ImageInfo[] = [];
+  acceptFileExtension = petitionAcceptFileExtension;
+  resultForm = new FormGroup({
     content: new FormControl(''),
     date: new FormControl(''),
     isPublic: new FormControl(''),
@@ -62,7 +36,7 @@ export class UpdateResultComponent implements OnInit {
     agency: new FormControl('')
   });
 
-  petitionId: string;
+  taskId: string;
   processInstanceId: string;
   token: any;
   agency = {
@@ -82,6 +56,7 @@ export class UpdateResultComponent implements OnInit {
   accountId: string;
 
   uploadedImage: UpdateFile[] = [];
+  upload = true;
   type: number[] = [];
   countDefaultImage;
   listTags = [];
@@ -95,13 +70,16 @@ export class UpdateResultComponent implements OnInit {
   itemsListUsers = [];
   response = [];
   keyword: '';
+  removedImage = [];
 
   constructor(private keycloak: KeycloakService,
               private service: PetitionService,
               public dialogRef: MatDialogRef<UpdateResultComponent>,
               @Inject(MAT_DIALOG_DATA) public data: ConfirmUpdateResultDialogModel,
-              public datepipe: DatePipe) {
-    this.petitionId = data.id;
+              public datepipe: DatePipe,
+              private sanitizer: DomSanitizer,
+              private snackbar: SnackbarService) {
+    this.taskId = data.taskId;
   }
 
   ngOnInit(): void {
@@ -109,61 +87,136 @@ export class UpdateResultComponent implements OnInit {
     this.getDetailPetition();
   }
 
+  uploadFile() {
+    (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'block';
+    this.keycloak.loadUserProfile().then(user => {
+      // tslint:disable-next-line: no-string-literal
+      this.accountId = user['attributes'].user_id;
+      this.countDefaultImage = this.uploadedImage.length;
+      if (this.countDefaultImage > 0) {
+        if (this.files.length > 0) {
+          this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+            file.forEach(e => {
+              this.type.push(3);
+              this.uploadedImage.push({
+                id: e.id,
+                name: e.filename,
+                group: this.type
+              });
+              this.type = [];
+            });
+            this.formToJson();
+          });
+        } else {
+          this.formToJson();
+        }
+      } else {
+        if (this.files.length > 0) {
+          this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
+            file.forEach(e => {
+              this.type.push(3);
+              this.uploadedImage.push({
+                id: e.id,
+                name: e.filename,
+                group: this.type
+              });
+              this.type = [];
+            });
+            this.formToJson();
+          });
+        } else {
+          this.formToJson();
+        }
+      }
+    });
+  }
+
   onFileSelected(event: any) {
     let i = 0;
     if (event.target.files && event.target.files[0]) {
       for (const file of event.target.files) {
-        // =============================================
-        let urlResult: any;
-        let fileName = '';
-        let fileNamesFull = '';
+        if (petitionAcceptFileType.indexOf(file.type) > 0) {
+          // =============================================
+          let urlResult: any;
+          let fileName = '';
+          let fileNamesFull = '';
 
-        // =============================================
-        this.files.push(file);
-        const reader = new FileReader();
-        reader.onload = (eventLoad) => {
-          this.uploaded = true;
-          urlResult = eventLoad.target.result;
-          if (file.name.length > 20) {
-            // Tên file quá dài
-            const startText = event.target.files[i].name.substr(0, 5);
-            // tslint:disable-next-line:max-line-length
-            const shortText = event.target.files[i].name.substring(event.target.files[i].name.length - 7, event.target.files[i].name.length);
-            fileName = startText + '...' + shortText;
-            // Tên file gốc - hiển thị tooltip
-            fileNamesFull = event.target.files[i].name;
-          } else {
-            fileName = file.name;
-            fileNamesFull = file.name ;
+          // =============================================
+          this.files.push(file);
+          const reader = new FileReader();
+          reader.onload = (eventLoad) => {
+            this.upload = true;
+            urlResult = eventLoad.target.result;
+            if (file.name.length > 20) {
+              // Tên file quá dài
+              const startText = file.name.substr(0, 5);
+              // tslint:disable-next-line:max-line-length
+              const shortText = file.name.substring(file.name.length - 6, file.name.length);
+              fileName = startText + '...' + shortText;
+              // Tên file gốc - hiển thị tooltip
+              fileNamesFull = file.name;
+            } else {
+              fileName = file.name;
+              fileNamesFull = file.name;
+            }
+            const tempId = {id: file.lastModified.toString()};
+            this.fileUpload.push({
+              id: tempId,
+              url: urlResult,
+              name: fileName,
+              fullName: fileNamesFull
+            });
+          };
+          reader.readAsDataURL(event.target.files[i]);
+          i++;
+        } else {
+          if (file.type.substring(file.type.lastIndexOf('/') + 1 ) === 'vnd.openxmlformats-officedocument.wordprocessingml.document') {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', 'DOCX', '', '', 'error_notification');
           }
-          this.filesInfo.push( {
-            id: i,
-            url: urlResult,
-            name: fileName,
-            fullName: fileNamesFull
-          });
-        };
-        reader.readAsDataURL(event.target.files[i]);
-        i++;
+          else if (file.type.substring(file.type.lastIndexOf('/') + 1 ) === 'msword') {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', 'DOC', '', '', 'error_notification');
+          }
+          else {
+            this.snackbar.openSnackBar('Không hỗ trợ loại tệp tin', file.type.substring(file.type.lastIndexOf('/') + 1 ).toUpperCase(), '', '', 'error_notification');
+          }
+        }
       }
     }
   }
 
   // Xoá file
   removeItem(id: string) {
-    let counter = 0;
-    let index = 0;
-    this.filesInfo.forEach(file => {
-      if (file.id === id) {
-        index = counter;
-      }
-      counter++;
-    });
-    this.uploadedImage = this.uploadedImage.filter(item => item.id != id);
-    this.filesInfo.splice(index, 1);
-    this.files.splice(index, 1);
-
     this.blankVal = '';
+    // fileUpload
+    const updatedMainArray: ImageInfo[] = [];
+    for (const file of this.fileUpload) {
+      if (file.id.id !== id) {
+        updatedMainArray.push(file);
+      }
+    }
+    this.fileUpload = updatedMainArray;
+
+    // uploadedImage
+    const updatedArray = [];
+    for (const file of this.uploadedImage) {
+      if (file.id !== id) {
+        updatedArray.push(file);
+      }
+    }
+    this.uploadedImage = updatedArray;
+
+    // files
+    const newFilesArray = [];
+    for (const file of this.files) {
+      if (file.lastModified !== Number(id)) {
+        newFilesArray.push(file);
+      }
+    }
+    this.files = newFilesArray;
+
+    if (id.length > 20) {
+      this.removedImage.push(id);
+    }
   }
 
   getRoleUser() {
@@ -194,30 +247,30 @@ export class UpdateResultComponent implements OnInit {
   }
 
   setViewData() {
-    if (this.petition[0].processVariables.petitionData.result.isPublic === true) {
-      this.checkedIsPublic = true;
-    } else {
+    if (this.petition[0].taskLocalVariables.isPublic === false) {
       this.checkedIsPublic = false;
+    } else {
+      this.checkedIsPublic = true;
     }
 
-    if (this.petition[0].processVariables.petitionData.result.approved === true) {
+    if (this.petition[0].taskLocalVariables.petitionData.result.approved === true) {
       this.checkedIsApproved = true;
     } else {
       this.checkedIsApproved = false;
     }
 
-    this.result = new FormGroup({
-      content: new FormControl(this.petition[0].processVariables.petitionData.result.content),
+    this.resultForm = new FormGroup({
+      content: new FormControl(this.petition[0].taskLocalVariables.petitionData.result.content),
       isPublic: new FormControl(this.checkedIsPublic),
       approved: new FormControl(this.checkedIsApproved)
     });
 
-    this.uploadedImage = this.petition[0].processVariables.petitionData.file;
+    this.uploadedImage = this.petition[0].taskLocalVariables.petitionData.file;
 
     this.countDefaultImage = this.uploadedImage.length;
 
-    if (this.petition[0].processVariables.petitionData.file.length > 0) {
-      this.petition[0].processVariables.petitionData.file.forEach(e => {
+    if (this.petition[0].taskLocalVariables.petitionData.file.length > 0) {
+      this.petition[0].taskLocalVariables.petitionData.file.forEach(e => {
         if (e.group[0] === 3) {
           let urlResult: any;
           let fileName = '';
@@ -227,11 +280,11 @@ export class UpdateResultComponent implements OnInit {
             const reader = new FileReader();
             reader.addEventListener('load', () => {
               urlResult = reader.result;
-              this.service.getFileName_Size(e.id).subscribe((data: any ) => {
+              this.service.getFileName_Size(e.id).subscribe((data: any) => {
                 if (data.filename.length > 20) {
                   // Tên file quá dài
                   const startText = data.filename.substr(0, 5);
-                  const shortText = data.filename.substr(data.filename.length - 7, data.filename.length);
+                  const shortText = data.filename.substr(data.filename.length - 6, data.filename.length);
                   fileName = startText + '...' + shortText;
                   // Tên file gốc - hiển thị tooltip
                   fileNamesFull = data.filename;
@@ -239,7 +292,7 @@ export class UpdateResultComponent implements OnInit {
                   fileName = data.filename;
                   fileNamesFull = data.filename;
                 }
-                this.filesInfo.push({
+                this.fileUpload.push({
                   id: e,
                   url: urlResult,
                   name: fileName,
@@ -260,122 +313,94 @@ export class UpdateResultComponent implements OnInit {
     this.uploaded = true;
   }
 
-  getDetailPetition() {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.petition.push(data.list.entries[0].entry);
-      this.setViewData();
+  updateResult(requestBody) {
+    this.service.putVariable(this.taskId, requestBody).subscribe(res => {
+      this.removedImage.forEach(id => {
+        this.service.deleteFile(id).subscribe(data => {
+        }, err => {
+          console.log(err);
+        });
+      });
+      // tslint:disable-next-line: only-arrow-functions
+      setTimeout(() => {
+        (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
+      }, 500);
+      this.dialogRef.close(true);
+    }, err => {
+      setTimeout(() => {
+        (document.querySelector('.loading_progress_bar') as HTMLElement).style.display = 'none';
+      }, 500);
+      this.dialogRef.close(false);
+      console.error(err);
     });
   }
 
-  updateResult(requestBody) {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.service.postVariable(data.list.entries[0].entry.processInstanceId, requestBody).subscribe(res => {
-        this.dialogRef.close(true);
-      }, err => {
-        this.dialogRef.close(false);
-        console.error(err);
-      });
+  getDetailPetition() {
+    this.service.getDetailPetition(this.taskId).subscribe(data => {
+      this.petition.push(data.entry);
+      this.setViewData();
+    }, err => {
+      console.log(err);
     });
   }
 
   formToJson() {
-    const formObj = this.updateForm.getRawValue();
-    formObj.variables.title = this.petition[0].processVariables.title;
-    formObj.variables.petitionData.id = this.petition[0].processVariables.petitionData.id;
-    formObj.variables.petitionData.title = this.petition[0].processVariables.title;
-    formObj.variables.petitionData.description = this.petition[0].processVariables.petitionData.description;
-    formObj.variables.petitionData.takePlaceAt = this.petition[0].processVariables.petitionData.takePlaceAt;
-    formObj.variables.petitionData.reporterLocation = this.petition[0].processVariables.petitionData.reporterLocation;
-    formObj.variables.petitionData.takePlaceOn = this.petition[0].processVariables.petitionData.takePlaceOn;
-    formObj.variables.petitionData.status = this.petition[0].processVariables.status;
-    formObj.variables.petitionData.confirm = this.petition[0].processVariables.confirm;
-    formObj.variables.petitionData.workflow = this.petition[0].processVariables.petitionData.workflow;
-    formObj.variables.petitionData.tag = this.petition[0].processVariables.petitionData.tag;
+    const formObj = this.resultForm.getRawValue();
+    formObj.payloadType = 'UpdateTaskVariablePayload';
+    formObj.taskId = this.taskId;
+    // Value
+    formObj.value = {};
+    formObj.value.id = this.petition[0].taskLocalVariables.petitionData.id;
+    formObj.value.title = this.petition[0].taskLocalVariables.petitionData.title;
+    formObj.value.description = this.petition[0].taskLocalVariables.petitionData.description;
+    // takePlaceAt
+    formObj.value.takePlaceAt = this.petition[0].taskLocalVariables.petitionData.takePlaceAt;
+    // reporterLocation
+    formObj.value.reporterLocation = this.petition[0].taskLocalVariables.petitionData.reporterLocation;
+    // takePlaceOn
+    formObj.value.takePlaceOn = this.datepipe.transform(this.petition[0].taskLocalVariables.petitionData.takePlaceOn, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
+    // status
+    formObj.value.status = this.petition[0].taskLocalVariables.petitionData.status;
+    // confirm
+    formObj.value.confirm = this.petition[0].taskLocalVariables.petitionData.confirm;
+    // tag
+    formObj.value.tag = this.petition[0].taskLocalVariables.petitionData.tag;
+    // file
+    formObj.value.file = this.uploadedImage;
+    // reporter
+    formObj.value.reporter = this.petition[0].taskLocalVariables.petitionData.reporter;
+    // thumbnailId
+    formObj.value.thumbnailId = this.petition[0].taskLocalVariables.petitionData.thumbnailId;
+    // createdDate
+    formObj.value.createdDate = this.petition[0].taskLocalVariables.petitionData.createdDate;
+    // isPublic
+    formObj.value.isPublic = this.petition[0].taskLocalVariables.petitionData.isPublic;
+    // isAnonymous
+    formObj.value.isAnonymous = this.petition[0].taskLocalVariables.petitionData.isAnonymous;
+    // deploymentId
+    formObj.value.deploymentId = this.petition[0].taskLocalVariables.petitionData.deploymentId;
+    // agency
+    formObj.value.agency = this.petition[0].taskLocalVariables.petitionData.agency;
+    // receptionMethod
+    formObj.value.receptionMethod = this.petition[0].taskLocalVariables.petitionData.receptionMethod;
+    // step
+    formObj.value.step = this.petition[0].taskLocalVariables.petitionData.step;
+    // result
+    formObj.value.result = {};
+    formObj.value.result.content = formObj.content;
+    formObj.value.result.date = this.datepipe.transform(new Date(), 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
+    formObj.value.result.isPublic = this.checkedIsPublic;
+    formObj.value.result.approved = this.checkedIsApproved;
 
-    formObj.variables.petitionData.reporter  = this.petition[0].processVariables.petitionData.reporter;
-    formObj.variables.petitionData.thumbnailId = this.petition[0].processVariables.petitionData.thumbnailId;
-    formObj.variables.petitionData.createdDate = this.petition[0].processVariables.petitionData.createdDate;
-    formObj.variables.petitionData.isPublic = this.petition[0].processVariables.petitionData.isPublic;
-    formObj.variables.petitionData.isAnonymous = this.petition[0].processVariables.petitionData.isAnonymous;
-    formObj.variables.petitionData.processInstanceId = this.petition[0].processVariables.petitionData.processInstanceId;
-    formObj.variables.petitionData.deploymentId = this.petition[0].processVariables.petitionData.deploymentId;
-    formObj.variables.petitionData.agency = this.petition[0].processVariables.petitionData.agency;
-    formObj.variables.petitionData.receptionMethod = this.petition[0].processVariables.petitionData.receptionMethod;
-
-    formObj.variables.petitionData.file = this.uploadedImage;
-
-    const a = this.result.getRawValue();
-    formObj.variables.petitionData.result.content = a.content;
-    formObj.variables.petitionData.result.isPublic = this.checkedIsPublic;
-    formObj.variables.petitionData.result.approved = this.checkedIsApproved;
-    formObj.variables.petitionData.result.agency = this.agency;
-
-    let newPublishedDate: string;
-    if (this.checkedIsApproved === true) {
-      newPublishedDate = new Date().toString();
-      formObj.variables.petitionData.result.date = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
-    } else {
-      formObj.variables.petitionData.result.date = this.datepipe.transform(newPublishedDate, 'yyyy-MM-dd\'T\'HH:mm:ss.SSSZ');
-    }
-
-    formObj.payloadType = 'SetProcessVariablesPayload';
+    // Hide element
+    delete formObj.variables;
 
     const resultJSON = JSON.stringify(formObj, null, 2);
-    // console.log(resultJSON);
     this.updateResult(resultJSON);
   }
 
   onSubmit() {
-    this.service.getDetailPetition(this.petitionId).subscribe(data => {
-      this.token = this.keycloak.getKeycloakInstance().token;
-      this.decodeToken(this.token);
-      this.petition.push(data.list.entries[0].entry);
-
-      this.keycloak.loadUserProfile().then(user => {
-        // tslint:disable-next-line: no-string-literal
-        this.accountId = user['attributes'].user_id;
-        this.countDefaultImage = this.uploadedImage.length;
-        if (this.countDefaultImage > 0) {
-          if (this.files.length > 0) {
-            this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-              file.forEach(e => {
-                this.type.push(3);
-                this.uploadedImage.push({
-                  id: e.id,
-                  name: e.filename,
-                  group: this.type
-                });
-                this.type = [];
-              });
-              this.formToJson();
-            });
-          } else {
-            this.formToJson();
-          }
-        } else {
-          if (this.files.length > 0) {
-            this.service.uploadMultiImages(this.files, this.accountId).subscribe((file) => {
-              file.forEach(e => {
-                this.type.push(3);
-                this.uploadedImage.push({
-                  id: e.id,
-                  name: e.filename,
-                  group: this.type
-                });
-                this.type = [];
-              });
-              this.formToJson();
-            });
-          } else {
-            this.formToJson();
-          }
-        }
-      });
-    }, err => {
-      if (err.status === 401) {
-        this.keycloak.login();
-      }
-    });
+    this.uploadFile();
   }
 
   checkPublic(event) {
@@ -398,9 +423,24 @@ export class UpdateResultComponent implements OnInit {
     // Đóng dialog, trả kết quả là false
     this.dialogRef.close();
   }
+
+  openLightbox(fileURL, fileId, fileName, type) {
+    switch (type) {
+      case 1:
+        this.service.openLightbox(fileURL, fileId, this.fileUpload, fileName);
+        break;
+      case 2:
+        this.service.openLightbox(fileURL, fileId, this.fileUpload, fileName);
+        break;
+    }
+  }
+
+  bypassSecurityTrustUrl(base64URL) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(base64URL);
+  }
 }
 
 export class ConfirmUpdateResultDialogModel {
   constructor(public title: string,
-              public id: string) { }
+              public taskId: string) { }
 }

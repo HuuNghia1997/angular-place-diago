@@ -17,26 +17,33 @@ export class ChecklistDatabase {
     this.dataChange.next(data);
   }
 
+  destroy() {
+    const data: TodoItemNode[]  = [];
+    this.dataChange.next(data);
+  }
+
   buildFileTree(obj: any, level: number): TodoItemNode[] {
     const ret: TodoItemNode[] = [];
-    let nodeGrant: any = [];
-    nodeGrant = obj.sequenceFlow;
-    const size = nodeGrant.length;
-    for (let i = 0; i < size; i++){
-      const nodeInLevel = nodeGrant[i];
-      const node = new TodoItemNode();
-      node.id = nodeGrant[i].id;
-      node.name = nodeGrant[i].name;
-      node.targetName = nodeGrant[i].targetName;
-      node.sourceRef = nodeGrant[i].sourceRef;
-      node.targetRef = nodeGrant[i].targetRef;
-      node.condition = nodeGrant[i].condition;
-      node.name = nodeGrant[i].name;
-      node.gatewayType = obj.type;
-      if (nodeGrant[i].gatewayInfo != null) {
-        node.children = this.buildFileTree(nodeGrant[i].gatewayInfo, level + 1);
+    if (obj) {
+      let nodeGrant: any = [];
+      nodeGrant = obj.sequenceFlow;
+      const size = nodeGrant.length;
+      for (let i = 0; i < size; i++) {
+        const nodeInLevel = nodeGrant[i];
+        const node = new TodoItemNode();
+        node.id = nodeGrant[i].id;
+        node.name = nodeGrant[i].name;
+        node.targetName = nodeGrant[i].targetName;
+        node.sourceRef = nodeGrant[i].sourceRef;
+        node.targetRef = nodeGrant[i].targetRef;
+        node.condition = nodeGrant[i].condition;
+        node.name = nodeGrant[i].name;
+        node.gatewayType = obj.type;
+        if (nodeGrant[i].gatewayInfo != null) {
+          node.children = this.buildFileTree(nodeGrant[i].gatewayInfo, level + 1);
+        }
+        ret.push(node);
       }
-      ret.push(node);
     }
     return ret;
   }

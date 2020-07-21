@@ -1,7 +1,7 @@
 <!--  Title  -->
 <mat-toolbar class="title">
   <mat-toolbar-row>
-    <h6 class="name-page"> Chi tiết phản ánh </h6>
+    <h6 class="name-page"> {{ taskName }} </h6>
   </mat-toolbar-row>
 </mat-toolbar>
 
@@ -16,7 +16,7 @@
 
     <div class="button-action">
       <!-- Btn chỉnh sửa -->
-      <button mat-button class="fs-13" (click)="updatePetition(petitionId, petitionTitle)">
+      <button mat-stroked-button class="fs-13" (click)="updatePetition(taskId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
         <span> Chỉnh sửa </span>
       </button>
@@ -24,18 +24,18 @@
       <!-- Btn nhận xử lý -->
       <div *ngIf="petitionStatus === 'CREATED'; then receivedBlock else elseBlock"></div>
       <ng-template #receivedBlock>
-        <button mat-button class="ml-1 fs-13" (click)="claimTask()">
+        <button mat-stroked-button class="ml-1 fs-13" (click)="claimTask(petitionTitle)">
           <mat-icon fontSet="material-icons-outlined"> dns </mat-icon>
           <span> Nhận xử lý </span>
         </button>
       </ng-template>
       <ng-template #elseBlock>
         <span *ngIf="petitionStatus === 'ASSIGNED'">
-          <button mat-button class="ml-1 fs-13" (click)="completePetition(petitionId, petitionTitle)" >
+          <button mat-stroked-button class="ml-1 fs-13" (click)="completePetition(taskId, petitionTitle)">
             <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
             <span> Xác nhận hoàn thành </span>
           </button>
-          <button mat-button class="ml-1 fs-13" (click)="releaseTask()">
+          <button mat-stroked-button class="ml-1 fs-13" (click)="releaseTask(petitionTitle)">
             <mat-icon fontSet="material-icons-outlined"> reply </mat-icon>
             <span> Bỏ nhận xử lý </span>
           </button>
@@ -43,21 +43,15 @@
       </ng-template>
 
       <!-- Btn xem quy trình -->
-      <button mat-button class="ml-1 fs-13" (click)="showProcess(petitionId, petitionTitle)">
+      <button mat-stroked-button class="ml-1 fs-13" (click)="showProcess(processInstanceId, petitionTitle)">
         <mat-icon> timeline </mat-icon>
         <span> Xem quy trình </span>
       </button>
 
       <!-- Btn cập nhật kết quả -->
-      <button mat-button class="ml-1 fs-13" (click)="updateResult(petitionId, petitionTitle)">
+      <button mat-stroked-button class="ml-1 fs-13" (click)="updateResult(taskId, petitionTitle)">
         <mat-icon fontSet="material-icons-outlined"> assignment </mat-icon>
         <span> Cập nhật kết quả </span>
-      </button>
-
-      <!-- Btn xóa -->
-      <button mat-button class="ml-1 fs-13">
-        <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
-        <span> Xóa </span>
       </button>
     </div> <!-- div button-action -->
 
@@ -74,6 +68,11 @@
               </td>
             </tr>
             <tr>
+              <td class="td-1"> Công khai: </td>
+              <td class="td-2"> <span [ngClass]="processPublic === false ? 'btn-none-public' : 'btn-public'">
+                {{ getPublic(processPublic) }} </span> </td>
+            </tr>
+            <tr>
               <td class="td-1"> Thời gian xảy ra: </td>
               <td class="td-2"> {{ petitionTakePlaceOn | date : 'dd/MM/yyyy HH:mm:ss' }} </td>
             </tr>
@@ -83,15 +82,18 @@
             </tr>
             <tr>
               <td class="td-1"> Đơn vị bị phản ánh: </td>
-              <td class="td-2"*ngFor='let agen of petitionAgency; let i = index'>
+              <td class="td-2" *ngFor='let agen of petitionAgency; let i = index'>
                 {{ agen.name }} {{ i === petitionAgency.length - 1 ? '' : ',' }}
               </td>
             </tr>
             <tr>
               <td class="td-1"> Nơi tạo phản ánh: </td>
               <td class="td-2">
-                {{ petitionCreatePlace }} (
-                <button class="btn-map">
+                {{ reporterAddress }},
+                <span *ngFor='let pl of reporterPlace; let i = index'>
+                  {{ pl.name }} {{ i === reporterPlace.length - 1 ? '' : ',' }}
+                </span>(
+                <button class="btn-map" (click)="openMapDialog(reporterLocation.fullAddress, reporterLocation.longitude, reporterLocation.latitude)">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
                 </button>)
@@ -101,7 +103,7 @@
               <td class="td-1"> Địa điểm phản ánh: </td>
               <td>
                 {{ petitionTakePlaceAt }} (
-                <button class="btn-map">
+                <button class="btn-map" (click)="openMapDialog(takePlaceAtLocation.fullAddress, takePlaceAtLocation.longitude, takePlaceAtLocation.latitude)">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
                 </button>)
@@ -120,21 +122,25 @@
           <div [ngClass]="{'img_upload': upload === true}">
             <div class="drag_upload_btn">
               <button mat-button [ngClass]="{'btn_uploaded': uploaded === true, 'clear_img_queue': uploaded === false}">
-              <mat-icon> cloud_upload </mat-icon>
-              Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc <a href=""> Tải lên </a>
+                <mat-icon> cloud_upload </mat-icon>
+                Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc <a href=""> Tải lên </a>
               </button>
-              <input id="img_upload" name="img_upload[]" type='file' (change)="onFileSelected($event)" multiple accept="file_extension|image/*" value="{{blankVal}}">
+              <input id="img_upload" name="img_upload[]" type='file' (change)="onFileSelected($event)" multiple
+                [accept]="acceptFileExtension" value="{{blankVal}}">
             </div>
 
             <div class="image_drag_upload_preview">
               <div class="list_upload" *ngFor="let file of fileUpload">
-                <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                <a href="javascript:void(0)" (click)="openLightbox(file.url ,file.id.id, file.fullName, 1)">
+                  <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                </a>
                 <div class="img_control">
-                  <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'"> {{ file.name }} </span>
-                  <a mat-icon-button class="delete_img" download="{{ file.name }}" href="{{ file.url }}">
+                  <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'">
+                    {{ file.name }} </span>
+                  <a mat-icon-button class="delete_img" download="{{ file.name }}" [href]="bypassSecurityTrustUrl(file.url)">
                     <mat-icon class="icon"> save_alt </mat-icon>
                   </a>
-                  <a mat-icon-button class="delete_img" align="end" (click)="removeItem(file.id)">
+                  <a mat-icon-button class="delete_img" align="end" (click)="removeItem(file.id.id)">
                     <mat-icon class="icon"> delete_outline </mat-icon>
                   </a>
                 </div>
@@ -142,38 +148,20 @@
             </div>
           </div>
 
-           <!-- File đính kèm -->
+          <!-- File đính kèm -->
 
           <!-- Lịch sử - hoạt động -->
           <h4 class="mt-2"> Hoạt động </h4>
           <mat-tab-group>
             <!-- Bình luận -->
-            <mat-tab label="Bình luận">
-              <!-- <mat-tree [dataSource]="commentDataSource" [treeControl]="treeControl" class="tree"> -->
-              <!-- <mat-tree *ngFor='let cmt of TREE_DATA' [treeControl]="treeControl" class="tree">
-                <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle> {{ node.user.fullname }} </mat-tree-node>
-                <mat-nested-tree-node *matTreeNodeDef="let node; when: hasChild">
-                  <div class="mat-tree-node">
-                    <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.content" style="border: none">
-                      <mat-icon class="mat-icon-rtl-mirror">
-                        {{ treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right' }}
-                      </mat-icon>
-                    </button>
-                    <span class="name-user"> {{ node.user.fullname }} </span>
-                    <span class="action"> &nbsp;đã bình luận - {{ node.crearedDate }} </span>
-                  </div>
-                  <ul [class.tree-invisible]="treeControl.isExpanded(node)">
-                    <ng-container matTreeNodeOutlet></ng-container>
-                  </ul>
-                  <mat-divider></mat-divider>
-                </mat-nested-tree-node>
-              </mat-tree> -->
+            <mat-tab label="Ý kiến xử lý">
               <div *ngFor='let cmt of TREE_DATA'>
                 <div style="margin-top: 1em; margin-bottom: 0.5em">
                   <span>
-                    <mat-icon style="vertical-align: middle;"> keyboard_arrow_down </mat-icon>
+                    <mat-icon style="vertical-align: middle; transform: scale(0.5); color: #636363;"> fiber_manual_record </mat-icon>
                     <span class="name-user"> {{ cmt.user.fullname }} </span>
-                    <span class="action"> &nbsp;đã bình luận - {{ cmt.createdDate | date : 'dd/MM/yyyy HH:mm:ss' }} </span>
+                    <span class="action"> &nbsp;đã thêm ý kiến xử lý - {{ cmt.createdDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+                    </span>
                   </span>
                 </div>
                 <div style="margin-bottom: 0.5em; margin-left: 2em;">
@@ -184,7 +172,7 @@
 
               <button mat-button class="mt-10" (click)="comment(petitionId)">
                 <mat-icon fontSet="material-icons-outlined"> insert_comment </mat-icon>
-                Bình luận
+                Thêm ý kiến xử lý
               </button>
             </mat-tab> <!-- Bình luận -->
 
@@ -202,7 +190,7 @@
                       <span *ngIf="his.type === 5"> đã xoá </span>
                       - {{ his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}
                     </span>
-                    <table class="mt-05" *ngIf='his.type === 1 || his.type === 4'>
+                    <table class="mt-05" *ngIf="his.type !== 4">
                       <tr class="fw-500">
                         <td class="width-19 action" i18n> Trường </td>
                         <td class="width-39 action" i18n> Giá trị cũ </td>
@@ -246,51 +234,18 @@
             <tr>
               <td class="td-1 width-40"> Địa chỉ: </td>
               <td class="td-2 width-60">
-                {{ reporterAddress }}
+                {{ reporterAddress }},
                 <span *ngFor='let pl of reporterPlace; let i = index'>
                   {{ pl.name }} {{ i === reporterPlace.length - 1 ? '' : ',' }}
                 </span>
-                (<button class="btn-map">
+                <!-- (<button class="btn-map">
                   <mat-icon fontSet="material-icons-outlined" class="icon-map"> place </mat-icon>
                   Xem bản đồ
-                </button>)
+                </button>) -->
               </td>
             </tr>
           </table> <!-- Table thông tin người phản ánh -->
-
-          <!-- Thông tin xử lý -->
-          <h4> Thông tin xử lý </h4>
-          <table class="table-info-process">
-            <tr>
-              <td class="td-1 width-40"> Người xử lý: </td>
-              <td class="td-2 width-60">  </td>
-            </tr>
-            <tr>
-              <td class="td-1 width-40"> Người theo dõi: </td>
-              <td class="td-2 width-60">  </td>
-            </tr>
-            <tr>
-              <td class="td-1 width-40"> Người duyệt: </td>
-              <td class="td-2 width-60">  </td>
-            </tr>
-            <tr>
-              <td class="td-1 width-40"> Ngày duyệt: </td>
-              <td class="td-2 width-60">  </td>
-            </tr>
-            <tr>
-              <td class="td-1 width-40"> Công việc: </td>
-              <td class="td-2 width-60">
-                <span class="btn-receive"> {{ taskName }} </span>
-              </td>
-            </tr>
-            <tr>
-              <td class="td-1 width-40"> Công khai: </td>
-              <td class="td-2 width-60">
-                <span [ngClass]="processPublic === false ? 'btn-none-public' : 'btn-public'"> {{ getPublic(processPublic) }} </span>
-              </td>
-            </tr>
-          </table> <!-- Table thông tin xử lý -->
-
+          
           <!-- Kết quả xử lý -->
           <h4 [ngClass]="resultPetition === undefined ? 'd-none' : 'mt-2'"> Kết quả xử lý </h4>
           <table [ngClass]="resultPetition === undefined ? 'd-none' : 'table-result'">
@@ -301,7 +256,15 @@
             <tr>
               <td class="td-1 width-40"> Công khai: </td>
               <td class="td-2 width-60">
-                <span [ngClass]="resultIsPublic === false ? 'btn-none-public' : 'btn-public'"> {{ getPublic(resultIsPublic) }} </span>
+                <span [ngClass]="resultIsPublic === false ? 'btn-none-public' : 'btn-public'">
+                  {{ getPublic(resultIsPublic) }} </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-1 width-40"> Phê duyệt kết quả: </td>
+              <td class="td-2 width-60">
+                <span [ngClass]="resultIsApproved === false ? 'btn-none-public' : 'btn-public'">
+                  {{ getApprove(resultIsApproved) }} </span>
               </td>
             </tr>
           </table>
@@ -312,7 +275,10 @@
               <span [class.overflow]="isExpand" [ngClass]="(isExpand === true ? 'overflow' : 'show-content')">
                 {{ resultContent }}
               </span>
-              <a [ngClass]="(isExpand === true ? 'see-more' : 'hidden-see-more')" (click)="isExpandToggle()"> Xem thêm </a>
+              <a [ngClass]="{'see-more': isExpand === true, 'hidden-see-more':  isExpand === false, 'd-none': countResultContent < 45}" (click)="isExpandToggle()"> Xem thêm
+              </a>
+              <a [ngClass]="{'see-more': isExpand === false, 'hidden-see-more':  isExpand === true, 'd-none': countResultContent < 45}" (click)="isExpandToggle()"> Thu gọn
+              </a>
             </tr>
           </table> <!-- Kết quả xử lý -->
 
@@ -320,9 +286,12 @@
           <div [ngClass]="resultPetition === undefined || filesInfo.length === 0 ? 'd-none' : 'img_uploaded'">
             <div class="image_drag_upload_preview">
               <div class="list_uploaded" *ngFor="let file of filesInfo">
-                <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                <a href="javascript:void(0)" (click)="openLightbox(file.url ,file.id.id, file.fullName, 2)">
+                  <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url('+ file.url +')'}"></div>
+                </a>
                 <div class="img_control">
-                  <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'"> {{ file.name }} </span>
+                  <span class="file_name" matTooltip="{{ file.fullName }}" [matTooltipPosition]="'right'">
+                    {{ file.name }} </span>
                   <a mat-icon-button class="delete_img" download="{{ file.name }}" href="{{ file.url }}">
                     <mat-icon class="icon"> save_alt </mat-icon>
                   </a>

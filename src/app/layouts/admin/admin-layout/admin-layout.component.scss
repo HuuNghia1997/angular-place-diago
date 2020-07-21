@@ -1,3 +1,12 @@
+.loading_progress_bar {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  height: 3px;
+  display: none;
+  transition: .3s;
+}
+
 .main-container {
   display: flex;
   flex-direction: column;

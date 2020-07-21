@@ -36,14 +36,14 @@ export class MapboxService {
     const zoom = 13;
     this.map = new mapboxgl.Map({
       container: 'map',
-      style: style,
-      zoom: zoom,
+      style,
+      zoom,
       center: [longitude, latitude],
     });
 
-    var geocoder = new MapboxGeocoder({
+    const geocoder = new MapboxGeocoder({
       accessToken: mapboxgl.accessToken,
-      getItemValue: function (item) {
+      getItemValue(item) {
         document.getElementById('placeName').innerHTML = item.place_name;
         this.centerPoint = item.center;
         console.log(this.centerPoint);
@@ -52,7 +52,7 @@ export class MapboxService {
 
         return item.place_name;
       },
-      mapboxgl: mapboxgl,
+      mapboxgl,
     });
 
     this.map.addControl(geocoder);

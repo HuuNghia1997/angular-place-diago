@@ -35,3 +35,5 @@ export const notificationCategoryId = '6';
 export const petitionHistoryGroupId = 2;
 export const petitionCommentGroupId = 1;
 export const petitionCategoryId = '3';
+export const petitionAcceptFileExtension = ['.jpg', 'jpeg', '.png', '.mp3', '.mp4', '.txt', '.pdf'];
+export const petitionAcceptFileType = ['audio/mpeg', 'image/jpeg', 'image/png', 'image/jpg', 'text/plain', 'application/pdf', 'video/mp4' ];

@@ -12,7 +12,7 @@ export class SnackbarService {
   openSnackBar(message: string, content: string, result: string, reason: string, panelClass: string) {
     this.snackBar.openFromComponent(CustomSnackbarComponent, {
       data: {
-        ms: message + '<b> ' + content + '</b> ' + result + reason
+        ms: message + '<b> ' + content + '</b> ' + result + '</br>' + reason
       },
       panelClass,
       duration: 5000,

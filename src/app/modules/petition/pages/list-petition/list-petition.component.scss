@@ -132,3 +132,12 @@ th.mat-sort-header-sorted {
 .btn-action {
   color: rgba($color: #000000, $alpha: 0.87);
 }
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: #44444450;
+}
+
+.tbl_wraptext_col {
+  width: 20%;
+  word-wrap: break-word;
+}

@@ -9,10 +9,11 @@ import { PickDateAdapter } from 'src/app/data/schema/pick-date-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationCompletedComponent } from '../../dialog/confirmation-completed/confirmation-completed.component';
 import { PetitionService } from 'src/app/data/service/petition.service';
 import { PaginatorService } from 'src/app/data/service/paginator.service';
 import { KeycloakService } from 'keycloak-angular';
+import { SnackbarService } from 'src/app/data/service/snackbar.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-petition',
@@ -26,8 +27,8 @@ import { KeycloakService } from 'keycloak-angular';
 })
 export class ListPetitionComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   displayedColumns: string[] = ['STT', 'title', 'topic', 'date', 'place', 'status', 'action'];
   ELEMENT_DATA: any[] = [];
@@ -47,8 +48,8 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     place: new FormControl(''),
     receptionMethod: new FormControl(''),
     tag: new FormControl(''),
-    startDate: new FormControl(''),
-    endDate: new FormControl('')
+    startDate: new FormControl(null),
+    endDate: new FormControl(null)
   });
 
   constructor(private dialog: MatDialog,
@@ -56,7 +57,9 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
               private translator: PaginatorService,
               public datepipe: DatePipe,
               private cdRef: ChangeDetectorRef,
-              private keycloak: KeycloakService) {
+              private keycloak: KeycloakService,
+              private snackbar: SnackbarService,
+              private router: Router) {
     this.dataSource = new MatTableDataSource(this.ELEMENT_DATA);
   }
 
@@ -77,6 +80,17 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     this.cdRef.detectChanges();
   }
 
+  searchFormreset() {
+    this.searchForm = new FormGroup({
+      title: new FormControl(''),
+      place: new FormControl(''),
+      receptionMethod: new FormControl(''),
+      tag: new FormControl(''),
+      startDate: new FormControl(null),
+      endDate: new FormControl(null)
+    });
+  }
+
   getListTag() {
     this.service.getListTag(this.categoryId).subscribe(data => {
       const size = data.numberOfElements;
@@ -90,46 +104,44 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
     });
   }
 
-  claimTask(id) {
-    this.service.getDetailPetition(id).subscribe(data => {
-      const taskId = data.list.entries[0].entry.id;
-      this.service.claimTask(taskId).subscribe(res => {
-        // tslint:disable-next-line: only-arrow-functions
-        setTimeout(function() {
-          window.location.reload();
-        }, reloadTimeout);
-      }, err => {
-        if (err.status === 401) {
-          this.keycloak.login();
-        }
-      });
+  claimTask(taskId, name) {
+    const message = 'Nhận xử lý';
+    const content = name;
+    const reason = '';
+    this.service.claimTask(taskId).subscribe(res => {
+      this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
+      // tslint:disable-next-line: only-arrow-functions
+      setTimeout(function() {
+        window.location.reload();
+      }, reloadTimeout);
+    }, err => {
+      this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+      if (err.status === 401) {
+        this.keycloak.login();
+      }
     });
   }
 
-  releaseTask(id) {
-    this.service.getDetailPetition(id).subscribe(data => {
-      const taskId = data.list.entries[0].entry.id;
-      this.service.releaseTask(taskId).subscribe(res => {
-        // tslint:disable-next-line: only-arrow-functions
-        setTimeout(function() {
-          window.location.reload();
-        }, reloadTimeout);
-      }, err => {
-        if (err.status === 401) {
-          this.keycloak.login();
-        }
-      });
+  releaseTask(taskId, name) {
+    const message = 'Bỏ nhận xử lý';
+    const content = name;
+    const reason = '';
+    this.service.releaseTask(taskId).subscribe(res => {
+      this.snackbar.openSnackBar(message, content, 'thành công', reason, 'success_notification');
+      // tslint:disable-next-line: only-arrow-functions
+      setTimeout(function() {
+        window.location.reload();
+      }, reloadTimeout);
+    }, err => {
+      if (err.status === 401) {
+        this.snackbar.openSnackBar(message, content, 'thất bại', reason, 'error_notification');
+        this.keycloak.login();
+      }
     });
   }
 
-  openDialogConfirmationCompleted() {
-    const dialogRef = this.dialog.open(ConfirmationCompletedComponent, {
-      width: '60%'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('This dialog was closed');
-    });
+  completePetition(id, name) {
+    this.service.completePetition(id, name);
   }
 
   onPaginateChange($event) {
@@ -175,31 +187,15 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
 
   search(page, pageSize) {
     const formObj = this.searchForm.getRawValue();
-    let searchString = 'page=' + page;
-    searchString = searchString + '&size=' + pageSize;
     if (formObj.title === '' && formObj.place === '' && formObj.receptionMethod === '' &&
-        formObj.tag === '' && formObj.startDate === '' && formObj.endDate === '') {
+      formObj.tag === '' && formObj.startDate === null && formObj.endDate === null) {
       this.service.getPetitionList(page, pageSize, true).subscribe(data => {
-        this.ELEMENT_DATA = [];
-        const size = data.list.entries.length;
-        for (let i = 0; i < size; i++) {
-          this.ELEMENT_DATA.push(data.list.entries[i].entry);
-        }
-        this.lengthPetition = this.ELEMENT_DATA.length;
-        this.dataSource.data = this.ELEMENT_DATA;
-        this.dataSource.paginator.pageSize = pageSize;
-        this.totalElements = data.list.pagination.totalItems;
-        const totalPage = data.list.pagination.totalItems / pageSize;
-        this.totalPages = Math.ceil(totalPage);
-        this.selectedPageSize = pageSize;
-
-        this.resetPageSize();
+        this.fetchData(data, page, pageSize);
       }, err => {
         if (err.status === 401) {
           this.keycloak.login();
         }
       });
-      searchString = '';
     } else {
       const title = formObj.title;
       const place = formObj.place;
@@ -208,12 +204,26 @@ export class ListPetitionComponent implements OnInit, AfterViewInit {
       const fromDate = formObj.startDate;
       const toDate = formObj.endDate;
       this.service.search(page, true, pageSize, title, place, category, receptionMethod, fromDate, toDate).subscribe(res => {
-        console.log(res);
+        this.fetchData(res, page, pageSize);
       });
     }
+  }
 
-
-
+  fetchData(data, page, pageSize) {
+    this.ELEMENT_DATA = [];
+    const size = data.list.entries.length;
+    for (let i = 0; i < size; i++) {
+      this.ELEMENT_DATA.push(data.list.entries[i].entry);
+      data.list.entries[i].entry.stt = pageSize * this.currentPage + (i + 1);
+    }
+    this.lengthPetition = this.ELEMENT_DATA.length;
+    this.dataSource.data = this.ELEMENT_DATA;
+    this.dataSource.paginator.pageSize = pageSize;
+    this.totalElements = data.list.pagination.totalItems;
+    const totalPage = data.list.pagination.totalItems / pageSize;
+    this.totalPages = Math.ceil(totalPage);
+    this.selectedPageSize = pageSize;
+    this.resetPageSize();
   }
 
   getStatus(status: string) {
