@@ -57,22 +57,33 @@
               </td>
             </tr>
             <tr>
-              <td class="td-1 w-25" i18n> Chuyên mục: </td>
-              <td class="td-2">
-                <span class="topic" *ngFor='let tags of workflowTags;'> {{ tags.name }} </span>
-              </td>
-            </tr>
-            <tr>
               <td class="td-1 w-25" i18n> Mã quy trình: </td>
               <td class="td-2"> {{ workflowId }} </td>
+            </tr>
+            <tr>
+              <td class="td-1" i18n> Ngày tạo: </td>
+              <td class="td-2"> {{ workflowCreatedDate | date : 'dd/MM/yyyy' }} </td>
+            </tr>
+            <tr>
+              <td class="td-1 w-25" i18n> Chuyên mục: </td>
+              <td class="td-2 category">
+                <span class="topic" *ngFor='let tags of workflowTags;'> {{ tags.name }} </span>
+              </td>
             </tr>
           </table>
 
           <!-- Quy trình -->
-          <h4 class="mt-2" i18n> Quy trình </h4>
-          <div class="card-container">
-            <img [src]="svgIcon" alt="" class="image-process">
+
+          <div class="config-container">
+            <h4 class="mt-2" i18n> Quy trình </h4>
+            <div class="img">
+              <img [src]="svgIcon" alt="" class="image-process">
+            </div>
           </div>
+          <!-- <div class="card-container">
+            <img [src]="svgIcon" alt="" class="image-process">
+          </div> -->
+          
 
           <!-- Hoạt động -->
           <h4 class="mt-2" i18n> Hoạt động </h4>
@@ -112,7 +123,7 @@
 
         <td class="col-2-content"></td> <!-- col-2-content -->
 
-        <td class="col-3-content">
+        <!-- <td class="col-3-content">
           <h4> &nbsp;</h4>
           <table class="table-date-create">
             <tr>
@@ -120,7 +131,8 @@
               <td class="td-2"> {{ workflowCreatedDate | date : 'dd/MM/yyyy' }} </td>
             </tr>
           </table>
-        </td> <!-- col-3-content -->
+        </td>  -->
+        <!-- col-3-content -->
       </tr>
     </table> <!-- div table-content -->
   </mat-card>

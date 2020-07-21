@@ -84,12 +84,14 @@ export class UpdateProcessComponent implements OnInit {
   }
 
   getProcess() {
-    this.service.getListModel(projectIdProcess, typeProcess).subscribe(data => {
+    this.service.getListModel(projectIdProcess, typeProcess).subscribe(data => {      
       this.listModelProcess = data.list;
       const size = this.listModelProcess.entries.length;
       for (let i = 0; i < size; i++) {
         this.processList.push(this.listModelProcess.entries[i].entry);
       }
+      this.setViewData();
+      
     });
   }
 
@@ -107,7 +109,6 @@ export class UpdateProcessComponent implements OnInit {
   getWorkflowDetail() {
     this.service.getWorkflowDetail(this.workflowId).subscribe(data => {
       this.response.push(data);
-      this.setViewData();
     }, err => {
       console.error(err);
     });
@@ -119,7 +120,6 @@ export class UpdateProcessComponent implements OnInit {
       tagSelected.push(item.id);
     }
     tagSelected = tagSelected.map(String);
-
     let proSelect: string;
     this.service.getIdModel(this.response[0].processDefinitionId).subscribe(info => {
       proSelect = info.entry.name;
@@ -177,7 +177,7 @@ export class UpdateProcessComponent implements OnInit {
   }
 
   getValueModel(idModel: string, modelList: any[]) {
-    let count = 0;
+    let count = 0;    
     modelList.forEach(model => {
       if (model.id !== idModel) {
         count = count + 1;
@@ -193,52 +193,28 @@ export class UpdateProcessComponent implements OnInit {
 
   public onConfirm(): void {
     if (this.click === false) {
-      this.service.getWorkflowDetail(this.workflowId).subscribe(data => {
-        this.service.getIdModel(data.processDefinitionId).subscribe(info => {
-          if (this.getValueModel(info.entry.id, this.processList) === true) {
-            this.processDefinitionId = this.idUnchange;
-            if (data.status === 0) {
-              this.status = 0;
-              this.formToJSON();
-            } else {
-              if (data.status === 1) {
-                this.status = 1;
-                this.formToJSON();
-              } else {
-                this.status = 2;
-                this.formToJSON();
-              }
-            }
-          } else {
-            this.service.deployModel(this.processToDeploy).subscribe(model => {
-              this.model = model.entry;
-              this.processDefinitionId = this.model.id;
-              if (data.status === 0) {
-                this.status = 0;
-                this.formToJSON();
-              } else {
-                if (data.status === 1) {
-                  this.status = 1;
-                  this.formToJSON();
-                } else {
-                  this.status = 2;
-                  this.formToJSON();
-                }
-              }
-            }, err => {
-              console.error(err);
-            });
-          }
-        });
+      if (this.processToDeploy != null ) {
+        this.service.deployModel(this.processToDeploy).subscribe(data => {
+        this.processDefinitionId = data.entry.id;
+        this.status = 1;
+        this.formToJSON();
+      }, err => {
+        console.error(err);
       });
+      }else{
+        this.processDefinitionId =this.response[0].processDefinitionId;
+        this.status = 1;
+        this.formToJSON();
+      }
+
     } else {
       if (this.checkTag === false) {
         this.snackbar.openSnackBar('Vui lòng chọn chuyên mục trước khi áp dụng', '', '', '', 'error_notification');
       } else {
         this.service.getWorkflowDetail(this.workflowId).subscribe(wf => {
-          this.service.getIdModel(wf.processDefinitionId).subscribe(info => {
+          this.service.getIdModel(wf.processDefinitionId).subscribe(info => {            
             if (this.getValueModel(info.entry.id, this.processList) === true) {
-              this.processDefinitionId = this.idUnchange;
+              this.processDefinitionId = info.entry.id;
               this.status = 1;
               this.formToJSON();
             } else {
@@ -258,10 +234,10 @@ export class UpdateProcessComponent implements OnInit {
     }
   }
 
-  getProcessDefinitionId(data) {
+  getProcessDefinitionId(data) {    
     this.processToDeploy = data;
     this.show = true;
-    this.diagramUrl = this.service.getUrlModel(data);
+    this.diagramUrl = this.service.getUrlModel(data);    
   }
 
   checkTags(data) {
