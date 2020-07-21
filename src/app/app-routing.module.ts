@@ -24,6 +24,10 @@ const routes: Routes = [
     loadChildren: () => import('modules/petition/petition.module').then(m => m.PetitionModule)
   },
   {
+    path: 'tat-ca-phan-anh',
+    loadChildren: () => import('modules/all-petition/all-petition.module').then(m => m.AllPetitionModule)
+  },
+  {
     path: 'cau-hinh-phan-anh',
     loadChildren: () => import('modules/config-petition/config-petition.module').then(m => m.ConfigPetitionModule)
   },

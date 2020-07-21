@@ -224,11 +224,13 @@ export class AddNotificationComponent implements OnInit {
       return item;
     });
     formObj.tag = this.itemsListTags;
-
+    console.log(formObj.to)
     // Add user
     for (const i of formObj.to) {
       // tslint:disable-next-line: triple-equals
       const item = this.userList.find(p => p.id == i);
+      console.log(this.userList);
+      console.log(item);
       this.itemsListUser.push(item);
     }
     this.itemsListUser = this.itemsListUser.map(item => {
@@ -240,7 +242,7 @@ export class AddNotificationComponent implements OnInit {
       return item;
     });
     formObj.to = this.itemsListUser;
-
+    console.log('khong loi to')
     // Add Image
     formObj.imageId = this.uploadedImage;
 
