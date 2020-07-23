@@ -961,8 +961,6 @@ export class EditPetitionComponent implements OnInit {
       this.files.splice(i, 1);
       this.blankVal = '';
     })
-
-
   }
 }
 export class ConfirmUpdateDialogModel {
