@@ -461,7 +461,6 @@ export class AddPetitionComponent implements OnInit {
                   );
                   fileImport = this.convertBase64toFile(urlPreview, file.name);
                   if (this.urls.length + 1 <= 5) {
-                    this.urls.push({url: this.urlPreview ,temp:null });
                     this.files.push(this.fileImport);
                     files.push(fileImport);
                     if (this.fileImport.name.length > 20) {
@@ -550,6 +549,8 @@ export class AddPetitionComponent implements OnInit {
                 ),
               };
               this.uploadedImage.push(temp);
+              this.urls.push({url: this.urlPreview ,temp:temp });
+
 
 
             });
@@ -640,12 +641,14 @@ export class AddPetitionComponent implements OnInit {
   }
 
   // Xoá file
-  removeItem(index: number) {
-    this.urls.splice(index, 1);
-    this.fileNames.splice(index, 1);
-    this.fileNamesFull.splice(index, 1);
-    this.files.splice(index, 1);
-    this.blankVal = '';
+  removeItem(index: number,id) {
+    this.service.deleteImage(id).subscribe((data)=>{
+      this.urls.splice(index, 1);
+      this.fileNames.splice(index, 1);
+      this.fileNamesFull.splice(index, 1);
+      this.files.splice(index, 1);
+      this.blankVal = '';
+    })
   }
 
   openMapDialog(address, long, lat) {

@@ -18,31 +18,6 @@ export interface Role {
 
 export const MENU_DATA: Menu[] = [
   {
-    mainMenu: 'Cổng thông tin',
-    icon: 'file_copy',
-    code: 'quan-tri-thong-bao',
-    listSubMenu: [
-      {
-        title: 'Quản trị thông báo',
-        route: 'quan-tri-thong-bao',
-        role: [
-          {
-            id: 1,
-            role: 'admin'
-          },
-          {
-            id: 2,
-            role: 'citizens_notification_manager'
-          },
-          {
-            id: 3,
-            role: 'citizens_admin'
-          }
-        ]
-      }
-    ]
-  },
-  {
     mainMenu: 'Phản ánh',
     icon: 'file_copy',
     code: 'cau-hinh-phan-anh',

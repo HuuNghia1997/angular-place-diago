@@ -649,7 +649,7 @@ export class EditPetitionComponent implements OnInit {
             let urlResult: any;
             let fileName = '';
             let fileNamesFull = '';
-  
+
             // =============================================
             const reader = new FileReader();
             reader.onload = (eventLoad) => {
@@ -680,13 +680,8 @@ export class EditPetitionComponent implements OnInit {
                       fileName = this.fileImport.name;
                       fileNamesFull = this.fileImport.name;
                     }
-  
-                    this.filesInfo.push({
-                      id: i,
-                      url: this.urlPreview,
-                      name: fileName,
-                      fullName: fileNamesFull,
-                    });
+
+
                   } else {
                     this.main.openSnackBar(
                       'Số lượng ',
@@ -702,7 +697,7 @@ export class EditPetitionComponent implements OnInit {
             i++;
           }
         }
-  
+
         setTimeout(() => {
           this.uploadImages(files);
         }, 1500);
@@ -762,6 +757,12 @@ export class EditPetitionComponent implements OnInit {
                     ),
                   };
                   this.uploadedImage.push(temp);
+                  this.filesInfo.push({
+                    id: temp,
+                    url: this.urlPreview,
+                    name: imgInfo.filename,
+                    fullName: imgInfo.filename,
+                  });
                 });
                 setTimeout(() => {
                   this.progress = 0;
@@ -790,6 +791,12 @@ export class EditPetitionComponent implements OnInit {
                     ),
                   };
                   this.uploadedImage.push(temp);
+                  this.filesInfo.push({
+                    id: temp,
+                    url: this.urlPreview,
+                    name: imgInfo.filename,
+                    fullName: imgInfo.filename,
+                  });
                 });
                 setTimeout(() => {
                   this.progress = 0;
@@ -908,7 +915,6 @@ export class EditPetitionComponent implements OnInit {
                 break;
               case HttpEventType.Response:
                 event.body.forEach((imgInfo) => {
-                  console.log(imgInfo);
 
                   let temp = {
                     id: imgInfo.id,
@@ -949,20 +955,12 @@ export class EditPetitionComponent implements OnInit {
     const imageFile = new File([imageBlob], fileName, { type: 'image/jpg' });
     return imageFile;
   }
-  removeItem(id: string) {
-    let counter = 0;
-    let index = 0;
-    this.filesInfo.forEach(file => {
-      if (file.id === id) {
-        index = counter;
-      }
-      counter++;
-    });
-    this.uploadedImage = this.uploadedImage.filter(item => item.id != id);
-    this.filesInfo.splice(index, 1);
-    this.files.splice(index, 1);
-
-    this.blankVal = '';
+  removeItem(id, i) {
+    this.service.deleteImage(id).subscribe((data) => {
+      this.filesInfo.splice(i, 1);
+      this.files.splice(i, 1);
+      this.blankVal = '';
+    })
   }
 }
 export class ConfirmUpdateDialogModel {

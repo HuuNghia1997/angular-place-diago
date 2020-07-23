@@ -18,6 +18,3 @@ Angular source code skeleton for web application with features:
 
 ## Template version
 version-1.2.0
-
-## Update log
-- test
