@@ -1,0 +1,69 @@
+<div class="main-container" [class.main-is-mobile]="mobileQuery.matches">
+  <mat-progress-bar mode="indeterminate" class="loading_progress_bar"></mat-progress-bar>
+  <mat-sidenav-container class="main-sidenav-container">
+    <mat-sidenav #snav [mode]="mobileQuery.matches ? 'over' : 'side'"
+                 [fixedInViewport]="mobileQuery.matches" [opened]="true">
+      <a routerLink="/home">
+        <div class="site_logo">
+          <div class="logo_img"></div>
+          <span class="site_name" i18n> CHÍNH QUYỀN SỐ </span>
+        </div>
+      </a>
+      <!-- menu -->
+      <app-admin-layout-sidenav></app-admin-layout-sidenav>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <mat-toolbar class="main-toolbar">
+        <mat-toolbar-row>
+          <!-- Show/hide menu -->
+          <button mat-icon-button (click)="snav.toggle()" *ngIf="isLoggedIn">
+            <mat-icon> menu </mat-icon>
+          </button>
+
+          <!-- Your agency -->
+          <h1 class="main-app-name" *ngIf="isLoggedIn"> {{ yourAgency }} </h1>
+          <span class="toolbar-spacer"></span>
+
+          <!-- Language -->
+          <button mat-button [matMenuTriggerFor]="menu" class="mat-icon-arrow-down">
+            <img src="{{ langSelected.urlsIcon }}">
+            {{ langSelected.value }}
+            <mat-icon> arrow_drop_down </mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu" xPosition="before">
+            <div *ngFor='let lang of language'>
+              <button mat-button class="btn-language" (click)="changeLanguage(lang.id)">
+                <img src="{{ lang.urlsIcon }}">
+                {{ lang.lang }} (
+                <span style="text-transform: uppercase"> {{ lang.value }} </span>
+                )
+              </button>
+            </div>
+          </mat-menu>
+
+          <!-- Account -->
+          <a mat-button (click)="login()" *ngIf="!isLoggedIn" i18n> Đăng nhập </a>
+          <a mat-button id="account_btn" [matMenuTriggerFor]="userLog" *ngIf="isLoggedIn">
+            <span id="account_name">
+              <div id="avatar_sidebar" class="avatar" style="background-image: url('../assets/img/avt.jpg');">
+                <img class="avatar" [src]="avatar"/>
+              </div>
+              {{ nickname }}
+            </span>
+          </a>
+          <mat-menu #userLog="matMenu" xPosition="before">
+            <button mat-menu-item (click)="logout()" *ngIf="isLoggedIn">
+              <mat-icon> person_outline </mat-icon>
+              <span i18n> Đăng xuất </span>
+            </button>
+          </mat-menu>
+        </mat-toolbar-row>
+      </mat-toolbar>
+      <div class="content">
+        <router-outlet></router-outlet>
+      </div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

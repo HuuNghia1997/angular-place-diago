@@ -1,0 +1,23 @@
+<mat-accordion [multi]="true">
+  <span *ngFor='let m of sidebarMenu; let i = index;'>
+    <mat-expansion-panel id="sidebar_menu"
+                        [expanded]="matchPosition(position, m.listSubMenu)"
+                        *ngIf="countAvailableMenu[i] > 0">
+      <mat-expansion-panel-header [collapsedHeight]="'20px'" [expandedHeight]="'20px'">
+        <mat-panel-title>
+          <mat-icon> {{ m.icon }} </mat-icon>
+          {{ m.mainMenu }}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <span *ngFor='let submenu of m.listSubMenu; let j = index'>
+        <a id="submenu" mat-button
+                        *ngIf="match(roleUser, submenu.role) === true"
+                        routerLinkActive="active"
+                        routerLink="/{{ submenu.route }}">
+          {{ submenu.title }}
+        </a>
+      </span>
+    </mat-expansion-panel>
+  </span>
+</mat-accordion>

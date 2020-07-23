@@ -1,0 +1,38 @@
+<div mat-dialog-title class="fw-500"> Xác nhận hoàn thành </div>
+
+<mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
+  <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+    <button mat-icon-button disabled></button>
+    <mat-checkbox *ngIf="node.gatewayType != 1" class="checklist-leaf-node"
+                  [checked]="checklistSelection.isSelected(node)"
+                  (change)="todoLeafSelectionToggle(node)"
+                  [ngClass]="{'custom_mat_checkbox': node.gatewayType === 1}">{{node.targetName}}</mat-checkbox>
+    <mat-checkbox *ngIf="node.gatewayType == 1" class="checklist-leaf-node custom_mat_checkbox"
+                  [checked]="checklistSelection.isSelected(node)"
+                  (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
+  </mat-tree-node>
+
+  <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+    <button mat-icon-button matTreeNodeToggle
+            [attr.aria-label]="'toggle ' + node.filename">
+      <mat-icon class="mat-icon-rtl-mirror">
+        {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+      </mat-icon>
+    </button>
+
+    <mat-checkbox  *ngIf="node.gatewayType == 1"
+                  [checked]="checklistSelection.isSelected(node)"
+                  [indeterminate]="descendantsPartiallySelected(node)"
+                  (change)="todoLeafSelectionToggle(node)" class="custom_mat_checkbox">{{node.targetName}}</mat-checkbox>
+    <mat-checkbox  *ngIf="node.gatewayType != 1"
+                  [checked]="checklistSelection.isSelected(node)"
+                  [indeterminate]="descendantsPartiallySelected(node)"
+                  (change)="todoLeafSelectionToggle(node)">{{node.targetName}}</mat-checkbox>
+  </mat-tree-node>
+</mat-tree>
+
+<mat-dialog-actions class="align-right">
+  <button mat-button class="btn-cancel" (click)="onDismiss()"> Hủy bỏ </button>
+  <button mat-button class="btn-update"  (click)="itemClick()"> Đồng ý </button>
+</mat-dialog-actions>
+

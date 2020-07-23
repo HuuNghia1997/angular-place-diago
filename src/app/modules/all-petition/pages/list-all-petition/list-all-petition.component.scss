@@ -1,0 +1,149 @@
+.title {
+    font-weight: bold;
+    background-color: #F5F8FF;
+  }
+  
+  .name-page {
+    margin-left: -0.5em;
+    font-weight: 500;
+  }
+  
+  .container {
+    padding: 0 0.5em;
+  }
+  
+  .expansion-panel {
+    padding: 0 1em;
+  }
+  
+  mat-panel-title,
+  mat-label {
+    font-size: 16px;
+  }
+  
+  input {
+    font-size: 14;
+  }
+  
+  .half-form-field {
+    width: 49%;
+  }
+  
+  .quarter-form-field {
+    width: 23.5%;
+  }
+  
+  .ml-1 {
+    margin-left: 2%;
+  }
+  
+  .btn-add {
+    margin-left: 2em;
+    background-color: #388E3C;
+    color: #fff;
+    height: 36px;
+  }
+  
+  .btn-search {
+    color: #ffffff;
+    background-color: #1976D2;
+  }
+  
+  .btn-clr {
+    border: 1px solid #333333;
+    color: rgba($color: #000000, $alpha: 0.87);
+    margin-left: 2%;
+  }
+  
+  .padding-table {
+    padding-top: 1em;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  th {
+    color: #000000;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  a {
+    color: #1976D2;
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  
+  a:link {
+    color: #1976D2;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  a:visited {
+    color: #1976D2;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  a:hover {
+    color: #1976D2;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  a:active {
+    color: #1976D2;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  th.mat-sort-header-sorted {
+    justify-content: left;
+    color: black;
+  }
+  
+  .btn-wait-get-process {
+    color: #fff;
+    padding: .2em;
+    border-radius: 4px;
+    background-color: #FF9900;
+  }
+  
+  .btn-wait-process {
+    color: #fff;
+    padding: .2em;
+    border-radius: 4px;
+    background-color: #377DCD;
+  }
+  
+  .btn-processed {
+    color: #fff;
+    padding: .2em;
+    border-radius: 4px;
+    background-color: #219653;
+  }
+  
+  .btn-cancel {
+    color: #fff;
+    padding: .2em;
+    border-radius: 4px;
+    background-color: #f8432b;
+  }
+
+  .mat-icon-more-horiz {
+    margin-left: 10px;
+    color: rgba($color: #000000, $alpha: 0.54);
+    display: flex;
+    justify-content: center;
+    width: 30px !important;
+    background-color: #ffffff;
+    border-radius: 2px;
+  }
+  
+  .btn-action {
+    color: rgba($color: #000000, $alpha: 0.87);
+  }
+  

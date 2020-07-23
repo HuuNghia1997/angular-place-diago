@@ -1,0 +1,95 @@
+.dialog_title {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+}
+
+.fs-14 {
+  font-size: 14px;
+}
+
+input, textarea, mat-select {
+  font-size: 14px;
+}
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.ml-2 {
+  margin-left: 2%;
+}
+
+.full-input {
+  width: 100%;
+}
+
+.short-input {
+  width: 32%;
+}
+
+.input-2-3 {
+  width: 66%;
+}
+
+.medium-input {
+  width: 66%;
+}
+
+.place-input {
+  width: 92%;
+}
+
+.btn-choose {
+  float: right;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  color: #1371FF;
+  font-size: 13px;
+  font-weight: bold;
+  position: relative;
+  top: 3px;
+  vertical-align: center;
+}
+
+.icon-map {
+  font-size: 20px;
+  color: #1371FF;
+}
+
+.btn-update {
+  color: #ffffff;
+  background-color: #1976D2;
+}
+
+.mt-1 {
+  margin-top: -1em;
+}
+
+.mt-2 {
+  margin-top: 2em;
+}
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-background,
+::ng-deep .mat-checkbox-indeterminate .mat-checkbox-background {
+  background-color: #ffffff !important;
+  border: 2px solid #1976D2;
+}
+
+::ng-deep .mat-checkbox .mat-checkbox-frame {
+  border: 2px solid #333333;
+}
+
+::ng-deep .mat-checkbox-checkmark-path {
+  stroke: #1976D2 !important;
+}
+
+mat-hint {
+  color: red;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline-thick {
+  color: #44444450;
+}

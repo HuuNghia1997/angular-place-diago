@@ -1,0 +1,74 @@
+<h3 class="dialog-title" mat-dialog-title>Tiếp nhận phản ánh</h3>
+
+<form [formGroup]="acceptForm" (submit)="onConfirm()">
+  <mat-dialog-content class="mat-typography">
+    <p>
+      Tiếp nhận xử lí phản ánh <strong>{{ petitionTitle }}</strong>
+    </p>
+    <div class="mb-1">
+      <span>Chọn quy trình tiếp nhận</span>
+      <mat-checkbox color="primary" formControlName="sendSms" class="ml-2">
+        Gửi tin nhắn SMS
+      </mat-checkbox>
+      <mat-checkbox color="primary" formControlName="isPublic" class="ml-2">
+        Công khai phản ánh
+      </mat-checkbox>
+    </div>
+
+    <mat-selection-list
+      formControlName="workflowId"
+      [multiple]="false"
+      required
+
+    >
+      <mat-list-option
+        *ngFor="let workflow of workflowList"
+        value="{{ workflow.id }}"
+      >
+        <span>
+          {{ workflow.name }}
+
+          <a
+            class="btn-action"
+            (click)="
+              openWorkflowDiagramDialog(
+                workflow.processDefinitionId,
+                workflow.name
+              )
+            "
+          >
+            <mat-icon class="mat-icon" fontSet="material-icons-outlined">
+              description
+            </mat-icon>
+          </a>
+        </span>
+      </mat-list-option>
+    </mat-selection-list>
+
+    <!-- Nội dung -->
+    <mat-form-field appearance="outline" class="input-full-width">
+      <mat-label> Nội dung </mat-label>
+      <label>
+        <textarea
+          matInput
+          formControlName="content"
+          cdkTextareaAutosize
+          rows="5"
+        ></textarea>
+      </label>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="center">
+    <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>
+    <button
+      mat-button
+      class="btn-save"
+      [mat-dialog-close]="true"
+      type="submit"
+      [disabled]="acceptForm.invalid"
+    >
+      Đồng ý
+    </button>
+  </mat-dialog-actions>
+</form>
