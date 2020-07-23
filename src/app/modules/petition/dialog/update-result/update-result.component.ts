@@ -194,6 +194,7 @@ export class UpdateResultComponent implements OnInit {
         updatedMainArray.push(file);
       }
     }
+    
     this.fileUpload = updatedMainArray;
 
     // uploadedImage
