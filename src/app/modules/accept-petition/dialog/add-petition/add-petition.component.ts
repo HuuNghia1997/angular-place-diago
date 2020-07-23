@@ -648,7 +648,6 @@ export class AddPetitionComponent implements OnInit {
       this.fileNamesFull.splice(index, 1);
       this.files.splice(index, 1);
       this.blankVal = '';
-
     })
   }
 

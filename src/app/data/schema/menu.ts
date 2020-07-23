@@ -17,7 +17,6 @@ export interface Role {
 }
 
 export const MENU_DATA: Menu[] = [
- 
   {
     mainMenu: 'Phản ánh',
     icon: 'file_copy',

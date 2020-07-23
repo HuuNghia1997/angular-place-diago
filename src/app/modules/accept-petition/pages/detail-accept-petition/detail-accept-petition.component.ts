@@ -143,6 +143,7 @@ export class DetailAcceptPetitionComponent implements OnInit {
   pageToGetHistory = 0;
   sizePerPageHistory = 15;
 
+  
   constructor(
     private route: ActivatedRoute,
     public dialog: MatDialog,
