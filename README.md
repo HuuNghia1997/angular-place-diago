@@ -17,4 +17,4 @@ Angular source code skeleton for web application with features:
 - [Deploying an i18n Angular app with angular-cli](https://dev.to/angular/deploying-an-i18n-angular-app-with-angular-cli-2fb9)
 
 ## Template version
-version-1.2.0
+version-1.2.0 
