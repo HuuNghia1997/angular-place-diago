@@ -1,0 +1,203 @@
+<h3 class="dialog_title" mat-dialog-title>Thêm mới phản ánh</h3>
+<form [formGroup]="addForm" (submit)="onConfirm()">
+  <mat-dialog-content class="mat-typography">
+    <h4 id="title">Thông tin người gửi</h4>
+    <!-- Người gửi -->
+    <mat-form-field appearance="outline" class="input-1-3-width">
+      <mat-label> Người gửi </mat-label>
+      <input matInput formControlName="reporterFullName" required maxlength="50" />
+      <mat-error *ngIf="reporterFullName.invalid">
+        {{ getErrorMessage(1) }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Số điện thoại -->
+    <mat-form-field appearance="outline" class="input-1-3-width ml-1">
+      <mat-label> Số điện thoại </mat-label>
+      <input matInput formControlName="reporterPhone" required maxlength="15" />
+      <mat-error *ngIf="reporterPhone.invalid">
+        {{ getErrorMessage(2) }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- CMND -->
+    <mat-form-field appearance="outline" class="input-1-3-width float-right">
+      <mat-label> CMND </mat-label>
+      <input matInput formControlName="reporterIdentityId" maxlength="15" />
+    </mat-form-field>
+
+    <!-- Tỉnh thành -->
+    <mat-form-field appearance="outline" class="input-1-3-width">
+      <mat-label> Tỉnh thành </mat-label>
+      <mat-select formControlName="reporterPlaceProvince">
+        <mat-option *ngFor="let province of provinces" [value]="province.id" (click)="setValueTown()">
+          {{ province.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Quận huyện -->
+    <mat-form-field appearance="outline" class="input-1-3-width ml-1">
+      <mat-label> Quận huyện </mat-label>
+      <mat-select formControlName="reporterPlaceTown">
+        <mat-option *ngFor="let town of towns" [value]="town.id" (click)="setValueVillage()">
+          {{ town.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Phường xã -->
+    <mat-form-field appearance="outline" class="input-1-3-width float-right">
+      <mat-label> Phường xã </mat-label>
+      <mat-select formControlName="reporterPlaceVillage">
+        <mat-option *ngFor="let village of villages" [value]="village.id">
+          {{ village.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Địa chỉ người phản ánh -->
+    <mat-form-field appearance="outline" class="input-2-3-width">
+      <mat-label> Địa chỉ </mat-label>
+      <input matInput formControlName="reporterFullAddress" maxlength="100" />
+    </mat-form-field>
+
+    <!-- Loại đối tượng -->
+    <mat-form-field appearance="outline" class="input-1-3-width float-right">
+      <mat-label> Đối tượng </mat-label>
+      <mat-select formControlName="reporterType">
+        <mat-option *ngFor="let reporterType of reporterTypeList" [value]="reporterType.id">
+          {{ reporterType.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <h4 id="title">Thông tin người gửi</h4>
+    <!-- Tiêu đề -->
+    <mat-form-field appearance="outline" class="input-full-width">
+      <mat-label> Tiêu đề </mat-label>
+      <input matInput required formControlName="title" maxlength="100" />
+      <mat-error *ngIf="title.invalid"> {{ getErrorMessage(3) }} </mat-error>
+    </mat-form-field>
+
+    <!-- Chuyên mục phản ánh -->
+    <mat-form-field appearance="outline" class="input-1-3-width">
+      <mat-label> Chuyên mục phản ánh </mat-label>
+      <mat-select required formControlName="tag">
+        <mat-option *ngFor="let tag of tagList" value="{{ tag.id }}">
+          {{ tag.name }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="tag.invalid"> {{ getErrorMessage(4) }} </mat-error>
+    </mat-form-field>
+
+    <!-- Thời gian xảy ra -->
+    <mat-form-field appearance="outline" class="input-1-3-width ml-1">
+      <mat-label> Thời gian xảy ra </mat-label>
+      <label>
+        <input matInput [ngxMatDatetimePicker]="pickerOccurred" required formControlName="takePlaceOn" />
+      </label>
+      <mat-datepicker-toggle matSuffix [for]="pickerOccurred"></mat-datepicker-toggle>
+      <ngx-mat-datetime-picker #pickerOccurred [showSpinners]="showSpinners" [showSeconds]="showSeconds"
+        [stepHour]="stepHour" [stepMinute]="stepMinute" [stepSecond]="stepSecond" [touchUi]="touchUi"
+        [enableMeridian]="enableMeridian">
+      </ngx-mat-datetime-picker>
+      <mat-error *ngIf="takePlaceOn.invalid">
+        {{ getErrorMessage(5) }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Đơn vị phản ánh -->
+    <mat-form-field appearance="outline" class="input-1-3-width float-right">
+      <mat-label> Đơn vị phản ánh </mat-label>
+      <mat-select formControlName="agency">
+        <mat-option *ngFor="let agen of agencyList" value="{{ agen.id }}">
+          {{ agen.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Nội dung -->
+    <mat-form-field appearance="outline" class="input-full-width">
+      <mat-label> Nội dung </mat-label>
+      <label>
+        <textarea matInput cdkTextareaAutosize rows="5" required formControlName="description"
+          maxlength="100"></textarea>
+      </label>
+      <mat-error *ngIf="description.invalid">
+        {{ getErrorMessage(6) }}
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Địa điểm phản ánh -->
+    <mat-form-field appearance="outline" class="place-input">
+      <mat-label> Địa điểm phản ánh </mat-label>
+      <label>
+        <input matInput required formControlName="petitionFullAddress" maxlength="100" />
+      </label>
+      <mat-error *ngIf="takePlaceAt.invalid">
+        {{ getErrorMessage(7) }}
+      </mat-error>
+    </mat-form-field>
+
+    <a mat-button class="btn-choose" (click)="openMapDialog('', 0, 0)">
+      <mat-icon fontSet="material-icons-outlined" class="icon-map" required>
+        place
+      </mat-icon>
+      Chọn
+    </a>
+
+    <mat-checkbox color="primary" formControlName="sendSms">
+      Gửi tin nhắn SMS
+    </mat-checkbox>
+    <mat-checkbox color="primary" formControlName="isPublic" class="ml-1">Công khai phản ánh</mat-checkbox>
+
+    <h4 id="title">Tập tin đính kèm</h4>
+    <div [ngClass]="{ img_uploaded: uploaded == true }">
+      <div class="drag_upload_btn" [ngClass]="{ no_boder: uploaded == true }">
+        <button mat-button [ngClass]="{
+            btn_uploaded: uploaded == true,
+            clear_img_queue: uploaded == false
+          }">
+          <mat-icon> cloud_upload </mat-icon>
+          Kéo thả tệp tin hoặc <a href=""> Chọn từ thư viện </a> hoặc
+          <a href=""> Tải lên </a>
+        </button>
+        <input id="img_upload" name="img_upload[]" type="file" (change)="onSelectFile($event)" multiple
+          accept="{this.typeFile[0]}" value="{{ blankVal }}" />
+      </div>
+      <div class="image_drag_upload_preview">
+        <!-- <img src="./../../../../../assets/img/video.jpg" /> -->
+        <!-- <div class="img_items mat-elevation-z4" [ngStyle]="{'background-image': 'url(' + bgImageVariable + ')'}" ></div> -->
+
+        <div class="list_uploaded" *ngFor="let url of urls; let i = index">
+          <div class="img_items mat-elevation-z4" [ngStyle]="{  'background-image': 'url(' + urls[i].url + ')' }"></div>
+          <div class="img_control">
+            <span class="file_name" matTooltip="{{ fileNamesFull[i] }}"
+              [matTooltipPosition]="'right'">{{ fileNames[i] }}</span>
+            <a mat-icon-button class="delete_img" align="end">
+              <mat-icon (click)="removeItem(i)">delete_outline</mat-icon>
+            </a>
+          </div>
+
+
+        </div>
+
+        <mat-progress-bar class="progress" mode="determinate" *ngIf="progress > 0" [value]="progress">
+        </mat-progress-bar>
+      </div>
+
+
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="center">
+    <a mat-button class="btn-cancel" (click)="onDismiss()">Đóng</a>
+    <!-- <a mat-button class="btn-cancel" [mat-dialog-close]="true">
+      Lưu và Chuyển xử lý
+    </a> -->
+    <button mat-button class="btn-save" type="submit" [disabled]="addForm.invalid">
+      Lưu lại
+    </button>
+  </mat-dialog-actions>
+</form>
