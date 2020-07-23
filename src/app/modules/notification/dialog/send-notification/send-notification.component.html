@@ -1,0 +1,12 @@
+<h3 class="dialog_title" mat-dialog-title> Gửi thông báo </h3>
+<div mat-dialog-content class="mt-1">
+  <p>
+    Thông báo
+    <b> {{ message }} </b>
+    sẽ được gửi?
+  </p>
+</div>
+<div mat-dialog-actions align="center">
+  <button class="mr-1 btn-cancel" mat-button (click)="onDismiss()"> Huỷ bỏ </button>
+  <button mat-raised-button class="primary-blue-btn" (click)="onConfirm()"> Đồng ý </button>
+</div>

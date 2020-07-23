@@ -1,0 +1,24 @@
+<button mat-icon-button class="close_btn" (click)="onDismiss()">
+    <mat-icon>close</mat-icon>
+</button>
+<span class="fileName" *ngIf="group == 1 ">{{ fileName }}</span>
+<div class="preview_zone">
+    <div *ngIf="group == 1" class="img_preview" [ngStyle]="{'background-image': 'url('+ selectedURL +')'}"></div>
+    <div class="newTab" *ngIf="group == 2 || group == 3 ">
+        <a [href]="selectedURL" target="_blank">
+            <mat-icon>launch</mat-icon>
+            <p>Phát {{ fileName }} trong tab mới</p>
+        </a>
+    </div>
+</div>
+<div class="bottom_carousel">
+    <owl-carousel-o [options]="customOptions">
+        <ng-container *ngFor="let file of fileUpload">
+            <ng-template carouselSlide>
+                <a href="javascript:void(0)" (click)="openImage(file.id.group[0], file.id.id, file.name, file.url)">
+                    <div class="slide_img" [ngStyle]="{'background-image': 'url('+ file.url +')'}" [title]="file.fullName"></div>
+                </a>
+            </ng-template>
+        </ng-container>
+    </owl-carousel-o>
+</div>

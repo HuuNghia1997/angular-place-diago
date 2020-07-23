@@ -1,0 +1,140 @@
+.dialog_title {
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  color: #000000;
+}
+
+.mt-1 {
+  margin-top: 1% !important;
+}
+
+.mt-4 {
+  margin-top: 4% !important;
+}
+
+.mb-1 {
+  margin-bottom: 1% !important;
+}
+
+.input-full-width {
+  width: 100%;
+}
+
+.input-1-2-width {
+  width: 49%;
+}
+
+.input-1-4-width {
+  width: 25%;
+}
+
+.input-2-3-width {
+  width: 66.1%;
+}
+
+.input-1-3-width {
+  width: 32.3%;
+}
+
+.btn-input-place {
+  width: 9%;
+}
+
+.ml-1 {
+  margin-left: 1.5% !important;
+}
+
+.ml-2 {
+  margin-left: 2% !important;
+}
+
+.float-right {
+  float: right;
+}
+
+#title {
+  font-weight: 500;
+  margin-top: 1em;
+}
+
+.container {
+  border: 0.5px dashed #BDBDBD;
+  height: 150px;
+  justify-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+a {
+  color: #1976D2;
+  text-decoration: none;
+}
+
+a:link {
+  color: #1976D2;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #1976D2;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #1976D2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+a:active {
+  color: #1976D2;
+  text-decoration: none;
+}
+
+.btn-cancel {
+  border: 1px solid #333333;
+}
+
+.btn-cancel:focus {
+  background-color: #ffffff;
+  display: none;
+}
+
+.btn-save {
+  color: #ffffff;
+  background-color: #1976D2;
+}
+
+.btn-choose-process {
+  text-align: left;
+  text-decoration: none;
+  background-color: #ffffff;
+}
+
+.btn-choose-process:focus {
+  color: #ffffff;
+  background-color: #1976D2;
+}
+
+.mat-icon {
+  float: right;
+}
+.place-input {
+  width: 90%;
+}
+
+.btn-choose {
+  float: right;
+  height: 59px;
+  width: 8%;
+  border: 1px solid #333333;
+  display: flex;
+  justify-content: center;
+  color: #1371FF;
+  font-size: 13px;
+  font-weight: bold;
+  position: relative;
+  top: 3px;
+  vertical-align: center;
+}

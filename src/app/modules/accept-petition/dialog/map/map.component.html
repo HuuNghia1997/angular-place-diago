@@ -1,0 +1,37 @@
+<h3 class="dialog_title" mat-dialog-title>Tìm kiếm địa điểm</h3>
+
+
+<input type="text" [(ngModel)]="value" #pacinput id="search" />
+
+<mat-dialog-content class="mat-typography">
+    <div class="mt-1">
+    <table>
+      <tr>
+        <strong id="title">Địa chỉ: </strong>
+        <span id="placeName">{{ address }}</span>
+      </tr>
+      <tr>
+        <strong id="title">Kinh độ: </strong>
+        <span id="latitude">{{ latitude }}</span>
+      </tr>
+      <tr>
+        <strong id="title">Vĩ độ: </strong>
+        <span id="longitude">{{ longitude }}</span>
+      </tr>
+    </table>
+  </div>
+
+
+    <google-map height="500px" width="100%" [zoom]="zoom" [center]="center" (mapClick)="click($event)">
+        <map-marker #markerElem *ngFor="let marker of markers" [position]="marker.position" [label]="marker.label" [title]="marker.title" [options]="marker.options" (mapClick)="openInfo(markerElem, marker.info)">
+        </map-marker>
+        <map-info-window>{{ infoContent }}</map-info-window>
+    </google-map>
+
+</mat-dialog-content>
+<mat-dialog-actions align="center">
+    <button mat-button class="btn-cancel" (click)="onDismiss()">Đóng</button>
+    <button mat-button class="btn-save" (click)="search()" [mat-dialog-close]="true">
+    Đồng ý
+  </button>
+</mat-dialog-actions>

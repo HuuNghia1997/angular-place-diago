@@ -1,0 +1,139 @@
+<!--  Title  -->
+<mat-toolbar class="title">
+  <mat-toolbar-row>
+    <h6 class="name-page" i18n> Chi tiết quy trình </h6>
+    <button mat-button class="btn-add" (click)="addProcess()">
+      <mat-icon> add </mat-icon>
+      <span i18n> Thêm mới </span>
+    </button>
+  </mat-toolbar-row>
+</mat-toolbar>
+
+<div class="container">
+  <mat-card>
+    <mat-card-title> {{ workflowName }} </mat-card-title>
+
+    <div class="button-action">
+      <!-- Btn cập nhật -->
+      <button mat-button class="fs-13" (click)="updateProcess(configPetitionId, workflowName)">
+        <mat-icon fontSet="material-icons-outlined"> create </mat-icon>
+        <span i18n> Cập nhật </span>
+      </button>
+
+      <!-- Btn xóa -->
+      <button mat-button class="fs-13 ml-1" (click)="deleteProcess(configPetitionId, workflowName)">
+        <mat-icon fontSet="material-icons-outlined"> delete </mat-icon>
+        <span i18n> Xóa </span>
+      </button>
+
+      <!-- Btn áp dụng -->
+      <div *ngIf="workflowStatus === 1; then receivedBlock else elseBlock"></div>
+      <ng-template #receivedBlock>
+        <button mat-button class="ml-1 fs-13" (click)="unApplyProcess(configPetitionId, workflowName)">
+          <mat-icon fontSet="material-icons-outlined"> highlight_off </mat-icon>
+          <span i18n> Hủy áp dụng </span>
+        </button>
+      </ng-template>
+      <ng-template #elseBlock>
+        <button mat-button class="ml-1 fs-13" (click)="applyProcess(configPetitionId, workflowName)">
+          <mat-icon fontSet="material-icons-outlined"> done_outline </mat-icon>
+          <span i18n> Áp dụng </span>
+        </button>
+      </ng-template>
+    </div> <!-- div button-action -->
+
+    <table class="table-content">
+      <tr>
+        <td class="col-1-content">
+          <h4 i18n> Thông tin quy trình </h4>
+          <table class="table-info-config-petition">
+            <tr>
+              <td class="td-1 w-25" i18n> Trạng thái: </td>
+              <td class="td-2">
+                <span [ngClass]="(workflowStatus === 1 ? 'status_applied' :
+                                  (workflowStatus === 0 ? 'status_unapply' : 'status_cancel'))">
+                  {{ getStatus(workflowStatus) }}
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="td-1 w-25" i18n> Mã quy trình: </td>
+              <td class="td-2"> {{ workflowId }} </td>
+            </tr>
+            <tr>
+              <td class="td-1" i18n> Ngày tạo: </td>
+              <td class="td-2"> {{ workflowCreatedDate | date : 'dd/MM/yyyy' }} </td>
+            </tr>
+            <tr>
+              <td class="td-1 w-25" i18n> Chuyên mục: </td>
+              <td class="td-2 category">
+                <span class="topic" *ngFor='let tags of workflowTags;'> {{ tags.name }} </span>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Quy trình -->
+
+          <div class="config-container">
+            <h4 class="mt-2" i18n> Quy trình </h4>
+            <div class="img">
+              <img [src]="svgIcon" alt="" class="image-process">
+            </div>
+          </div>
+          <!-- <div class="card-container">
+            <img [src]="svgIcon" alt="" class="image-process">
+          </div> -->
+          
+
+          <!-- Hoạt động -->
+          <h4 class="mt-2" i18n> Hoạt động </h4>
+          <mat-tab-group>
+            <mat-tab label="Lịch sử">
+              <mat-card class="card-history">
+                <div *ngFor='let his of history; let i = index;' class="history_item mt-1">
+                  <mat-card-subtitle>
+                    <span>
+                      <span class="name-user"> {{ his.user.name }} </span>
+                      <span *ngIf="his.type === 1"> đã bình luận </span>
+                      <span *ngIf="his.type === 2"> đã chuyển bước </span>
+                      <span *ngIf="his.type === 3"> đã thay đổi </span>
+                      <span *ngIf="his.type === 4"> đã thêm mới </span>
+                      <span *ngIf="his.type === 5"> đã xoá </span>
+                      - {{ his.affectedDate | date : 'dd/MM/yyyy HH:mm:ss' }}
+                    </span>
+                    <table class="mt-05" [ngClass]="{'d-none': his.type === 4}">
+                      <tr class="fw-500">
+                        <td class="width-19 action" i18n> Trường </td>
+                        <td class="width-39 action" i18n> Giá trị cũ </td>
+                        <td class="width-39 action" i18n> Giá trị mới </td>
+                      </tr>
+                      <tr *ngFor="let his_item of his.action" [ngClass]="{'d-none':  his.type === 4}">
+                        <td class="width-19 action"> {{ his_item.fieldName }} </td>
+                        <td class="width-39 action"> {{ his_item.originalValue }}</td>
+                        <td class="width-39 action"> {{ his_item.newValue }} </td>
+                      </tr>
+                    </table>
+                    <mat-divider></mat-divider>
+                  </mat-card-subtitle>
+                </div>
+              </mat-card>
+            </mat-tab>
+          </mat-tab-group>
+        </td> <!-- col-1-content -->
+
+        <td class="col-2-content"></td> <!-- col-2-content -->
+
+        <!-- <td class="col-3-content">
+          <h4> &nbsp;</h4>
+          <table class="table-date-create">
+            <tr>
+              <td class="td-1" i18n> Ngày tạo: </td>
+              <td class="td-2"> {{ workflowCreatedDate | date : 'dd/MM/yyyy' }} </td>
+            </tr>
+          </table>
+        </td>  -->
+        <!-- col-3-content -->
+      </tr>
+    </table> <!-- div table-content -->
+  </mat-card>
+</div> <!-- div container -->
