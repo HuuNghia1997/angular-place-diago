@@ -176,7 +176,7 @@
             <span class="file_name" matTooltip="{{ fileNamesFull[i] }}"
               [matTooltipPosition]="'right'">{{ fileNames[i] }}</span>
             <a mat-icon-button class="delete_img" align="end">
-              <mat-icon (click)="removeItem(i)">delete_outline</mat-icon>
+              <mat-icon (click)="removeItem(i,urls[i].temp.id)">delete_outline</mat-icon>
             </a>
           </div>
 
