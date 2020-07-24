@@ -3,17 +3,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment as env } from 'env/environment';
 import { Observable, of } from 'rxjs';
 import { ApiProviderService } from './api-provider.service';
+import { EnvService } from './env.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private http: HttpClient, private apiProvider: ApiProviderService) { }
+  constructor(private http: HttpClient, private apiProvider: ApiProviderService,private envService: EnvService) { }
 
   getPasswordToken(): Observable<Object> {
-    let url: string = env.keycloakOptions.config.url;
-    url += "/realms/" + env.keycloakOptions.config.realm;
+    let config = this.envService.getConfig();
+    let url: string = config.keycloakOptions.config.url;
+    url += "/realms/" + config.keycloakOptions.config.realm;
     url += "/protocol/openid-connect/token";
 
     let httpOptions = {
@@ -26,9 +28,11 @@ export class AuthService {
   }
 
   getPasswordTokenAJAX(): Observable<Object> {
-    let url: string = env.keycloakOptions.config.url;
-    url += "/realms/" + env.keycloakOptions.config.realm;
+    let config = this.envService.getConfig();
+    let url: string = config.keycloakOptions.config.url;
+    url += "/realms/" + config.keycloakOptions.config.realm;
     url += "/protocol/openid-connect/token";
+
 
     return new Observable<Object>(s => {
       var xhttp = new XMLHttpRequest();

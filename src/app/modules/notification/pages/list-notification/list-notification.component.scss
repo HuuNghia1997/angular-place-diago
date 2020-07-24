@@ -3,13 +3,19 @@
   background-color: #F5F8FF;
 }
 
+.tbl_wraptext_col {
+    width: 19% !important;
+    word-wrap: break-word;
+}
 .btn-add {
   margin-left: 2em;
   background-color: #388E3C;
   color: #fff;
   height: 36px;
 }
-
+#dateDue{
+  width: 15% !important;
+}
 .btn-add:focus {
   display: none;
 }

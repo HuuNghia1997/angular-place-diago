@@ -15,8 +15,18 @@
             "rootUrl": "${DIGO_API_GATEWAY}",
             "services": {
                 "fileman": { "path": "fi" },
-                "basedata": { "path": "ba" }
+                "basedata": { "path": "ba" },
+                "basecat": { "path": "bt" },
+                "human": { "path": "hu" },
+                "postman": { "path": "po" },
+                "surfeed": { "path": "su" },
+                "models": { "path": "modeling-service/v1" },
+                "rbPetition": { "path": "rb-petition" },
+                "messenger": { "path": "me" }
             }
         }
-    }
+    },
+    "typeFile": "${DIGO_TYPE_FILE}",
+    "typeProcess":"${DIGO_TYPE_PROCESS}",
+    "projectIdProcess":"${DIGO_TYPE_PROCESS_ID}"
 }

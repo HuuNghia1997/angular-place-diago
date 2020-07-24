@@ -97,7 +97,7 @@
 
       <!-- Tiêu đề -->
       <ng-container matColumnDef="title">
-        <th mat-header-cell *matHeaderCellDef style="width: 25%"> Tiêu đề </th>
+        <th mat-header-cell *matHeaderCellDef style="width: 20%"> Tiêu đề </th>
         <td mat-cell *matCellDef="let element" class="tbl_wraptext_col title">
           <a routerLink="/quan-tri-thong-bao/chi-tiet/{{element.id}}"> {{ element.title }} </a>
         </td>
@@ -147,8 +147,8 @@
 
       <!-- Ngày hết hạn -->
       <ng-container matColumnDef="endDate">
-        <th mat-header-cell *matHeaderCellDef style="width: 8%"> Ngày hết hạn </th>
-        <td mat-cell *matCellDef="let element"> {{ element.expiredDate | date : 'dd/MM/yyyy' }} </td>
+        <th mat-header-cell *matHeaderCellDef style="width: 10%"> Ngày hết hạn </th>
+        <td mat-cell *matCellDef="let element" id="dateDue"> {{ element.expiredDate | date : 'dd/MM/yyyy' }} </td>
       </ng-container>
 
       <!-- Thao tác -->

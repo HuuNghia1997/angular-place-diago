@@ -11,9 +11,9 @@ export class UserService {
   constructor(private http: HttpClient,
               private apiProviderService: ApiProviderService) { }
 
-  private getUserInfoPath = this.apiProviderService.getUrl('digo-microservice', 'human') + '/user/';
+  private getUserInfoPath = this.apiProviderService.getUrl('digoMicroservice', 'human') + '/user/';
 
-  private getUserfilePath = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
+  private getUserfilePath = this.apiProviderService.getUrl('digoMicroservice', 'fileman') + '/file/';
 
   getUserInfo(id: string): Observable<any> {
     return this.http.get(this.getUserInfoPath + id);

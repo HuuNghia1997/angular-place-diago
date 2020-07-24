@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'env/environment';
+import { EnvService } from './env.service';
 
 export interface Service {
   name: string,
@@ -18,25 +19,23 @@ export interface Provider {
 })
 export class ApiProviderService {
 
-  private apiProviders: Provider[];
+  private apiProviders;
 
-  constructor() {
-    this.apiProviders = <Provider[]>environment.apiProviders;
+  constructor(private envService: EnvService) {
+    this.apiProviders = envService.getConfig().apiProviders;
   }
 
   getUrl(providerName: string, serviceName?: string): string {
     let url: string = null;
-    if (this.apiProviders && this.apiProviders.length > 0) {
-      let provider: Provider = this.apiProviders.find(p => p.name === providerName);
-      if (provider) {
-        url = provider.rootUrl;
-        if (serviceName && provider.services && provider.services.length) {
-          let service: Service = provider.services.find(s => s.name === serviceName);
-          if (service.rootUrl) {
-            url = service.rootUrl;
-          }
-          url += service.path;
+    if (this.apiProviders[providerName]) {
+      let provider: Provider = this.apiProviders[providerName];
+      url = provider.rootUrl;
+      if (serviceName && provider.services && provider.services[serviceName]) {
+        let service: Service = provider.services[serviceName];
+        if (service.rootUrl) {
+          url = service.rootUrl;
         }
+        url += service.path;
       }
     }
     return url;

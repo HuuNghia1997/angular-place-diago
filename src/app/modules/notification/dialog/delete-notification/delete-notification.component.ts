@@ -15,7 +15,7 @@ export class DeleteNotificationComponent implements OnInit {
   message: string;
   id: string;
 
-  public deleteURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification/';
+  public deleteURL = this.apiProviderService.getUrl('digoMicroservice', 'postman') + '/notification/';
 
   constructor(public dialogRef: MatDialogRef<DeleteNotificationComponent>,
               private http: HttpClient,

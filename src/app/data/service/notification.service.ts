@@ -38,17 +38,17 @@ export class NotificationService {
     private keycloak: KeycloakService,
     private route: ActivatedRoute,
     private router: Router) { }
-  public getTags = this.apiProviderService.getUrl('digo-microservice', 'basecat') + '/tag?category-id=';
-  public uploadFileURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
-  public postURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification';
-  public getDetailURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification/';
-  public putURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification/';
-  public getFileURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/';
-  public getHistory = this.apiProviderService.getUrl('digo-microservice', 'logman') + '/history?group-id=';
-  public searchURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification/--search?';
-  public uploadFilesURL = this.apiProviderService.getUrl('digo-microservice', 'fileman') + '/file/--multiple';
-  public getAgencyURL = this.apiProviderService.getUrl('digo-microservice', 'basedata') + '/agency/name+logo-id?parent-id=&tag-id=';
-  public getUserURL = this.apiProviderService.getUrl('digo-microservice', 'human') + '/user/--search?keyword=';
+  public getTags = this.apiProviderService.getUrl('digoMicroservice', 'basecat') + '/tag?category-id=';
+  public uploadFileURL = this.apiProviderService.getUrl('digoMicroservice', 'fileman') + '/file/';
+  public postURL = this.apiProviderService.getUrl('digoMicroservice', 'postman') + '/notification';
+  public getDetailURL = this.apiProviderService.getUrl('digoMicroservice', 'postman') + '/notification/';
+  public putURL = this.apiProviderService.getUrl('digoMicroservice', 'postman') + '/notification/';
+  public getFileURL = this.apiProviderService.getUrl('digoMicroservice', 'fileman') + '/file/';
+  public getHistory = this.apiProviderService.getUrl('digoMicroservice', 'logman') + '/lo'+'/history?group-id=';
+  public searchURL = this.apiProviderService.getUrl('digoMicroservice', 'postman') + '/notification/--search?';
+  public uploadFilesURL = this.apiProviderService.getUrl('digoMicroservice', 'fileman') + '/file/--multiple';
+  public getAgencyURL = this.apiProviderService.getUrl('digoMicroservice', 'basedata') + '/agency/name+logo-id?parent-id=&tag-id=';
+  public getUserURL = this.apiProviderService.getUrl('digoMicroservice', 'human') + '/user/--search?keyword=';
   result: boolean;
 
   private notificationComponent: ListNotificationComponent;

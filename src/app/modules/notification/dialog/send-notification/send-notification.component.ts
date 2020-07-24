@@ -14,7 +14,7 @@ export class SendNotificationComponent implements OnInit {
   title: string;
   message: string;
   id: string;
-  public publishURL = this.apiProviderService.getUrl('digo-microservice', 'postman') + '/notification/';
+  public publishURL = this.apiProviderService.getUrl('digoMicroservice', 'postman') + '/notification/';
 
   constructor(public dialogRef: MatDialogRef<SendNotificationComponent>,
               private http: HttpClient,
